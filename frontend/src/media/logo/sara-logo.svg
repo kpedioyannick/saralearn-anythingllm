@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Fond cercle vert -->
+  <circle cx="60" cy="60" r="56" fill="#118c44"/>
+
+  <!-- Lettre S -->
+  <path d="M72 38c-3-4-8-6-13-6-8 0-15 5-15 13 0 7 5 10 12 13l4 2c5 2 8 4 8 8 0 5-4 8-10 8-5 0-9-2-12-6l-5 5c4 5 10 8 17 8 10 0 17-6 17-15 0-8-5-12-13-15l-4-2c-4-2-7-3-7-7 0-4 3-6 8-6 4 0 7 1 10 4l6-5z" fill="white"/>
+
+  <!-- Feuille/germe en haut à droite du S -->
+  <path d="M76 32 Q85 22 90 28 Q84 36 76 32Z" fill="#86efac"/>
+  <line x1="76" y1="32" x2="82" y2="26" stroke="#86efac" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,40 @@
+{
+  "admin_id": 1,
+  "lang": "fr",
+  "program": "france",
+  "langs": [
+    { "value": "fr", "label": "Français" },
+    { "value": "en", "label": "English" }
+  ],
+  "programs": [
+    { "value": "france", "label": "Programme français", "lang": "fr" },
+    { "value": "usa", "label": "American curriculum", "lang": "en" }
+  ],
+  "program_config": {
+    "france": {
+      "classes": ["cm2", "6eme", "5eme", "4eme", "3eme", "2nde"],
+      "workspace_prefix": {
+        "cm2": "CM2",
+        "6eme": "6eme",
+        "5eme": "5eme",
+        "4eme": "4eme",
+        "3eme": "3eme",
+        "2nde": "2nde"
+      },
+      "shared_workspaces": {
+        "brevet": ["3eme", "4eme"]
+      }
+    },
+    "usa": {
+      "classes": ["grade6", "grade7", "grade8", "grade9", "grade10"],
+      "workspace_prefix": {
+        "grade6": "Grade 6",
+        "grade7": "Grade 7",
+        "grade8": "Grade 8",
+        "grade9": "Grade 9",
+        "grade10": "Grade 10"
+      },
+      "shared_workspaces": {}
+    }
+  }
+}

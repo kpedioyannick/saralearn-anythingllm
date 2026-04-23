@@ -1,0 +1,92 @@
+{
+  "fiche": [
+    "fais une fiche de révision",
+    "crée une fiche",
+    "résume le cours",
+    "fiche de cours",
+    "récapitulatif",
+    "synthèse du cours",
+    "fiche récap",
+    "résumé du chapitre",
+    "points essentiels"
+  ],
+  "carte_mentale": [
+    "carte mentale",
+    "mind map",
+    "mindmap",
+    "fais un schéma",
+    "visualise le cours",
+    "carte conceptuelle",
+    "arbre de concepts",
+    "organisation visuelle"
+  ],
+  "exercice": [
+    "donne-moi des exercices",
+    "entraîne-moi",
+    "fais un QCM",
+    "crée un quiz",
+    "questions d'entraînement",
+    "exercices pratiques",
+    "teste mes connaissances",
+    "des exercices sur",
+    "pratique",
+    "exercices issus du brevet",
+    "un problème de maths",
+    "sujet type brevet",
+    "problème ouvert",
+    "exercice avec énoncé",
+    "problème complet",
+    "sujet d'examen",
+    "exercice type bac",
+    "problème avec des questions",
+    "exercices du programme avec corrigé"
+  ],
+  "aide_devoir": [
+    "aide-moi pour mon devoir",
+    "je comprends pas cet exercice",
+    "corrige mon travail",
+    "vérifie ma réponse",
+    "j'ai un problème avec",
+    "comment résoudre",
+    "aide pour ce problème",
+    "je suis bloqué sur"
+  ],
+  "exemple": [
+    "donne un exemple",
+    "illustre avec un exemple",
+    "montre-moi un exemple",
+    "exemple concret",
+    "cas pratique",
+    "exemples d'application",
+    "exemple du quotidien"
+  ],
+  "explication": [
+    "explique-moi",
+    "c'est quoi",
+    "définition de",
+    "je ne comprends pas",
+    "comment ça marche",
+    "qu'est-ce que",
+    "pourquoi",
+    "comment fonctionne"
+  ],
+  "cours": [
+    "fais un cours complet",
+    "explique le cours",
+    "leçon sur",
+    "enseigne-moi",
+    "présente le chapitre",
+    "cours sur le thème",
+    "développe le cours"
+  ],
+  "dictee": [
+    "fais-moi une dictée",
+    "je veux une dictée",
+    "dictée sur",
+    "entraîne-moi à la dictée",
+    "une dictée s'il te plaît",
+    "fais une dictée",
+    "exercice de dictée",
+    "pratique de l'orthographe dictée"
+  ]
+}
