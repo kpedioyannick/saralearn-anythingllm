@@ -102,6 +102,12 @@ markdown.renderer.rules.fence = function (tokens, idx, options, env, self) {
   if (lang === "probleme") {
     return `<div class="probleme-block" data-content="${encodeURIComponent(code)}"></div>\n`;
   }
+  if (lang === "video") {
+    return `<div class="video-block" data-content="${encodeURIComponent(code)}"></div>\n`;
+  }
+  if (lang === "video-url") {
+    return `<div class="video-url-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
+  }
   if (lang === "reveal") {
     const slidesHtml = code
       .split(/\n---\n/)

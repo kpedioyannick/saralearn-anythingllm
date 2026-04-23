@@ -13,12 +13,14 @@ export function parseRichBlocks(html) {
   for (const node of root.childNodes) {
     const cls = node.classList;
     if (node.nodeType === Node.ELEMENT_NODE && cls) {
-      if (cls.contains("quiz-block") || cls.contains("dictee-block") || cls.contains("geogebra-block") || cls.contains("markmap-block") || cls.contains("probleme-block")) {
+      if (cls.contains("quiz-block") || cls.contains("dictee-block") || cls.contains("geogebra-block") || cls.contains("markmap-block") || cls.contains("probleme-block") || cls.contains("video-block") || cls.contains("video-url-block")) {
         if (htmlBuf) { parts.push({ type: "html", content: htmlBuf }); htmlBuf = ""; }
         const type = cls.contains("quiz-block") ? "quiz"
           : cls.contains("dictee-block") ? "dictee"
           : cls.contains("geogebra-block") ? "geogebra"
           : cls.contains("probleme-block") ? "probleme"
+          : cls.contains("video-url-block") ? "video-url"
+          : cls.contains("video-block") ? "video"
           : "markmap";
         parts.push({ type, content: decodeURIComponent(node.dataset.content || "") });
         continue;

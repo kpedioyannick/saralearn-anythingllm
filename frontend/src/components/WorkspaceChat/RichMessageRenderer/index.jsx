@@ -6,6 +6,7 @@ import QuizBlock from "@/components/WorkspaceChat/QuizBlock";
 import DicteeBlock from "@/components/WorkspaceChat/DicteeBlock";
 import GeogebraBlock from "@/components/WorkspaceChat/GeogebraBlock";
 import ProblemeBlock from "@/components/WorkspaceChat/ProblemeBlock";
+import VideoBlock from "@/components/WorkspaceChat/VideoBlock";
 import { Transformer } from "markmap-lib";
 import { Markmap } from "markmap-view";
 
@@ -120,6 +121,16 @@ export default function RichMessageRenderer({ message, workspace, activeThread }
         }
         if (part.type === "markmap") {
           return <MarkmapBlock key={`mm-${part.content.slice(0, 40)}`} content={part.content} />;
+        }
+        if (part.type === "video") {
+          return <VideoBlock key={`vid-${part.content.slice(0, 40)}`} content={part.content} />;
+        }
+        if (part.type === "video-url") {
+          return (
+            <div key={`vidu-${part.content.slice(0, 40)}`} className="my-4 rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
+              <video src={part.content} controls autoPlay className="w-full max-h-[70vh]" style={{ display: "block" }} />
+            </div>
+          );
         }
         return null;
       })}

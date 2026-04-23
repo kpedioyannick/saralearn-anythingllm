@@ -1224,6 +1224,8 @@ const TRANSLATIONS = {
     progress: {
       button_title: "My progress",
       empty: "No quiz completed in this chapter.",
+      to_retry: "To retry",
+      retry: "Retry",
     },
   },
 };

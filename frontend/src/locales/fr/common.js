@@ -1239,6 +1239,8 @@ const TRANSLATIONS = {
     progress: {
       button_title: "Voir ma progression",
       empty: "Aucun quiz complété dans ce chapitre.",
+      to_retry: "À retravailler",
+      retry: "Retravailler",
     },
   },
 };

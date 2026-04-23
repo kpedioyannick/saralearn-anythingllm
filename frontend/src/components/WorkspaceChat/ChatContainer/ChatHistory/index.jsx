@@ -325,7 +325,7 @@ export default forwardRef(function (
                             {group.correct}/{group.total}
                           </span>
                         </div>
-                        <div className="mt-1 flex justify-end">
+                        <div className="mt-1 flex items-center justify-between">
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex ${skillState.className}`}
                           >
@@ -338,6 +338,15 @@ export default forwardRef(function (
                               {skillState.label}
                             </span>
                           </span>
+                          <button
+                            onClick={() => {
+                              setShowProgress(false);
+                              sendCommand({ text: `Entraîne-moi sur : ${group.competence}`, autoSubmit: true });
+                            }}
+                            className="text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 light:text-emerald-700 transition-colors"
+                          >
+                            🔁 {t("sara.progress.retry")}
+                          </button>
                         </div>
                       </div>
                     );

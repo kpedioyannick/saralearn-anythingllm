@@ -204,7 +204,7 @@ export default function SaraLogin() {
       window.localStorage.setItem(AUTH_TOKEN, res.token);
       window.location = paths.home();
     } else {
-      setError(res.message || copy.invalidCredentials);
+      setError(copy.invalidCredentials);
       setLoading(false);
     }
   };

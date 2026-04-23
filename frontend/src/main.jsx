@@ -31,6 +31,15 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/home",
+        lazy: async () => {
+          const { default: HomePresentation } = await import(
+            "@/pages/HomePresentation"
+          );
+          return { element: <HomePresentation /> };
+        },
+      },
+      {
         path: "/sara/login",
         lazy: async () => {
           const { default: SaraLogin } = await import("@/pages/SaraLogin");

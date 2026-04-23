@@ -147,6 +147,55 @@ function saraEndpoints(app) {
     }
   });
 
+  // Proxy vidéo pédagogique → saralearn-video API
+  const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
+
+  app.post("/sara/video", async (req, res) => {
+    try {
+      const payload = reqBody(req);
+      const r = await fetch(`${VIDEO_API_URL}/api/videos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      res.status(r.status).json(data);
+    } catch (e) {
+      console.error("[Sara] Video API error:", e.message);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  app.get("/sara/video/:videoId", async (req, res) => {
+    try {
+      const { videoId } = req.params;
+      const r = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`);
+      const data = await r.json();
+      // Réécrire videoUrl pour pointer vers le proxy serveur
+      if (data.videoUrl) {
+        data.videoUrl = data.videoUrl.replace(VIDEO_API_URL, "");
+        data.videoUrl = `/sara/video-file${data.videoUrl}`;
+      }
+      res.status(r.status).json(data);
+    } catch (e) {
+      console.error("[Sara] Video status error:", e.message);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Proxy fichiers MP4 générés
+  app.get("/sara/video-file/videos/:file", async (req, res) => {
+    try {
+      const { file } = req.params;
+      const r = await fetch(`${VIDEO_API_URL}/videos/${file}`);
+      if (!r.ok) return res.status(404).send("Not found");
+      res.setHeader("Content-Type", "video/mp4");
+      r.body.pipe(res);
+    } catch (e) {
+      res.status(500).send(e.message);
+    }
+  });
+
   // Public — formulaire de contact via Mailjet
   app.post("/sara/contact", async (req, res) => {
     try {

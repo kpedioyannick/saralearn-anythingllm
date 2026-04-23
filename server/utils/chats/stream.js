@@ -16,6 +16,45 @@ const {
 const { detectIntent, getIntentTemplate } = require("../sara/intentDetector");
 const { Document } = require("../../models/documents");
 
+const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
+const fetch = require("node-fetch");
+
+async function processVideoBlock(text) {
+  const match = text.match(/```video\n([\s\S]*?)```/);
+  if (!match) return text;
+  let payload;
+  try {
+    const jsonStr = match[1].trim().match(/\{[\s\S]*\}/)?.[0];
+    if (!jsonStr) return text;
+    payload = JSON.parse(jsonStr);
+    if (!payload.slides) return text;
+  } catch { return text; }
+
+  try {
+    const r = await fetch(`${VIDEO_API_URL}/api/videos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const { videoId } = await r.json();
+    if (!videoId) return text;
+
+    // Poll jusqu'à done ou error (max 3 min)
+    for (let i = 0; i < 60; i++) {
+      await new Promise((res) => setTimeout(res, 3000));
+      const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
+      if (s.status === "done" && s.videoUrl) {
+        const proxyUrl = `/api/sara/video-file/videos/${videoId}.mp4`;
+        return text.replace(match[0], `\`\`\`video-url\n${proxyUrl}\n\`\`\``);
+      }
+      if (s.status === "error") return text;
+    }
+  } catch (e) {
+    console.error("[Sara] Video generation error:", e.message);
+  }
+  return text;
+}
+
 const VALID_CHAT_MODE = ["automatic", "chat", "query"];
 
 async function streamChatWithWorkspace(
@@ -36,6 +75,67 @@ async function streamChatWithWorkspace(
 
   // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
   if (isDicteeThread) chatMode = "chat";
+
+  // Intent vidéo : générer les slides, appeler l'API vidéo, retourner l'URL directement
+  if (intent === "video") {
+    writeResponseChunk(response, {
+      uuid, sources: [], type: "textResponseChunk",
+      textResponse: "⏳ Génération de la vidéo en cours…", close: false, error: false,
+    });
+
+    try {
+      const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
+      const videoPrompt = `${updatedMessage}${intentPrefix}`;
+      const { textResponse: slidesText } = await LLMConnector.getChatCompletion([
+        { role: "system", content: await chatPrompt(workspace, null) },
+        { role: "user", content: videoPrompt },
+      ], { temperature: 0.7 });
+
+      const jsonMatch = slidesText?.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("Pas de JSON dans la réponse LLM");
+      const payload = JSON.parse(jsonMatch[0]);
+      if (!payload.slides) throw new Error("Pas de slides dans le JSON");
+      // Normaliser les champs que le LLM peut nommer différemment
+      payload.slides = payload.slides.map((s, i) => ({
+        id: s.id || `s${i + 1}`,
+        title: s.title || s.heading || s.name || `Slide ${i + 1}`,
+        description: s.description || s.content || s.text || s.body || "",
+        subtitlesSrt: s.subtitlesSrt || s.subtitle || s.narration || s.audio || s.description || s.content || "",
+      }));
+
+      const r = await fetch(`${VIDEO_API_URL}/api/videos`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const { videoId } = await r.json();
+      if (!videoId) throw new Error("Pas de videoId");
+
+      for (let i = 0; i < 60; i++) {
+        await new Promise((res) => setTimeout(res, 3000));
+        const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
+        if (s.status === "done") {
+          const proxyUrl = `/api/sara/video-file/videos/${videoId}.mp4`;
+          const completeText = `\`\`\`video-url\n${proxyUrl}\n\`\`\``;
+          await WorkspaceChats.new({
+            workspaceId: workspace.id, prompt: message,
+            response: { text: completeText, sources: [], type: chatMode, attachments: [], metrics: {} },
+            threadId: thread?.id || null, user,
+          });
+          writeResponseChunk(response, { uuid, sources: [], type: "textResponse", textResponse: completeText, close: true, error: false });
+          return;
+        }
+        if (s.status === "error") throw new Error(s.error || "Erreur rendu vidéo");
+      }
+      throw new Error("Timeout génération vidéo");
+    } catch (e) {
+      console.error("[Sara] Video intent error:", e.message);
+      writeResponseChunk(response, {
+        uuid, sources: [], type: "textResponse",
+        textResponse: `❌ Impossible de générer la vidéo : ${e.message}`, close: true, error: true,
+      });
+      return;
+    }
+  }
 
   if (Object.keys(VALID_COMMANDS).includes(updatedMessage)) {
     const data = await VALID_COMMANDS[updatedMessage](
