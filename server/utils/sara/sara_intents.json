@@ -99,5 +99,18 @@
     "fais une dictée",
     "exercice de dictée",
     "pratique de l'orthographe dictée"
+  ],
+  "generate_h5p": [
+    "fais-moi un quiz h5p",
+    "génère un h5p",
+    "crée un exercice h5p",
+    "quiz h5p sur",
+    "exercice h5p sur",
+    "fais un h5p",
+    "génère un quiz h5p",
+    "fais-moi du h5p",
+    "h5p sur le cours",
+    "h5p quiz",
+    "crée un h5p"
   ]
 }

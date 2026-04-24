@@ -186,10 +186,11 @@ app.all("*", function (_, response) {
   response.sendStatus(200);
 });
 
+const COLLECTOR_PORT = Number(process.env.COLLECTOR_PORT) || 8888;
 app
-  .listen(8888, async () => {
+  .listen(COLLECTOR_PORT, async () => {
     await wipeCollectorStorage();
-    console.log(`Document processor app listening on port 8888`);
+    console.log(`Document processor app listening on port ${COLLECTOR_PORT}`);
   })
   .on("error", function (_) {
     process.once("SIGUSR2", function () {

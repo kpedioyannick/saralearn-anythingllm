@@ -69,9 +69,9 @@
     "joi": "^17.11.0",
     "joi-password-complexity": "^5.2.0",
     "js-tiktoken": "^1.0.8",
+    "jsdom": "26.1.0",
     "jsonrepair": "^3.7.0",
     "jsonwebtoken": "^9.0.0",
-    "jsdom": "26.1.0",
     "langchain": "0.1.36",
     "marked": "15.0.12",
     "mime": "^3.0.0",
@@ -99,7 +99,8 @@
     "uuid-apikey": "^1.5.3",
     "weaviate-ts-client": "^1.4.0",
     "web-push": "^3.6.7",
-    "winston": "^3.13.0"
+    "winston": "^3.13.0",
+    "zod": "^3.25.76"
   },
   "resolutions": {
     "**/graphql-request/form-data": "3.0.4",

@@ -11,6 +11,26 @@ import SimpleSSOPassthrough from "@/pages/Login/SSO/simple";
 import OnboardingFlow from "@/pages/OnboardingFlow";
 import "@/index.css";
 
+// Cleanup auto : désinstalle tout service worker fantôme d'une ancienne version
+// (anciennes builds AnythingLLM/Workbox/PWA cachant aggressivement le HTML/JS)
+// et vide les Cache Storage. Garde SEULEMENT notre SW /service-workers/push-notifications.js.
+// Empêche les users de rester bloqués sur une version obsolète après un redeploy.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((reg) => {
+      const url = reg.active?.scriptURL || reg.installing?.scriptURL || reg.waiting?.scriptURL || "";
+      if (!url.includes("/service-workers/push-notifications.js")) {
+        reg.unregister().then((ok) => ok && console.info("[boot] Removed stale SW:", url));
+      }
+    });
+  }).catch(() => {});
+  if ("caches" in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((k) => caches.delete(k).then((ok) => ok && console.info("[boot] Cleared cache:", k)));
+    }).catch(() => {});
+  }
+}
+
 const isDev = import.meta.env.DEV;
 const REACTWRAP = isDev ? React.Fragment : React.StrictMode;
 

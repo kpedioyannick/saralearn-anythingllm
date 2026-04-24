@@ -18,6 +18,9 @@ const { Document } = require("../../models/documents");
 
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
 const fetch = require("node-fetch");
+const { parseText2Quiz } = require("../sara/h5p/text2quizParser");
+const { toH5pPayload } = require("../sara/h5p/toH5pParams");
+const { generateH5P } = require("../sara/h5p/client");
 
 async function processVideoBlock(text) {
   const match = text.match(/```video\n([\s\S]*?)```/);
@@ -76,13 +79,65 @@ async function streamChatWithWorkspace(
   // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
   if (isDicteeThread) chatMode = "chat";
 
+  // Intent H5P : LLM sort du text2quiz → server convertit en params H5P →
+  // POST à l'API PHP h5p-php-api :8888 → 1 URL par question renvoyée dans la bulle.
+  if (intent === "generate_h5p") {
+    try {
+      writeResponseChunk(response, {
+        uuid, sources: [], type: "textResponse",
+        textResponse: "⏳ Génération du quiz interactif…",
+        close: false, error: false,
+      });
+
+      const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
+      const { textResponse: quizText } = await LLMConnector.getChatCompletion([
+        { role: "system", content: await chatPrompt(workspace, null) },
+        { role: "user", content: `${updatedMessage}${intentPrefix}` },
+      ], { temperature: 0.5 });
+
+      const { questions, competence } = parseText2Quiz(quizText || "");
+      if (questions.length === 0) throw new Error("Aucune question exploitable dans la réponse LLM");
+
+      const titleBase = thread?.name || competence || "Quiz";
+      const urls = [];
+      for (let i = 0; i < questions.length; i++) {
+        const payload = toH5pPayload(questions[i]);
+        const { url } = await generateH5P({
+          ...payload,
+          title: `${titleBase} — Q${i + 1}`,
+        });
+        urls.push(url);
+      }
+
+      // Une bulle = N blocs h5p (un par URL). Le front les rend en iframes.
+      const completeText = urls.map((u) => `\`\`\`h5p\n${u}\n\`\`\``).join("\n\n");
+
+      await WorkspaceChats.new({
+        workspaceId: workspace.id, prompt: message,
+        response: { text: completeText, sources: [], type: chatMode, attachments: [], metrics: {} },
+        threadId: thread?.id || null, user,
+      });
+      writeResponseChunk(response, {
+        uuid, sources: [], type: "textResponse",
+        textResponse: completeText, close: true, error: false,
+      });
+      return;
+    } catch (e) {
+      console.error("[Sara] H5P intent error:", e.message);
+      writeResponseChunk(response, {
+        uuid, sources: [], type: "textResponse",
+        textResponse: `❌ Impossible de générer le quiz interactif : ${e.message}`,
+        close: true, error: true,
+      });
+      return;
+    }
+  }
+
   // Intent vidéo : générer les slides, appeler l'API vidéo, retourner l'URL directement
   if (intent === "video") {
-    writeResponseChunk(response, {
-      uuid, sources: [], type: "textResponseChunk",
-      textResponse: "⏳ Génération de la vidéo en cours…", close: false, error: false,
-    });
-
+    // Volontairement aucun chunk au démarrage : on laisse le loader (typing) tourner
+    // pendant la phase LLM (~10-30s), c'est plus naturel que d'afficher "génération…"
+    // tout de suite. Le 1er ping arrivera après le POST sara-video, quand le rendu commence.
     try {
       const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
       const videoPrompt = `${updatedMessage}${intentPrefix}`;
@@ -113,9 +168,11 @@ async function streamChatWithWorkspace(
       const dots = ["⏳ Rendu vidéo en cours…", "⏳ Rendu vidéo en cours… ·", "⏳ Rendu vidéo en cours… · ·"];
       for (let i = 0; i < 80; i++) {
         await new Promise((res) => setTimeout(res, 3000));
-        // Ping SSE toutes les 9s pour maintenir la connexion
+        // Ping SSE toutes les 9s pour maintenir la connexion.
+        // type "textResponse" REMPLACE le contenu (au lieu de "textResponseChunk" qui concatène) :
+        // ça évite l'accumulation moche "⏳…⏳…⏳…" et donne un seul message qui change.
         if (i % 3 === 0) {
-          writeResponseChunk(response, { uuid, sources: [], type: "textResponseChunk", textResponse: dots[Math.floor(i / 3) % 3], close: false, error: false });
+          writeResponseChunk(response, { uuid, sources: [], type: "textResponse", textResponse: dots[Math.floor(i / 3) % 3], close: false, error: false });
         }
         const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
         if (s.status === "done") {

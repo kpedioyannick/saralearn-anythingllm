@@ -108,6 +108,9 @@ markdown.renderer.rules.fence = function (tokens, idx, options, env, self) {
   if (lang === "video-url") {
     return `<div class="video-url-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
   }
+  if (lang === "h5p") {
+    return `<div class="h5p-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
+  }
   if (lang === "reveal") {
     const slidesHtml = code
       .split(/\n---\n/)
@@ -122,6 +125,15 @@ markdown.renderer.rules.fence = function (tokens, idx, options, env, self) {
 
 markdown.use(markdownItKatexPlugin);
 
+// Détecte les messages de progression vidéo "⏳ Rendu vidéo en cours…"
+// et les wrap en span animé. Pas de regex sur du HTML déjà rendu : le pattern
+// est en texte brut donc on opère AVANT markdown.render.
+const VIDEO_LOADER_RE = /^(⏳ Rendu vidéo en cours…(?: ·)*)$/;
+
 export default function renderMarkdown(text = "") {
+  const trimmed = text.trim();
+  if (VIDEO_LOADER_RE.test(trimmed)) {
+    return `<div class="sara-video-loader"><span class="sara-video-loader__icon">⏳</span><span class="sara-video-loader__label">${trimmed.replace(/^⏳ /, "")}</span></div>`;
+  }
   return markdown.render(text);
 }

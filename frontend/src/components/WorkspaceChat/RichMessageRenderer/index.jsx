@@ -7,6 +7,7 @@ import DicteeBlock from "@/components/WorkspaceChat/DicteeBlock";
 import GeogebraBlock from "@/components/WorkspaceChat/GeogebraBlock";
 import ProblemeBlock from "@/components/WorkspaceChat/ProblemeBlock";
 import VideoBlock from "@/components/WorkspaceChat/VideoBlock";
+import H5PBlock from "@/components/WorkspaceChat/H5PBlock";
 import { Transformer } from "markmap-lib";
 import { Markmap } from "markmap-view";
 
@@ -131,6 +132,9 @@ export default function RichMessageRenderer({ message, workspace, activeThread }
               <video src={part.content} controls autoPlay className="w-full max-h-[70vh]" style={{ display: "block" }} />
             </div>
           );
+        }
+        if (part.type === "h5p") {
+          return <H5PBlock key={`h5p-${part.content}`} url={part.content} />;
         }
         return null;
       })}
