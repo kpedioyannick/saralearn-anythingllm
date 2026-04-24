@@ -4,6 +4,8 @@ const path = require("path");
 const EMBEDDING_URL = process.env.EMBEDDING_BASE_PATH || "http://localhost:5001";
 const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL_PREF || "intfloat/multilingual-e5-large";
 const SIMILARITY_THRESHOLD = 0.75;
+// Seuil plus bas pour les modifiers (formulations courtes, similarités plus tassées).
+const MODIFIER_THRESHOLD = 0.70;
 
 const INTENTS_DATA = require("./sara_intents.json");
 
@@ -17,7 +19,7 @@ const TEMPLATES = {
   carte_mentale: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`markmap contenant la carte mentale. Aucun autre texte.\nRègles :\n- Chaque nœud = titre court (3-5 mots max)\n- Juste après chaque nœud qui nécessite une explication, ajoute une ligne HTML comment : <!-- explication courte en 1-2 phrases -->\n- Exemple :\n## Photosynthèse\n<!-- Processus par lequel les plantes produisent leur énergie à partir de la lumière solaire. -->\n### Chlorophylle\n<!-- Pigment vert qui capture la lumière. Présent dans les chloroplastes. -->`,
   exercice: (subject) =>
-    `\n\nSujet : **${subject}**.\nFormats disponibles — choisis librement selon le contenu et le niveau :\n\n**Pour des exercices courts (QCM, vrai/faux, texte à trous…)** → bloc \`\`\`quiz\nLa PREMIÈRE ligne doit être : \`competence: [compétence travaillée]\`\nEnsuite les questions :\n- QCM : \`QCM || question || réponse1 | V: bonne réponse | réponse3 || explication\`\n- Vrai/Faux : \`VF || affirmation || V || explication\`\n- Réponse courte : \`QRC || question || bonne réponse || explication\`\n- Texte à trous : \`Trous || Le {{mot}} est dans {{contexte}}\`\n- Association : \`Association || {{terme1::définition1}}{{terme2::définition2}}\`\n\n**Pour des problèmes ouverts avec énoncé et questions** → bloc \`\`\`probleme\n\`\`\`probleme\ntitre: [titre]\nniveau: [niveau]\ncompetence: [compétence travaillée]\n\n[Énoncé]\n\n---\nQ: [question]\nR: [corrigé détaillé]\n\`\`\`\n\nTu peux combiner les deux formats dans la même réponse si pertinent. Adapte ton choix au contenu des documents fournis et au bon sens pédagogique.`,
+    `\n\nSujet : **${subject}**.\n\nFormat de sortie OBLIGATOIRE : UNIQUEMENT des blocs \`\`\`quiz ou \`\`\`probleme. Aucun markdown hors bloc.\n\nIMPORTANT — préserve la richesse du contexte RAG :\n- Le bloc \`\`\`probleme accepte des énoncés LONGS (extraits littéraires complets, récits historiques, figures/schémas décrits, formules).\n- Tu peux mettre PLUSIEURS paires \`Q:\` / \`R:\` dans un même bloc pour un problème multi-parties (typique brevet).\n- Markdown autorisé À L'INTÉRIEUR du bloc (gras, listes, LaTeX).\n→ Reproduis la structure, la longueur et le niveau des exercices du contexte. N'abrège PAS.\n\nChoix du format :\n- \`\`\`quiz → exercices courts auto-évaluables (QCM, VF, QRC, Trous, Association).\n- \`\`\`probleme → énoncé riche + questions ouvertes (brevet, compréhension littéraire, problèmes maths multi-étapes).\n\nINTERDIT hors bloc : titre markdown (\`**Exercice 1**\`), liste numérotée libre, préambule (\"Voici...\"), excuse (\"Je ne peux pas...\"), conclusion.\n\nStructure \`\`\`probleme (peut être longue) :\n\`\`\`probleme\ntitre: [titre]\nniveau: [niveau]\ncompetence: [compétence travaillée]\n\n[Énoncé — aussi long que nécessaire, avec extraits, schémas décrits, contexte complet]\n\n---\nQ: [question 1]\nR: [corrigé détaillé]\n\n---\nQ: [question 2]\nR: [corrigé détaillé]\n\`\`\`\n\nStructure \`\`\`quiz :\n\`\`\`quiz\ncompetence: [compétence travaillée]\nQCM || question || opt1 | V: bonne réponse | opt3 || explication\nVF || affirmation || V || explication\nQRC || question || réponse attendue || indice court\nTrous || Le {{mot}} est dans {{contexte}}\nAssociation || {{terme1::définition1}}{{terme2::définition2}}\n\`\`\`\n\nCombinaison autorisée si pertinent (ex: \`\`\`probleme pour le sujet brevet + \`\`\`quiz pour vérifier des acquis).`,
   aide_devoir: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : aide structurée en Markdown avec étapes numérotées et explications claires.`,
   exemple: (subject) =>
@@ -26,8 +28,8 @@ const TEMPLATES = {
     `\n\nSujet : **${subject}**.\nFormat de réponse : explication claire et progressive en Markdown, adaptée au niveau scolaire.`,
   cours: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : cours complet et structuré en Markdown (titres ##, sous-titres ###, exemples, points clés).`,
-  video: (subject) =>
-    `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`video contenant un JSON de slides pédagogiques. Aucun autre texte.\nRègles :\n- Choisis librement le nombre de slides selon le besoin pédagogique du sujet (pas de limite)\n- Chaque slide : titre court + description en Markdown (gras, listes, LaTeX si besoin) + subtitlesSrt (texte narré)\n- Garde une narration courte par slide (cible 3 à 6 secondes de lecture) pour un rythme TikTok et un fort watch-time\n- format: "portrait", wordByWord: true\n- La narration (subtitlesSrt) doit être du texte parlé naturel, sans Markdown\nStructure exacte :\n\`\`\`video\n{\n  "title": "${subject}",\n  "format": "portrait",\n  "wordByWord": true,\n  "slides": [\n    {\n      "id": "s1",\n      "title": "📌 Titre de la slide",\n      "description": "Contenu **Markdown** de la slide.",\n      "subtitlesSrt": "Texte narré pour cette slide."\n    }\n  ]\n}\n\`\`\``,
+  video: (subject, opts = { format: "portrait", wordByWord: true }) =>
+    `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`video contenant un JSON de slides pédagogiques. Aucun autre texte.\nRègles :\n- Choisis librement le nombre de slides selon le besoin pédagogique du sujet (pas de limite)\n- Chaque slide : titre court + description en Markdown (gras, listes, LaTeX si besoin) + subtitlesSrt (texte narré)\n- Garde une narration courte par slide (cible 3 à 6 secondes de lecture) pour un rythme TikTok et un fort watch-time\n- format: "${opts.format}", wordByWord: ${opts.wordByWord}\n- La narration (subtitlesSrt) doit être du texte parlé naturel, sans Markdown\nStructure exacte :\n\`\`\`video\n{\n  "title": "${subject}",\n  "format": "${opts.format}",\n  "wordByWord": ${opts.wordByWord},\n  "slides": [\n    {\n      "id": "s1",\n      "title": "📌 Titre de la slide",\n      "description": "Contenu **Markdown** de la slide.",\n      "subtitlesSrt": "Texte narré pour cette slide."\n    }\n  ]\n}\n\`\`\``,
   dictee: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`dictee contenant la dictée selon les normes officielles françaises.\nFormat du bloc :\n\`\`\`dictee\ntitre: [titre de la dictée]\nniveau: [niveau de la classe]\n\n[phrase 1]||\n[phrase 2]||\n[phrase 3]\n\`\`\`\nRègles :\n- Adapter la longueur au niveau (CM2: 5-7 phrases, 6ème: 6-8, 5ème/4ème: 7-10, 3ème: 9-12)\n- Richesse orthographique adaptée au niveau (accords, homophones, ponctuation variée)\n- Chaque phrase séparée par || (sera lue 2 fois avec pause)\n- IMPORTANT : si l'utilisateur te fournit un texte ou des mots à dicter, utilise EXACTEMENT ce texte sans en ajouter, modifier ou supprimer un seul mot.\n- Pas de texte en dehors du bloc.`,
   generate_h5p: (subject) =>
@@ -77,42 +79,102 @@ async function initAnchorVectors() {
   return _initPromise;
 }
 
-async function detectIntent(message) {
+function bestScoreAgainst(msgVector, anchorVectors) {
+  let best = -1;
+  for (const v of anchorVectors) {
+    const score = cosineSimilarity(msgVector, v);
+    if (score > best) best = score;
+  }
+  return best;
+}
+
+// Modifiers pilotés par vecteurs : on choisit le format dont le groupe
+// _video_format_* a la meilleure similarité (au-dessus du seuil), sinon portrait.
+// wordByWord = false uniquement si _video_no_karaoke dépasse le seuil.
+function pickVideoOptions(msgVector, anchors) {
+  // Format : seuil absolu + marge sur le 2e. Quand les 3 scores sont serrés
+  // (aucun signal explicite de format), aucun ne doit l'emporter → fallback portrait.
+  const FORMAT_THRESHOLD = 0.75;
+  const FORMAT_MARGIN = 0.005;
+  const formats = ["portrait", "landscape", "square"];
+  const scored = formats
+    .map((f) => ({
+      f,
+      s: bestScoreAgainst(msgVector, anchors[`_video_format_${f}`] || []),
+    }))
+    .sort((a, b) => b.s - a.s);
+  const [winner, runnerUp] = scored;
+  const bestFormat =
+    winner.s > FORMAT_THRESHOLD && winner.s - runnerUp.s > FORMAT_MARGIN
+      ? winner.f
+      : "portrait";
+
+  // wordByWord : scoring comparatif. Le signal "vidéo" sature les similarités
+  // (~0.80 pour tout message parlant de vidéo), donc un seuil absolu ne discrimine
+  // pas. On compare le groupe "no_karaoke" au groupe "karaoke" (cas par défaut)
+  // et on désactive uniquement si "no_karaoke" l'emporte avec une marge claire
+  // ET que sa proximité absolue est suffisamment forte (évite les false-positifs
+  // quand le delta est ténu sur des contenus non reliés au karaoké).
+  const noKaraokeScore = bestScoreAgainst(msgVector, anchors._video_no_karaoke || []);
+  const karaokeScore = bestScoreAgainst(msgVector, anchors._video_karaoke || []);
+  const wordByWord = !(
+    noKaraokeScore - karaokeScore > 0.005 && noKaraokeScore > 0.88
+  );
+
+  return { format: bestFormat, wordByWord };
+}
+
+async function detectIntentAndOptions(message) {
   try {
     const anchors = await initAnchorVectors();
     const msgVector = await embedText(message);
-    if (!msgVector) return null;
+    if (!msgVector) return { intent: null, options: {} };
 
     // On calcule le meilleur score par intent (pas juste le best global)
     // pour pouvoir basculer vers le 2e meilleur si une garde filtre le gagnant.
+    // Les clés _*-prefixées sont des modifiers (pas des intents) → exclues du ranking.
     const bestByIntent = {};
     for (const [intent, vectors] of Object.entries(anchors)) {
-      let best = -1;
-      for (const anchorVec of vectors) {
-        const score = cosineSimilarity(msgVector, anchorVec);
-        if (score > best) best = score;
-      }
+      if (intent.startsWith("_")) continue;
+      const best = bestScoreAgainst(msgVector, vectors);
       if (best >= SIMILARITY_THRESHOLD) bestByIntent[intent] = best;
     }
 
     const ranked = Object.entries(bestByIntent).sort((a, b) => b[1] - a[1]);
+    let chosen = null;
     for (const [intent] of ranked) {
       // Garde : generate_h5p exige le mot "h5p" littéral dans le message.
       // Le modèle multilingual-e5 donne des similarités quasi-égales entre
       // "quiz h5p" et "quiz interactif", donc le vote vecteur seul ne suffit pas.
       if (intent === "generate_h5p" && !/\bh5p\b/i.test(message)) continue;
-      return intent;
+      chosen = intent;
+      break;
     }
-    return null;
+
+    const options = chosen === "video" ? pickVideoOptions(msgVector, anchors) : {};
+    return { intent: chosen, options };
   } catch (err) {
     console.error("[Sara] Intent detection error:", err.message);
-    return null;
+    return { intent: null, options: {} };
   }
 }
 
-function getIntentTemplate(intent, threadName = "ce sujet") {
-  const fn = TEMPLATES[intent];
-  return fn ? fn(threadName) : "";
+async function detectIntent(message) {
+  const { intent } = await detectIntentAndOptions(message);
+  return intent;
 }
 
-module.exports = { detectIntent, getIntentTemplate, initAnchorVectors };
+function getIntentTemplate(intent, threadName = "ce sujet", options = {}) {
+  const fn = TEMPLATES[intent];
+  if (!fn) return "";
+  if (intent === "video") {
+    const opts = {
+      format: options.format || "portrait",
+      wordByWord: options.wordByWord !== false,
+    };
+    return fn(threadName, opts);
+  }
+  return fn(threadName);
+}
+
+module.exports = { detectIntent, detectIntentAndOptions, getIntentTemplate, initAnchorVectors };

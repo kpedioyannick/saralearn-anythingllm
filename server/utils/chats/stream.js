@@ -13,7 +13,7 @@ const {
   sourceIdentifier,
 } = require("./index");
 
-const { detectIntent, getIntentTemplate } = require("../sara/intentDetector");
+const { detectIntentAndOptions, getIntentTemplate } = require("../sara/intentDetector");
 const { Document } = require("../../models/documents");
 
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
@@ -73,8 +73,13 @@ async function streamChatWithWorkspace(
   const updatedMessage = await grepCommand(message, user);
   // Thread "Dictée" → intent dictée automatique, sinon détection par vecteurs
   const isDicteeThread = thread?.name?.toLowerCase().includes("dict");
-  const intent = isDicteeThread ? "dictee" : await detectIntent(updatedMessage);
-  const intentPrefix = intent ? getIntentTemplate(intent, thread?.name) : "";
+  let intent, intentOptions = {};
+  if (isDicteeThread) {
+    intent = "dictee";
+  } else {
+    ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
+  }
+  const intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions) : "";
 
   // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
   if (isDicteeThread) chatMode = "chat";

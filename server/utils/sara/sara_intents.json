@@ -112,5 +112,51 @@
     "h5p sur le cours",
     "h5p quiz",
     "crée un h5p"
+  ],
+  "_video_format_landscape": [
+    "vidéo horizontale",
+    "format paysage",
+    "vidéo youtube",
+    "écran large",
+    "format télé",
+    "comme à la télé",
+    "format classique",
+    "format 16:9",
+    "format ordinateur"
+  ],
+  "_video_format_square": [
+    "vidéo carrée",
+    "format carré",
+    "post instagram",
+    "format 1:1",
+    "vidéo carré pour insta"
+  ],
+  "_video_format_portrait": [
+    "vidéo verticale",
+    "format tiktok",
+    "format reels",
+    "vidéo shorts",
+    "vidéo pour téléphone",
+    "format mobile",
+    "story instagram",
+    "format 9:16"
+  ],
+  "_video_no_karaoke": [
+    "vidéo sans karaoké",
+    "vidéo avec sous-titres normaux",
+    "vidéo avec phrases complètes",
+    "vidéo sans mot par mot",
+    "vidéo avec sous-titres simples",
+    "vidéo avec sous-titres classiques",
+    "vidéo pas de karaoké",
+    "vidéo avec sous-titres en phrase complète"
+  ],
+  "_video_karaoke": [
+    "vidéo avec karaoké",
+    "vidéo mot par mot",
+    "vidéo style tiktok karaoké",
+    "vidéo dynamique mot à mot",
+    "vidéo sous-titres karaoké",
+    "vidéo avec mots animés"
   ]
 }
