@@ -67,13 +67,14 @@ export default function VideoBlock({ content }) {
 
   if (status === "done" && videoUrl) {
     return (
-      <div className="my-4 rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
+      <div className="my-2 w-full min-w-0 sm:my-4 rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
         <video
           src={videoUrl}
           controls
           autoPlay
-          className="w-full max-h-[70vh]"
-          style={{ display: "block" }}
+          playsInline
+          preload="metadata"
+          className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
         />
       </div>
     );
@@ -87,16 +88,20 @@ export default function VideoBlock({ content }) {
   };
 
   return (
-    <div className="my-4 rounded-xl border border-emerald-500/20 bg-zinc-900/60 p-4 flex items-center gap-3">
+    <div className="my-2 w-full min-w-0 sm:my-4 rounded-lg sm:rounded-xl border border-emerald-500/20 bg-zinc-900/60 px-2.5 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3">
       {status !== "error" ? (
         <>
-          <div className="w-5 h-5 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin shrink-0" />
-          <p className="text-sm text-emerald-300">{labels[status]}</p>
+          <div className="h-3.5 w-3.5 sm:h-5 sm:w-5 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin shrink-0" />
+          <p className="min-w-0 text-[11px] leading-snug text-emerald-300 sm:text-sm">
+            {labels[status]}
+          </p>
         </>
       ) : (
         <>
-          <span className="text-red-400 text-lg">⚠️</span>
-          <p className="text-sm text-red-300">{labels.error}</p>
+          <span className="shrink-0 text-sm text-red-400 sm:text-base" role="img" aria-hidden>
+            ⚠️
+          </span>
+          <p className="min-w-0 text-[11px] leading-snug text-red-300 sm:text-sm">{labels.error}</p>
         </>
       )}
     </div>

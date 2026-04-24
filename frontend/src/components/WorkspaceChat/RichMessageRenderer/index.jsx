@@ -128,8 +128,18 @@ export default function RichMessageRenderer({ message, workspace, activeThread }
         }
         if (part.type === "video-url") {
           return (
-            <div key={`vidu-${part.content.slice(0, 40)}`} className="my-4 rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
-              <video src={part.content} controls autoPlay className="w-full max-h-[70vh]" style={{ display: "block" }} />
+            <div
+              key={`vidu-${part.content.slice(0, 40)}`}
+              className="my-2 w-full min-w-0 sm:my-4 rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg"
+            >
+              <video
+                src={part.content}
+                controls
+                autoPlay
+                playsInline
+                preload="metadata"
+                className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
+              />
             </div>
           );
         }
