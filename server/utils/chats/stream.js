@@ -110,8 +110,13 @@ async function streamChatWithWorkspace(
       const { videoId } = await r.json();
       if (!videoId) throw new Error("Pas de videoId");
 
-      for (let i = 0; i < 60; i++) {
+      const dots = ["⏳ Rendu vidéo en cours…", "⏳ Rendu vidéo en cours… ·", "⏳ Rendu vidéo en cours… · ·"];
+      for (let i = 0; i < 80; i++) {
         await new Promise((res) => setTimeout(res, 3000));
+        // Ping SSE toutes les 9s pour maintenir la connexion
+        if (i % 3 === 0) {
+          writeResponseChunk(response, { uuid, sources: [], type: "textResponseChunk", textResponse: dots[Math.floor(i / 3) % 3], close: false, error: false });
+        }
         const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
         if (s.status === "done") {
           const proxyUrl = `/api/sara/video-file/videos/${videoId}.mp4`;
