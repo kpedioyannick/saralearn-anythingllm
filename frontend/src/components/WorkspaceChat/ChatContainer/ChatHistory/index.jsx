@@ -477,7 +477,12 @@ function buildMessages({
     } else {
       acc.push(
         <HistoricalMessage
-          key={index}
+          // Key stable basée sur l'identité du message (DB chatId pour les
+          // messages chargés depuis l'historique, uuid pour les messages
+          // venant juste de finir de streamer). Empêche le remount/perte
+          // d'état des QuizBlock/ProblemeBlock/DicteeBlock quand un nouveau
+          // message en cours de streaming décale la liste des messages.
+          key={`hm-${props.chatId ?? props.uuid ?? index}`}
           uuid={props.uuid}
           message={props.content}
           role={props.role}

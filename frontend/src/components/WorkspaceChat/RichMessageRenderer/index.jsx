@@ -28,10 +28,27 @@ function MarkmapBlock({ content }) {
   const containerRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
 
+  // Compat ascendante : on garde l'extraction des anciens commentaires HTML
+  // (cartes mentales générées avant le passage à `description: ...`).
   const descriptions = useMemo(() => parseDescriptions(content), [content]);
+
+  // Nouveau format : la 1re ligne du bloc peut être `description: <texte>`.
+  // On l'extrait pour l'afficher en bas, et on retire cette ligne du markdown
+  // passé à Markmap (sinon ça pollue la racine de l'arbre).
+  const { description, mapBody } = useMemo(() => {
+    const m = content.match(/^\s*description\s*:\s*([\s\S]*?)\n/i);
+    if (m) {
+      return {
+        description: m[1].trim(),
+        mapBody: content.slice(m[0].length),
+      };
+    }
+    return { description: null, mapBody: content };
+  }, [content]);
+
   const cleanContent = useMemo(
-    () => content.replace(/<!--[\s\S]*?-->/g, "").replace(/\n{3,}/g, "\n\n").trim(),
-    [content]
+    () => mapBody.replace(/<!--[\s\S]*?-->/g, "").replace(/\n{3,}/g, "\n\n").trim(),
+    [mapBody]
   );
 
   useEffect(() => {
@@ -60,6 +77,11 @@ function MarkmapBlock({ content }) {
         ref={containerRef}
         style={{ width: "100%", height: 300, borderRadius: 8, overflow: "hidden" }}
       />
+      {description && (
+        <div className="mt-3 px-4 py-3 rounded-xl bg-zinc-800/60 border border-zinc-700/60 text-sm text-white/85 leading-relaxed light:bg-slate-100 light:border-slate-300 light:text-slate-700">
+          {description}
+        </div>
+      )}
       {tooltip && (
         <div className="mt-2 px-4 py-3 rounded-xl bg-zinc-800/90 border border-emerald-700/40 text-sm text-white/85 leading-relaxed">
           {tooltip}

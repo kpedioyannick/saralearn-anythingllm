@@ -133,7 +133,10 @@ const VIDEO_LOADER_RE = /^(⏳ Rendu vidéo en cours…(?: ·)*)$/;
 export default function renderMarkdown(text = "") {
   const trimmed = text.trim();
   if (VIDEO_LOADER_RE.test(trimmed)) {
-    return `<div class="sara-video-loader"><span class="sara-video-loader__icon">⏳</span><span class="sara-video-loader__label">${trimmed.replace(/^⏳ /, "")}</span></div>`;
+    // Strip le préfixe ⏳ ET les suffixes " ·" que le serveur ajoute à chaque
+    // poll (compteur de progression) — l'animation des dots suffit visuellement.
+    const cleanLabel = trimmed.replace(/^⏳ /, "").replace(/(?: ·)+$/, "");
+    return `<div class="sara-video-loader"><span class="sara-video-loader__dots"><span></span><span></span><span></span></span><span class="sara-video-loader__label">${cleanLabel}</span></div>`;
   }
   return markdown.render(text);
 }

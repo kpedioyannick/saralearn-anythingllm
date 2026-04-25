@@ -140,9 +140,26 @@ async function streamChatWithWorkspace(
 
   // Intent vidéo : générer les slides, appeler l'API vidéo, retourner l'URL directement
   if (intent === "video") {
-    // Volontairement aucun chunk au démarrage : on laisse le loader (typing) tourner
-    // pendant la phase LLM (~10-30s), c'est plus naturel que d'afficher "génération…"
-    // tout de suite. Le 1er ping arrivera après le POST sara-video, quand le rendu commence.
+    // Loader visible en permanence pendant TOUT le pipeline (LLM + rendu).
+    // Heartbeat toutes les 2s : sans ça, le frontend reçoit 1 chunk puis 30s de
+    // silence pendant la phase LLM → il considère le message "terminé" et
+    // efface le loader. Avec ce heartbeat, le DOM reste rafraîchi.
+    const loaderTexts = [
+      "⏳ Rendu vidéo en cours…",
+      "⏳ Rendu vidéo en cours… ·",
+      "⏳ Rendu vidéo en cours… · ·",
+    ];
+    let heartbeatI = 0;
+    const sendHeartbeat = () => {
+      writeResponseChunk(response, {
+        uuid, sources: [], type: "textResponse",
+        textResponse: loaderTexts[heartbeatI % loaderTexts.length],
+        close: false, error: false,
+      });
+      heartbeatI++;
+    };
+    sendHeartbeat();
+    const heartbeat = setInterval(sendHeartbeat, 2000);
     try {
       const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
       const videoPrompt = `${updatedMessage}${intentPrefix}`;
@@ -162,6 +179,12 @@ async function streamChatWithWorkspace(
         description: s.description || s.content || s.text || s.body || "",
         subtitlesSrt: s.subtitlesSrt || s.subtitle || s.narration || s.audio || s.description || s.content || "",
       }));
+      // SOURCE DE VÉRITÉ : on force format/wordByWord depuis intentOptions et
+      // on ignore ce que le LLM a mis dans le JSON (DeepSeek oublie ou inverse
+      // parfois ces flags). intentOptions vient de detectIntentAndOptions et
+      // reflète la vraie demande user (vector-based).
+      if (intentOptions?.format) payload.format = intentOptions.format;
+      if (typeof intentOptions?.wordByWord === "boolean") payload.wordByWord = intentOptions.wordByWord;
 
       const r = await fetch(`${VIDEO_API_URL}/api/videos`, {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -170,17 +193,13 @@ async function streamChatWithWorkspace(
       const { videoId } = await r.json();
       if (!videoId) throw new Error("Pas de videoId");
 
-      const dots = ["⏳ Rendu vidéo en cours…", "⏳ Rendu vidéo en cours… ·", "⏳ Rendu vidéo en cours… · ·"];
+      // Le heartbeat ci-dessus émet déjà "⏳ Rendu vidéo en cours…" toutes les 2s
+      // pendant tout le pipeline. La boucle ne fait plus que poller le statut.
       for (let i = 0; i < 80; i++) {
         await new Promise((res) => setTimeout(res, 3000));
-        // Ping SSE toutes les 9s pour maintenir la connexion.
-        // type "textResponse" REMPLACE le contenu (au lieu de "textResponseChunk" qui concatène) :
-        // ça évite l'accumulation moche "⏳…⏳…⏳…" et donne un seul message qui change.
-        if (i % 3 === 0) {
-          writeResponseChunk(response, { uuid, sources: [], type: "textResponse", textResponse: dots[Math.floor(i / 3) % 3], close: false, error: false });
-        }
         const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
         if (s.status === "done") {
+          clearInterval(heartbeat);
           const proxyUrl = `/api/sara/video-file/videos/${videoId}.mp4`;
           const completeText = `\`\`\`video-url\n${proxyUrl}\n\`\`\``;
           await WorkspaceChats.new({
@@ -195,6 +214,7 @@ async function streamChatWithWorkspace(
       }
       throw new Error("Timeout génération vidéo");
     } catch (e) {
+      clearInterval(heartbeat);
       console.error("[Sara] Video intent error:", e.message);
       writeResponseChunk(response, {
         uuid, sources: [], type: "textResponse",

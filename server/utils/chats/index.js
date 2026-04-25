@@ -92,8 +92,15 @@ async function chatPrompt(workspace, user = null) {
   const { SystemSettings } = require("../../models/systemSettings");
   const basePrompt =
     workspace?.openAiPrompt ?? SystemSettings.saneDefaultSystemPrompt;
+  // Sara — préfixer le prompt avec le nom du workspace ("programme")
+  // pour que le LLM sache toujours dans quelle classe + matière il opère.
+  // Ex: workspace name "CM2 — Anglais" → DeepSeek comprend la matière et la
+  // langue de réponse attendue, indépendamment de ce que dit basePrompt.
+  const programLine = workspace?.name
+    ? `Programme : ${workspace.name}\n\n`
+    : "";
   return await SystemPromptVariables.expandSystemPromptVariables(
-    basePrompt,
+    programLine + basePrompt,
     user?.id,
     workspace?.id
   );
