@@ -5,6 +5,7 @@ import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams } from "react-router-dom";
+import useUser from "@/hooks/useUser";
 export const THREAD_RENAME_EVENT = "renameThread";
 
 export default function ThreadContainer({
@@ -173,6 +174,9 @@ export default function ThreadContainer({
 }
 
 function NewThreadButton({ workspace }) {
+  const { user } = useUser();
+  if (user?.role === "default") return null;
+
   const [loading, setLoading] = useState(false);
   const onClick = async () => {
     setLoading(true);
@@ -224,6 +228,8 @@ function NewThreadButton({ workspace }) {
 }
 
 function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
+  const { user } = useUser();
+  if (user?.role === "default") return null;
   if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0)
     return null;
   return (

@@ -11,6 +11,7 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import useUser from "@/hooks/useUser";
 
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 export default function ThreadItem({
@@ -28,6 +29,8 @@ export default function ThreadItem({
   const workspaceSlug = workspace?.slug ?? urlSlug;
   const optionsContainer = useRef(null);
   const [showOptions, setShowOptions] = useState(false);
+  const { user } = useUser();
+  const canModify = user?.role !== "default";
   const linkTo = thread.virtual
     ? "/"
     : !thread.slug
@@ -117,7 +120,7 @@ export default function ThreadItem({
             </p>
           </a>
         )}
-        {!!thread.slug && !thread.deleted && !thread.virtual && (
+        {canModify && !!thread.slug && !thread.deleted && !thread.virtual && (
           <div ref={optionsContainer} className="flex items-center">
             {" "}
             {/* Added flex and items-center */}

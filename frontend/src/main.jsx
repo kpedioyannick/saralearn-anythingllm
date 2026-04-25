@@ -31,6 +31,29 @@ if ("serviceWorker" in navigator) {
   }
 }
 
+// Auto-reload quand un chunk JS ne peut pas être chargé (typique après redéploiement
+// avec nouveaux hashes de chunks). On reload une seule fois par session pour éviter
+// les boucles infinies si le serveur est vraiment KO.
+const CHUNK_RELOAD_KEY = "anythingllm_chunk_reload_attempted";
+const isChunkLoadError = (err) => {
+  const msg = String(err?.message || err || "");
+  return (
+    err?.name === "ChunkLoadError" ||
+    /Failed to fetch dynamically imported module/i.test(msg) ||
+    /Loading chunk \d+ failed/i.test(msg) ||
+    /Importing a module script failed/i.test(msg)
+  );
+};
+const handleChunkError = (err) => {
+  if (!isChunkLoadError(err)) return;
+  if (sessionStorage.getItem(CHUNK_RELOAD_KEY)) return;
+  sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+  console.warn("[boot] Stale chunk detected — reloading once:", err);
+  window.location.reload();
+};
+window.addEventListener("error", (e) => handleChunkError(e?.error || e));
+window.addEventListener("unhandledrejection", (e) => handleChunkError(e?.reason));
+
 const isDev = import.meta.env.DEV;
 const REACTWRAP = isDev ? React.Fragment : React.StrictMode;
 
