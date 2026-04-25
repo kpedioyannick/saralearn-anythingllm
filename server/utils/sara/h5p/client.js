@@ -3,17 +3,19 @@ const fetch = require("node-fetch");
 const H5P_API_URL =
   process.env.SARA_H5P_API_URL ||
   "http://127.0.0.1:8888/api/generate-content.php";
+const H5P_BOOK_API_URL =
+  process.env.SARA_H5P_BOOK_API_URL ||
+  "http://127.0.0.1:8888/api/generate-book.php";
+const H5P_FLASHCARDS_API_URL =
+  process.env.SARA_H5P_FLASHCARDS_API_URL ||
+  "http://127.0.0.1:8888/api/generate-flashcards.php";
 
-/**
- * POST un contenu à l'API PHP H5P et retourne { url, slug }.
- * Throw en cas d'échec — appelant doit try/catch.
- */
-async function generateH5P({ type, params, title, language = "fr" }) {
-  const res = await fetch(H5P_API_URL, {
+async function postJson(url, body, timeout = 20000) {
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type, params, title, language }),
-    timeout: 15000,
+    body: JSON.stringify(body),
+    timeout,
   });
   const data = await res.json();
   if (!data?.success) {
@@ -25,4 +27,23 @@ async function generateH5P({ type, params, title, language = "fr" }) {
   return { url: data.url, slug: data.slug };
 }
 
-module.exports = { generateH5P, H5P_API_URL };
+async function generateH5P({ type, params, title, language = "fr" }) {
+  return postJson(H5P_API_URL, { type, params, title, language });
+}
+
+async function generateH5PBook({ title, language = "fr", pages, showCoverPage = true, bookCover }) {
+  return postJson(H5P_BOOK_API_URL, { title, language, pages, showCoverPage, bookCover });
+}
+
+async function generateH5PFlashcards({ title, language = "fr", description = "", cards }) {
+  return postJson(H5P_FLASHCARDS_API_URL, { title, language, description, cards });
+}
+
+module.exports = {
+  generateH5P,
+  generateH5PBook,
+  generateH5PFlashcards,
+  H5P_API_URL,
+  H5P_BOOK_API_URL,
+  H5P_FLASHCARDS_API_URL,
+};

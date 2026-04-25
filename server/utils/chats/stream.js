@@ -19,8 +19,10 @@ const { Document } = require("../../models/documents");
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
 const fetch = require("node-fetch");
 const { parseText2Quiz } = require("../sara/h5p/text2quizParser");
+const { parseText2Book } = require("../sara/h5p/text2bookParser");
+const { parseText2Flashcards } = require("../sara/h5p/text2flashcardsParser");
 const { toH5pPayload } = require("../sara/h5p/toH5pParams");
-const { generateH5P } = require("../sara/h5p/client");
+const { generateH5P, generateH5PBook, generateH5PFlashcards } = require("../sara/h5p/client");
 
 async function processVideoBlock(text) {
   const match = text.match(/```video\n([\s\S]*?)```/);
@@ -84,38 +86,62 @@ async function streamChatWithWorkspace(
   // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
   if (isDicteeThread) chatMode = "chat";
 
-  // Intent H5P : LLM sort du text2quiz → server convertit en params H5P →
-  // POST à l'API PHP h5p-php-api :8888 → 1 URL par question renvoyée dans la bulle.
+  // Intent H5P : 3 sous-formats selon intentOptions.format
+  //   - quiz (défaut) → ```quiz → N URLs h5p individuelles (multiple_choice/true_false/blanks)
+  //   - book → ```book → 1 URL InteractiveBook multi-chapitres
+  //   - flashcards → ```flashcards → 1 URL Flashcards
   if (intent === "generate_h5p") {
+    const h5pFormat = intentOptions?.format || "quiz";
+    const loaderText = h5pFormat === "book"
+      ? "⏳ Génération du livre interactif…"
+      : h5pFormat === "flashcards"
+        ? "⏳ Génération des flashcards…"
+        : "⏳ Génération du quiz interactif…";
     try {
       writeResponseChunk(response, {
         uuid, sources: [], type: "textResponse",
-        textResponse: "⏳ Génération du quiz interactif…",
+        textResponse: loaderText,
         close: false, error: false,
       });
 
       const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
-      const { textResponse: quizText } = await LLMConnector.getChatCompletion([
+      const { textResponse: llmText } = await LLMConnector.getChatCompletion([
         { role: "system", content: await chatPrompt(workspace, null) },
         { role: "user", content: `${updatedMessage}${intentPrefix}` },
       ], { temperature: 0.5 });
 
-      const { questions, competence } = parseText2Quiz(quizText || "");
-      if (questions.length === 0) throw new Error("Aucune question exploitable dans la réponse LLM");
-
-      const titleBase = thread?.name || competence || "Quiz";
-      const urls = [];
-      for (let i = 0; i < questions.length; i++) {
-        const payload = toH5pPayload(questions[i]);
-        const { url } = await generateH5P({
-          ...payload,
-          title: `${titleBase} — Q${i + 1}`,
+      let completeText;
+      if (h5pFormat === "book") {
+        const { title, language, pages } = parseText2Book(llmText || "");
+        if (!pages || pages.length === 0) throw new Error("Aucun chapitre exploitable dans la réponse LLM");
+        const titleBase = title || thread?.name || "Livre interactif";
+        const { url } = await generateH5PBook({
+          title: titleBase, language: language || "fr", pages, showCoverPage: true,
         });
-        urls.push(url);
+        completeText = `\`\`\`h5p\n${url}\n\`\`\``;
+      } else if (h5pFormat === "flashcards") {
+        const { title, language, description, cards } = parseText2Flashcards(llmText || "");
+        if (!cards || cards.length === 0) throw new Error("Aucune carte exploitable dans la réponse LLM");
+        const titleBase = title || thread?.name || "Flashcards";
+        const { url } = await generateH5PFlashcards({
+          title: titleBase, language: language || "fr", description, cards,
+        });
+        completeText = `\`\`\`h5p\n${url}\n\`\`\``;
+      } else {
+        const { questions, competence } = parseText2Quiz(llmText || "");
+        if (questions.length === 0) throw new Error("Aucune question exploitable dans la réponse LLM");
+        const titleBase = thread?.name || competence || "Quiz";
+        const urls = [];
+        for (let i = 0; i < questions.length; i++) {
+          const payload = toH5pPayload(questions[i]);
+          const { url } = await generateH5P({
+            ...payload,
+            title: `${titleBase} — Q${i + 1}`,
+          });
+          urls.push(url);
+        }
+        completeText = urls.map((u) => `\`\`\`h5p\n${u}\n\`\`\``).join("\n\n");
       }
-
-      // Une bulle = N blocs h5p (un par URL). Le front les rend en iframes.
-      const completeText = urls.map((u) => `\`\`\`h5p\n${u}\n\`\`\``).join("\n\n");
 
       await WorkspaceChats.new({
         workspaceId: workspace.id, prompt: message,
@@ -131,7 +157,7 @@ async function streamChatWithWorkspace(
       console.error("[Sara] H5P intent error:", e.message);
       writeResponseChunk(response, {
         uuid, sources: [], type: "textResponse",
-        textResponse: `❌ Impossible de générer le quiz interactif : ${e.message}`,
+        textResponse: `❌ Impossible de générer le contenu H5P (${h5pFormat}) : ${e.message}`,
         close: true, error: true,
       });
       return;
@@ -160,6 +186,7 @@ async function streamChatWithWorkspace(
     };
     sendHeartbeat();
     const heartbeat = setInterval(sendHeartbeat, 2000);
+    let previewHeartbeat = null;
     try {
       const LLMConnector = getLLMProvider({ provider: workspace?.chatProvider, model: workspace?.chatModel });
       const videoPrompt = `${updatedMessage}${intentPrefix}`;
@@ -193,13 +220,31 @@ async function streamChatWithWorkspace(
       const { videoId } = await r.json();
       if (!videoId) throw new Error("Pas de videoId");
 
-      // Le heartbeat ci-dessus émet déjà "⏳ Rendu vidéo en cours…" toutes les 2s
-      // pendant tout le pipeline. La boucle ne fait plus que poller le statut.
+      // Patience active : afficher la slide 1 (titre + description) pendant le rendu
+      // au lieu d'un simple spinner. Le frontend rend `video-preview` comme une carte
+      // stylée. Le heartbeat ré-émet le même bloc pour empêcher le frontend de croire
+      // que le stream est terminé.
+      const previewBlock = "```video-preview\n" + JSON.stringify({
+        videoId,
+        slide1: payload.slides[0] || null,
+        totalSlides: payload.slides.length,
+      }) + "\n```";
+      clearInterval(heartbeat);
+      const sendPreview = () => {
+        writeResponseChunk(response, {
+          uuid, sources: [], type: "textResponse",
+          textResponse: previewBlock,
+          close: false, error: false,
+        });
+      };
+      sendPreview();
+      previewHeartbeat = setInterval(sendPreview, 2000);
+
       for (let i = 0; i < 80; i++) {
         await new Promise((res) => setTimeout(res, 3000));
         const s = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}`).then((r) => r.json());
         if (s.status === "done") {
-          clearInterval(heartbeat);
+          clearInterval(previewHeartbeat);
           const proxyUrl = `/api/sara/video-file/videos/${videoId}.mp4`;
           const completeText = `\`\`\`video-url\n${proxyUrl}\n\`\`\``;
           await WorkspaceChats.new({
@@ -215,6 +260,7 @@ async function streamChatWithWorkspace(
       throw new Error("Timeout génération vidéo");
     } catch (e) {
       clearInterval(heartbeat);
+      if (previewHeartbeat) clearInterval(previewHeartbeat);
       console.error("[Sara] Video intent error:", e.message);
       writeResponseChunk(response, {
         uuid, sources: [], type: "textResponse",
@@ -345,10 +391,15 @@ async function streamChatWithWorkspace(
     });
   });
 
-  // Enrichir la requête RAG avec le nom du thread pour cibler le bon sous-chapitre
-  const ragInput = thread?.name
+  // Enrichir la requête RAG avec le nom du thread + mots-clés TF-IDF du sous-chapitre
+  const threadKeywords = require("../sara/thread_keywords.json");
+  const baseRagInput = thread?.name
     ? `${thread.name} — ${updatedMessage}`
     : updatedMessage;
+  const tk = thread?.slug ? threadKeywords[thread.slug] : null;
+  const ragInput = tk
+    ? `${baseRagInput} [contexte: ${tk.keywords}]`
+    : baseRagInput;
 
   // Filtrer le RAG sur les documents du thread si possible
   const threadDocIds = await getThreadDocIdentifiers(workspace, thread);

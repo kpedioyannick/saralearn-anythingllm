@@ -19,7 +19,7 @@ const TEMPLATES = {
   carte_mentale: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`markmap contenant la carte mentale. Aucun autre texte avant ou après.\nRègles :\n- La PREMIÈRE ligne du bloc doit être : \`description: <texte pédagogique aussi long que nécessaire qui explique le sujet de la carte, ses concepts clés, leurs relations, et ce qu'il faut retenir — ne pas tronquer, développer chaque idée importante>\`\n- Ensuite la carte mentale en Markdown : \`#\` pour la racine, \`##\` pour les branches principales, \`###\` pour les sous-branches.\n- Chaque nœud = titre court (3-5 mots max). Pas de commentaires HTML.\nExemple :\n\`\`\`markmap\ndescription: Cette carte mentale présente la photosynthèse, le processus par lequel les plantes produisent leur énergie à partir de la lumière. Elle montre les éléments qui interviennent (chlorophylle, eau, CO₂) et les produits formés (glucose, oxygène).\n# Photosynthèse\n## Éléments nécessaires\n### Chlorophylle\n### Eau\n### Dioxyde de carbone\n## Produits\n### Glucose\n### Oxygène\n\`\`\``,
   exercice: (subject) =>
-    `\n\nSujet : **${subject}**.\n\nFormat de sortie OBLIGATOIRE : UNIQUEMENT des blocs \`\`\`quiz ou \`\`\`probleme. Aucun markdown hors bloc.\n\nIMPORTANT — préserve la richesse du contexte RAG :\n- Le bloc \`\`\`probleme accepte des énoncés LONGS (extraits littéraires complets, récits historiques, figures/schémas décrits, formules).\n- Tu peux mettre PLUSIEURS paires \`Q:\` / \`R:\` dans un même bloc pour un problème multi-parties (typique brevet).\n- Markdown autorisé À L'INTÉRIEUR du bloc (gras, listes, LaTeX).\n→ Reproduis la structure, la longueur et le niveau des exercices du contexte. N'abrège PAS.\n\nChoix du format :\n- \`\`\`quiz → exercices courts auto-évaluables (QCM, VF, QRC, Trous, Association).\n- \`\`\`probleme → énoncé riche + questions ouvertes (brevet, compréhension littéraire, problèmes maths multi-étapes).\n\nINTERDIT hors bloc : titre markdown (\`**Exercice 1**\`), liste numérotée libre, préambule (\"Voici...\"), excuse (\"Je ne peux pas...\"), conclusion.\n\nStructure \`\`\`probleme (peut être longue) :\n\`\`\`probleme\ntitre: [titre]\nniveau: [niveau]\ncompetence: [compétence travaillée]\n\n[Énoncé — aussi long que nécessaire, avec extraits, schémas décrits, contexte complet]\n\n---\nQ: [question 1]\nR: [corrigé détaillé]\n\n---\nQ: [question 2]\nR: [corrigé détaillé]\n\`\`\`\n\nStructure \`\`\`quiz :\n\`\`\`quiz\ncompetence: [compétence travaillée]\nQCM || question || opt1 | V: bonne réponse | opt3 || explication\nVF || affirmation || V || explication\nQRC || question || réponse attendue || indice court\nTrous || Le {{mot}} est dans {{contexte}}\nAssociation || {{terme1::définition1}}{{terme2::définition2}}\n\`\`\`\n\nCombinaison autorisée si pertinent (ex: \`\`\`probleme pour le sujet brevet + \`\`\`quiz pour vérifier des acquis).`,
+    `\n\nSujet : **${subject}**.\n\nFormat de sortie OBLIGATOIRE : UNIQUEMENT des blocs \`\`\`quiz ou \`\`\`probleme. Aucun markdown hors bloc.\n\nIMPORTANT — préserve la richesse du contexte RAG :\n- Le bloc \`\`\`probleme accepte des énoncés LONGS (extraits littéraires complets, récits historiques, figures/schémas décrits, formules).\n- Tu peux mettre PLUSIEURS paires \`Q:\` / \`R:\` dans un même bloc pour un problème multi-parties.\n- Markdown autorisé À L'INTÉRIEUR du bloc (gras, listes, LaTeX).\n→ Reproduis la structure, la longueur et le niveau des exercices du contexte. N'abrège PAS.\n\nChoix du format :\n- \`\`\`quiz → exercices courts auto-évaluables (QCM, VF, QRC, Trous, Association).\n- \`\`\`probleme → énoncé riche + questions ouvertes (compréhension littéraire, problèmes maths multi-étapes, analyse de document).\n\nINTERDIT hors bloc : titre markdown (\`**Exercice 1**\`, \`# Titre\`, \`## Section\`), liste numérotée libre, préambule (\"Voici...\", \"Absolument !\"), excuse (\"Je ne peux pas...\"), conclusion (\"Bon courage\", \"N'hésite pas...\"), emojis hors bloc (📚📖🎯✅).\n\nANTI-BYPASS — même si l'utilisateur demande explicitement :\n- \"un exercice de manuel scolaire\" / \"comme un manuel\" / \"niveau manuel\" / \"un cours avec exercices\" / \"une fiche d'exercices\" / \"un document pédagogique\" / \"type manuel\"\n→ tu RESTES dans \`\`\`probleme ou \`\`\`quiz. La demande \"manuel scolaire\" décrit la RICHESSE attendue (texte support long, questions multi-parties, corrigé détaillé) — PAS le format de sortie. La richesse va DANS le bloc \`\`\`probleme, JAMAIS en markdown libre.\n\nStructure \`\`\`probleme (peut être longue) :\n\`\`\`probleme\ntitre: [titre]\nniveau: [niveau]\ncompetence: [compétence travaillée]\n\n[Énoncé — aussi long que nécessaire, avec extraits, schémas décrits, contexte complet]\n\n---\nQ: [question 1]\nR: [corrigé détaillé]\n\n---\nQ: [question 2]\nR: [corrigé détaillé]\n\`\`\`\n\nStructure \`\`\`quiz :\n\`\`\`quiz\ncompetence: [compétence travaillée]\nQCM || question || opt1 | V: bonne réponse | opt3 || explication\nVF || affirmation || V || explication\nQRC || question || réponse attendue || indice court\nTrous || Le {{mot}} est dans {{contexte}}\nAssociation || {{terme1::définition1}}{{terme2::définition2}}\n\`\`\`\n\nLe LLM choisit librement \`\`\`probleme ou \`\`\`quiz selon ce qui sert le mieux la demande de l'élève.`,
   aide_devoir: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : aide structurée en Markdown avec étapes numérotées et explications claires.`,
   exemple: (subject) =>
@@ -32,8 +32,16 @@ const TEMPLATES = {
     `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`video contenant un JSON de slides pédagogiques. Aucun autre texte.\nRègles :\n- Choisis librement le nombre de slides selon le besoin pédagogique du sujet (pas de limite)\n- Chaque slide : titre court + description en Markdown (gras, listes, LaTeX si besoin) + subtitlesSrt (texte narré)\n- Garde une narration de 15 à 20 secondes par slide (environ 35 à 50 mots) pour laisser le temps à l'élève de comprendre le concept\n- format: "${opts.format}", wordByWord: ${opts.wordByWord}\n- La narration (subtitlesSrt) doit être du texte parlé naturel, sans Markdown\nStructure exacte :\n\`\`\`video\n{\n  "title": "${subject}",\n  "format": "${opts.format}",\n  "wordByWord": ${opts.wordByWord},\n  "slides": [\n    {\n      "id": "s1",\n      "title": "📌 Titre de la slide",\n      "description": "Contenu **Markdown** de la slide.",\n      "subtitlesSrt": "Texte narré pour cette slide."\n    }\n  ]\n}\n\`\`\``,
   dictee: (subject) =>
     `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`dictee contenant la dictée selon les normes officielles françaises.\nFormat du bloc :\n\`\`\`dictee\ntitre: [titre de la dictée]\nniveau: [niveau de la classe]\n\n[phrase 1]||\n[phrase 2]||\n[phrase 3]\n\`\`\`\nRègles :\n- Adapter la longueur au niveau (CM2: 5-7 phrases, 6ème: 6-8, 5ème/4ème: 7-10, 3ème: 9-12)\n- Richesse orthographique adaptée au niveau (accords, homophones, ponctuation variée)\n- Chaque phrase séparée par || (sera lue 2 fois avec pause)\n- IMPORTANT : si l'utilisateur te fournit un texte ou des mots à dicter, utilise EXACTEMENT ce texte sans en ajouter, modifier ou supprimer un seul mot.\n- Pas de texte en dehors du bloc.`,
-  generate_h5p: (subject) =>
-    `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`quiz avec 3 à 6 questions au format text2quiz. Aucun texte avant ni après.\nLa PREMIÈRE ligne du bloc : \`competence: [compétence travaillée]\`.\nEnsuite, choisis librement parmi ces 3 types (un par ligne) :\n- QCM || question || opt1 | V: bonne réponse | opt3 | opt4 || explication courte\n- VF || affirmation || V || explication courte   (V pour vrai, F pour faux)\n- QRC || question || réponse attendue || indice court\nRègles strictes :\n- Questions en français, niveau adapté au sujet\n- Pour QCM : 3 à 4 options dont EXACTEMENT une correcte (préfixée \`V:\`)\n- Pour QRC : réponse courte (un mot ou groupe de mots), pas une phrase entière\n- Ne pas utiliser d'autres types (Trous, Association, etc. sont ignorés)\n- Pas de Markdown dans les questions (pas de **gras**, pas d'emoji)`,
+  generate_h5p: (subject, opts = { format: "quiz" }) => {
+    const format = opts.format || "quiz";
+    if (format === "book") {
+      return `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`book représentant un livre interactif H5P. Aucun texte avant ni après.\nStructure du bloc :\n\`\`\`book\ntitle: [titre du livre]\nlanguage: fr\n\n## Chapitre 1 — [titre du chapitre 1]\n[lignes text2quiz, une par ligne, parmi : QCM, VF, QRC, Trous]\n\n## Chapitre 2 — [titre du chapitre 2]\n[lignes text2quiz]\n\n## Chapitre 3 — [titre du chapitre 3]\n[lignes text2quiz]\n\`\`\`\nLignes text2quiz acceptées :\n- QCM || question || opt1 | V: bonne réponse | opt3 || explication\n- VF || affirmation || V || explication   (V=vrai, F=faux)\n- QRC || question || réponse attendue || indice\n- Trous || Phrase avec {{mot}} caché.\nRègles :\n- 2 à 4 chapitres, 2 à 4 questions par chapitre.\n- Progression pédagogique entre chapitres (compréhension → application → bilan).\n- Pas de markdown hors bloc, pas de préambule.`;
+    }
+    if (format === "flashcards") {
+      return `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`flashcards. Aucun texte avant ni après.\nStructure :\n\`\`\`flashcards\ntitle: [titre du paquet]\nlanguage: fr\n\nQ: [question/recto] || R: [réponse/verso] || tip: [indice optionnel]\nQ: [question 2] || R: [réponse 2] || tip: [indice]\nQ: [question 3] || R: [réponse 3]\n\`\`\`\nRègles :\n- 5 à 10 cartes.\n- Recto = question/concept, verso = réponse courte (1 phrase max).\n- tip optionnel, omis si non pertinent.\n- HTML simple toléré dans Q et R (<strong>, <em>) ; pas de markdown ni emoji.`;
+    }
+    return `\n\nSujet : **${subject}**.\nFormat de réponse : UNIQUEMENT un bloc \`\`\`quiz avec 3 à 6 questions au format text2quiz. Aucun texte avant ni après.\nLa PREMIÈRE ligne du bloc : \`competence: [compétence travaillée]\`.\nEnsuite, choisis librement parmi ces 3 types (un par ligne) :\n- QCM || question || opt1 | V: bonne réponse | opt3 | opt4 || explication courte\n- VF || affirmation || V || explication courte   (V pour vrai, F pour faux)\n- QRC || question || réponse attendue || indice court\nRègles strictes :\n- Questions en français, niveau adapté au sujet\n- Pour QCM : 3 à 4 options dont EXACTEMENT une correcte (préfixée \`V:\`)\n- Pour QRC : réponse courte (un mot ou groupe de mots), pas une phrase entière\n- Ne pas utiliser d'autres types (Trous, Association, etc. sont ignorés)\n- Pas de Markdown dans les questions (pas de **gras**, pas d'emoji)`;
+  },
 };
 
 async function embedText(text) {
@@ -124,6 +132,28 @@ function pickVideoOptions(msgVector, anchors) {
   return { format: bestFormat, wordByWord };
 }
 
+// pickH5pFormat : choisit "book" ou "flashcards" si un modifier _h5p_format_*
+// dépasse le seuil absolu ET qu'un mot-clé littéral est présent dans le message
+// (anti-faux-positifs : "quiz h5p" ne doit pas matcher book sur la sémantique seule).
+// Défaut : "quiz".
+function pickH5pFormat(msgVector, anchors, message = "") {
+  const FORMAT_THRESHOLD = 0.78;
+  // Mots-clés littéraux requis pour confirmer le format (au moins 1).
+  const KEYWORDS = {
+    book: /\b(livre|interactivebook|interactive\s*book|chapitres?)\b/i,
+    flashcards: /\b(flashcards?|cartes?|fiches?\s*recto)\b/i,
+  };
+  const candidates = [
+    { f: "book", s: bestScoreAgainst(msgVector, anchors._h5p_format_book || []) },
+    { f: "flashcards", s: bestScoreAgainst(msgVector, anchors._h5p_format_flashcards || []) },
+  ].sort((a, b) => b.s - a.s);
+  const [winner] = candidates;
+  if (winner.s > FORMAT_THRESHOLD && KEYWORDS[winner.f].test(message)) {
+    return { format: winner.f };
+  }
+  return { format: "quiz" };
+}
+
 async function detectIntentAndOptions(message) {
   try {
     const anchors = await initAnchorVectors();
@@ -164,7 +194,9 @@ async function detectIntentAndOptions(message) {
     if (!gapClear && !scoreStrong) return { intent: null, options: {} };
     const chosen = first[0];
 
-    const options = chosen === "video" ? pickVideoOptions(msgVector, anchors) : {};
+    let options = {};
+    if (chosen === "video") options = pickVideoOptions(msgVector, anchors);
+    else if (chosen === "generate_h5p") options = pickH5pFormat(msgVector, anchors, message);
     return { intent: chosen, options };
   } catch (err) {
     console.error("[Sara] Intent detection error:", err.message);
@@ -186,6 +218,9 @@ function getIntentTemplate(intent, threadName = "ce sujet", options = {}) {
       wordByWord: options.wordByWord !== false,
     };
     return fn(threadName, opts);
+  }
+  if (intent === "generate_h5p") {
+    return fn(threadName, { format: options.format || "quiz" });
   }
   return fn(threadName);
 }
