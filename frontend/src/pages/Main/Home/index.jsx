@@ -54,6 +54,7 @@ async function createDefaultWorkspace(workspaceName = "My Workspace") {
 export default function Home() {
   const { t } = useTranslation();
   const { user } = useUser();
+  const navigate = useNavigate();
   const [workspace, setWorkspace] = useState(null);
   const [threadSlug, setThreadSlug] = useState(null);
   const [workspaceLoading, setWorkspaceLoading] = useState(true);
@@ -64,15 +65,12 @@ export default function Home() {
     async function init() {
       const ws = await getTargetWorkspace();
       if (ws) {
-        const [suggestedMessages, { showAgentCommand }] = await Promise.all([
-          Workspace.getSuggestedMessages(ws.slug),
-          Workspace.agentCommandAvailable(ws.slug),
-        ]);
-        setWorkspace({
-          ...ws,
-          suggestedMessages,
-          showAgentCommand,
-        });
+        // Si l'user a déjà un workspace (LS ou DB), on le bascule directement
+        // dans /workspace/:slug. WorkspaceChat redirige ensuite vers le 1er
+        // thread existant (logique déjà câblée). On évite ainsi la création
+        // d'un thread vide à chaque login.
+        navigate(paths.workspace.chat(ws.slug), { replace: true });
+        return;
       }
       setWorkspaceLoading(false);
     }
