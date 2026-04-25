@@ -1,0 +1,20 @@
+{
+  "name": "sara-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests Playwright pour Sara AI (login, intents, génération de contenu, i18n)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:smoke": "playwright test 01-smoke",
+    "test:auth": "playwright test 02-auth 03-auth",
+    "test:llm": "RUN_LIVE_LLM=1 playwright test 06 07 08 09 10 11 12",
+    "test:i18n": "playwright test 04-i18n 12-language",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "dotenv": "^16.4.5"
+  }
+}
