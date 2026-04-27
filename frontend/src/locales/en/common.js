@@ -989,6 +989,13 @@ const TRANSLATIONS = {
     regenerate_response: "Regenerate response",
     good_response: "Good response",
     more_actions: "More actions",
+    followup_chips: {
+      again: { label: "More", template: "More" },
+      fiche: { label: "As sheet", template: "Make me a study sheet on this topic" },
+      exercice: { label: "As exercises", template: "Give me exercises on this topic" },
+      carte_mentale: { label: "Mind map", template: "Make me a mind map on this topic" },
+      explication: { label: "Re-explain", template: "Rephrase your explanation differently" },
+    },
     sources: "Sources",
     source_count_one: "{{count}} reference",
     source_count_other: "{{count}} references",

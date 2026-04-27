@@ -193,6 +193,7 @@ export default forwardRef(function (
         saveEditedMessage,
         forkThread,
         websocket,
+        sendCommand,
       }),
     [
       workspace,
@@ -202,6 +203,7 @@ export default forwardRef(function (
       saveEditedMessage,
       forkThread,
       websocket,
+      sendCommand,
     ]
   );
   const lastMessageInfo = useMemo(() => getLastMessageInfo(history), [history]);
@@ -427,6 +429,7 @@ function buildMessages({
   saveEditedMessage,
   forkThread,
   websocket,
+  sendCommand,
 }) {
   return history.reduce((acc, props, index) => {
     const isLastBotReply =
@@ -499,6 +502,7 @@ function buildMessages({
           forkThread={forkThread}
           metrics={props.metrics}
           outputs={props.outputs}
+          sendCommand={sendCommand}
         />
       );
     }

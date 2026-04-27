@@ -38,6 +38,7 @@ const HistoricalMessage = ({
   forkThread,
   metrics = {},
   outputs = [],
+  sendCommand,
 }) => {
   const { t } = useTranslation();
   const { isEditing } = useEditMessage({ chatId, role });
@@ -120,6 +121,7 @@ const HistoricalMessage = ({
                 role={role}
                 forkThread={forkThread}
                 metrics={metrics}
+                sendCommand={sendCommand}
               />
             </div>
           </div>
@@ -190,6 +192,7 @@ const HistoricalMessage = ({
                   role={role}
                   forkThread={forkThread}
                   metrics={metrics}
+                  sendCommand={sendCommand}
                 />
                 </div>
               </div>

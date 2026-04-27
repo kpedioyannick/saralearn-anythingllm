@@ -33,7 +33,7 @@ function buildText(template, threadTitle) {
 }
 
 const CHIP_BTN_CLASS =
-  "text-xs md:text-sm px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 light:text-emerald-700 transition-colors whitespace-nowrap";
+  "text-xs md:text-sm px-3 py-1.5 rounded-full border border-zinc-700/60 hover:border-zinc-600 text-zinc-400 hover:text-white hover:bg-zinc-700/60 light:border-slate-300 light:hover:border-slate-400 light:text-slate-500 light:hover:text-slate-900 light:hover:bg-slate-200 transition-all duration-150 whitespace-nowrap";
 
 function ChipButton({ chip, label, onClick }) {
   return (
@@ -187,6 +187,44 @@ export function ActivitiesButton({
           </div>,
           document.body
         )}
+    </div>
+  );
+}
+
+// Follow-up chips rendered under each Sara reply, replacing the old action icons
+// (copy, edit, fork, regenerate). Pedagogical : invite the student to keep
+// exploring (same content in another format, "encore", "réexplique"...).
+const FOLLOWUP_CHIPS = [
+  { id: "again", icon: "⟳" },
+  { id: "fiche", icon: "📚" },
+  { id: "exercice", icon: "✏️" },
+  { id: "carte_mentale", icon: "🧠" },
+  { id: "explication", icon: "💡" },
+];
+
+export function FollowUpChips({ sendCommand }) {
+  const { t } = useTranslation();
+  return (
+    <div className="overflow-x-auto no-scrollbar">
+      <div className="inline-flex gap-1.5">
+        {FOLLOWUP_CHIPS.map((c) => {
+          const text = t(`chat_window.followup_chips.${c.id}.template`);
+          const label = t(`chat_window.followup_chips.${c.id}.label`);
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => sendCommand({ text, autoSubmit: true })}
+              title={label}
+              aria-label={label}
+              className="text-[11px] px-2 py-1 md:px-2.5 rounded-full border border-zinc-700/60 hover:border-zinc-600 text-zinc-400 hover:text-white hover:bg-zinc-700/60 light:border-slate-300 light:hover:border-slate-400 light:text-slate-500 light:hover:text-slate-900 light:hover:bg-slate-200 transition-all duration-150 whitespace-nowrap"
+            >
+              <span>{c.icon}</span>
+              <span className="hidden md:inline ml-1">{label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

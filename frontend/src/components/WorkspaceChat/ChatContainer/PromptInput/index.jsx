@@ -15,6 +15,7 @@ import useTextSize from "@/hooks/useTextSize";
 import { useTranslation } from "react-i18next";
 import Appearance from "@/models/appearance";
 import usePromptInputStorage from "@/hooks/usePromptInputStorage";
+import useUser from "@/hooks/useUser";
 import ToolsMenu, { TOOLS_MENU_KEYBOARD_EVENT } from "./ToolsMenu";
 import { ActivitiesButton, ActivitiesChipStrip } from "../IntentChips";
 import { useSearchParams } from "react-router-dom";
@@ -46,6 +47,8 @@ export default function PromptInput({
   threadSlug = null,
 }) {
   const { t } = useTranslation();
+  const { user } = useUser();
+  const isAdmin = !user || user?.role === "admin";
   const { showAgentCommand = true } = workspace ?? {};
   const { isDisabled } = useIsDisabled();
   const agentSessionActive = useIsAgentSessionActive();
@@ -366,36 +369,30 @@ export default function PromptInput({
                   placeholder={t("chat_window.send_message")}
                 />
               </div>
-              {!centered && (
-                <div className="hidden md:block">
-                  <ActivitiesChipStrip
-                    workspace={workspace}
-                    activeThread={activeThread}
-                    sendCommand={sendCommand}
-                    textareaRef={textareaRef}
-                  />
-                </div>
-              )}
-              <div className="flex justify-between items-center pt-3.5 pb-3">
-                <div className="flex items-center gap-x-0.25">
+              <div className="flex items-center pt-3.5 pb-3 gap-x-2">
+                <div className="flex items-center gap-x-0.25 shrink-0">
                   <div className="flex items-center gap-x-1">
-                    <AttachItem
-                      workspaceSlug={workspaceSlug}
-                      workspaceThreadSlug={threadSlug}
-                    />
+                    {isAdmin && (
+                      <AttachItem
+                        workspaceSlug={workspaceSlug}
+                        workspaceThreadSlug={threadSlug}
+                      />
+                    )}
                     <AgentSessionButton
                       sendCommand={sendCommand}
                       promptInput={promptInput}
                       textareaRef={textareaRef}
-                      visible={!agentSessionActive & showAgentCommand}
+                      visible={isAdmin && !agentSessionActive && showAgentCommand}
                     />
                   </div>
-                  <ToolsButton
-                    showTools={showTools}
-                    setShowTools={setShowTools}
-                    textareaRef={textareaRef}
-                    autoOpenedToolsRef={autoOpenedToolsRef}
-                  />
+                  {isAdmin && (
+                    <ToolsButton
+                      showTools={showTools}
+                      setShowTools={setShowTools}
+                      textareaRef={textareaRef}
+                      autoOpenedToolsRef={autoOpenedToolsRef}
+                    />
+                  )}
                   {!centered && (
                     <div className="md:hidden">
                       <ActivitiesButton
@@ -407,7 +404,17 @@ export default function PromptInput({
                     </div>
                   )}
                 </div>
-                <div className="flex gap-x-2 items-center">
+                {!centered && (
+                  <div className="hidden md:block flex-1 min-w-0">
+                    <ActivitiesChipStrip
+                      workspace={workspace}
+                      activeThread={activeThread}
+                      sendCommand={sendCommand}
+                      textareaRef={textareaRef}
+                    />
+                  </div>
+                )}
+                <div className="flex gap-x-2 items-center shrink-0 ml-auto">
                   <SpeechToText sendCommand={sendCommand} />
                   {isStreaming ? (
                     <StopGenerationButton />

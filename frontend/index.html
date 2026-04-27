@@ -5,17 +5,83 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/sara-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sara | Ton assistant pédagogique</title>
 
-    <meta name="title" content="Sara | Ton assistant pédagogique">
-    <meta name="description" content="Sara — l'assistant IA pour apprendre mieux">
+    <title>Sara — Soutien scolaire IA · Programme français &amp; américain | AI tutor</title>
+
+    <meta name="title" content="Sara — Soutien scolaire IA · Programme français & américain | AI tutor" />
+    <meta name="description" content="Sara, l'assistant pédagogique IA qui adapte exercices, quiz et fiches de révision au programme scolaire de chaque élève — du CM1 à la 3ème (France) et du Grade 4 au Grade 9 (USA)." />
+    <meta name="keywords" content="aide aux devoirs, soutien scolaire, IA pédagogique, exercices brevet, programme scolaire français, AI tutor, US curriculum, homework help, Grade 6, CM2, 3ème, fiches de révision, quiz, H5P" />
+    <meta name="author" content="Sara Education" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Canonical & alternates (FR / EN / x-default) -->
+    <link rel="canonical" href="https://sara.education/" />
+    <link rel="alternate" hreflang="fr" href="https://fr.sara.education/" />
+    <link rel="alternate" hreflang="en" href="https://en.sara.education/" />
+    <link rel="alternate" hreflang="x-default" href="https://sara.education/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sara" />
+    <meta property="og:url" content="https://sara.education/" />
+    <meta property="og:title" content="Sara — Soutien scolaire IA · Programme français & américain" />
+    <meta property="og:description" content="Exercices, quiz et révisions personnalisés par l'IA, calés sur le programme officiel — France (CM1-3ème) & USA (Grade 4-9). Personalized AI tutor for French & US curriculum." />
+    <meta property="og:image" content="https://sara.education/sara-logo.svg" />
+    <meta property="og:image:alt" content="Sara — assistant pédagogique IA" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sara — Soutien scolaire IA · FR & US curriculum" />
+    <meta name="twitter:description" content="Exercices, quiz et révisions personnalisés par l'IA, calés sur le programme officiel — France & USA." />
+    <meta name="twitter:image" content="https://sara.education/sara-logo.svg" />
 
     <link rel="apple-touch-icon" href="/sara-logo.svg" />
 
     <!-- PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a" />
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- JSON-LD : EducationalOrganization + WebSite (audiences FR + US) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://sara.education/#org",
+          "name": "Sara",
+          "alternateName": "Sara Education",
+          "url": "https://sara.education/",
+          "logo": "https://sara.education/sara-logo.svg",
+          "description": "Assistant pédagogique IA personnalisé sur le programme scolaire français et américain.",
+          "knowsLanguage": ["fr", "en"],
+          "audience": [
+            { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Élèves CM1 à 3ème (France)" },
+            { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Students Grade 4 to Grade 9 (USA)" },
+            { "@type": "EducationalAudience", "educationalRole": "parent" },
+            { "@type": "EducationalAudience", "educationalRole": "teacher" }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://sara.education/#website",
+          "url": "https://sara.education/",
+          "name": "Sara",
+          "inLanguage": ["fr-FR", "en-US"],
+          "publisher": { "@id": "https://sara.education/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sara.education/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>

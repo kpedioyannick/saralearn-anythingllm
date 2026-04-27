@@ -28,16 +28,12 @@ export default function QuickActions({
       <QuickActionButton
         label={t("main-page.quickActions.editWorkspace")}
         onClick={onEditWorkspace}
-        show={
-          hasAvailableWorkspace &&
-          (!user || ["admin", "manager"].includes(user?.role))
-        }
+        show={hasAvailableWorkspace && (!user || user?.role === "admin")}
       />
       <QuickActionButton
         label={t("main-page.quickActions.uploadDocument")}
         onClick={onUploadDocument}
-        // Any user can upload documents.
-        show={true}
+        show={!user || user?.role === "admin"}
       />
     </div>
   );

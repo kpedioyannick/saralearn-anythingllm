@@ -28,16 +28,11 @@ import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/Works
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 
 async function getTargetWorkspace() {
-  const lastVisited = safeJsonParse(
-    localStorage.getItem(LAST_VISITED_WORKSPACE)
-  );
-  if (lastVisited?.slug) {
-    const workspace = await Workspace.bySlug(lastVisited.slug);
-    if (workspace) return workspace;
-  }
-
+  // On retourne TOUJOURS le DERNIER workspace de la liste (pas de cache
+  // localStorage). L'élève atterrit ainsi sur le contenu le plus récemment
+  // créé/mis à jour, pas sur l'historique.
   const workspaces = await Workspace.all();
-  return workspaces.length > 0 ? workspaces[0] : null;
+  return workspaces.length > 0 ? workspaces[workspaces.length - 1] : null;
 }
 
 async function createDefaultWorkspace(workspaceName = "My Workspace") {

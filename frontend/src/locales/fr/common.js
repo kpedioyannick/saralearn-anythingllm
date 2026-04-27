@@ -797,6 +797,13 @@ const TRANSLATIONS = {
     regenerate_response: "Régénérer la réponse",
     good_response: "Bonne réponse",
     more_actions: "Plus d'actions",
+    followup_chips: {
+      again: { label: "Encore", template: "Encore" },
+      fiche: { label: "En fiche", template: "Fais-moi une fiche de révision sur ce sujet" },
+      exercice: { label: "En exercices", template: "Donne-moi des exercices sur ce sujet" },
+      carte_mentale: { label: "Carte mentale", template: "Fais-moi une carte mentale sur ce sujet" },
+      explication: { label: "Réexplique", template: "Reformule ton explication différemment" },
+    },
     fork: "Dupliquer",
     delete: "Supprimer",
     cancel: "Annuler",

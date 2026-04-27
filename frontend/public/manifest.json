@@ -1,13 +1,24 @@
 {
-  "name": "AnythingLLM",
-  "short_name": "AnythingLLM",
+  "name": "Sara — Assistant pédagogique IA",
+  "short_name": "Sara",
+  "description": "Assistant IA personnalisé · Programme scolaire français & américain · Personalized AI tutor for French & US curriculum",
+  "lang": "fr",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
   "icons": [
     {
+      "src": "/sara-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/favicon.png",
-      "sizes": "any"
+      "sizes": "any",
+      "type": "image/png"
     }
   ]
 }

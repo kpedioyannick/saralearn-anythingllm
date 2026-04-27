@@ -1,2 +1,19 @@
 User-agent: *
-Disallow: /
+Allow: /$
+Allow: /sitemap.xml
+Allow: /manifest.json
+Allow: /sara-logo.svg
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /fonts/
+Disallow: /api/
+Disallow: /admin/
+Disallow: /workspace/
+Disallow: /settings/
+Disallow: /onboarding/
+Disallow: /login
+Disallow: /sso/
+Disallow: /accept-invite/
+Disallow: /password-reset/
+
+Sitemap: https://sara.education/sitemap.xml
