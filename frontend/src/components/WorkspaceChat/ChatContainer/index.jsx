@@ -33,6 +33,7 @@ import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import TextSizeMenu from "./TextSizeMenu";
 import WorkspaceModelPicker from "./WorkspaceModelPicker";
+import IntentChips from "./IntentChips";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
 
 export default function ChatContainer({ workspace, knownHistory = [], activeThread = null }) {
@@ -372,9 +373,14 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         <DnDFileUploaderWrapper>
           <div className="flex flex-col h-full w-full items-center justify-center">
             <div className="flex flex-col items-center w-full">
-              <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
+              <h1 className="text-white text-xl md:text-2xl mb-8 text-center">
                 {activeThread ? activeThread.name : t("main-page.greeting")}
               </h1>
+              <IntentChips
+                workspace={workspace}
+                activeThread={activeThread}
+                sendCommand={sendCommand}
+              />
               <PromptInput
                 workspace={workspace}
                 submit={handleSubmit}
@@ -434,6 +440,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
                 </MetricsProvider>
                 <PromptInput
                   workspace={workspace}
+                  activeThread={activeThread}
                   submit={handleSubmit}
                   isStreaming={loadingResponse}
                   sendCommand={sendCommand}

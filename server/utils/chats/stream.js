@@ -13,7 +13,7 @@ const {
   sourceIdentifier,
 } = require("./index");
 
-const { detectIntentAndOptions, getIntentTemplate } = require("../sara/intentDetector");
+const { detectIntentAndOptions, getIntentTemplate, getUserLanguage } = require("../sara/intentDetector");
 const { Document } = require("../../models/documents");
 
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
@@ -23,6 +23,59 @@ const { parseText2Book } = require("../sara/h5p/text2bookParser");
 const { parseText2Flashcards } = require("../sara/h5p/text2flashcardsParser");
 const { toH5pPayload } = require("../sara/h5p/toH5pParams");
 const { generateH5P, generateH5PBook, generateH5PFlashcards } = require("../sara/h5p/client");
+
+// Normalise les fences ``` mal placées que DeepSeek émet régulièrement dans
+// les blocs ```probleme/```quiz, malgré les règles du template exercice :
+//   1. Triple-backticks IMBRIQUÉS dans ```probleme (pseudocode encadré par
+//      ``` au lieu d'indent 4 espaces) → markdown-it casse le rendu.
+//   2. Bloc ouvert jamais fermé avant qu'un nouveau ```<lang> ne s'ouvre.
+//   3. Bloc ouvert en fin de réponse sans close.
+// Machine à état ligne par ligne, robuste aux LLMs distraits.
+function normalizeRichBlocks(text) {
+  if (!text || text.indexOf("```") === -1) return text;
+  const lines = text.split("\n");
+  const out = [];
+  let inLang = null;       // bloc Sara ouvert ('quiz', 'probleme', 'dictee'...) ou null
+  let nestedOpen = false;  // dans un ``` imbriqué (uniquement attendu en probleme)
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const fence = line.match(/^\s*```(\w*)\s*$/);
+    if (!fence) {
+      out.push(nestedOpen ? "    " + line : line);
+      continue;
+    }
+    const lang = fence[1];
+    if (inLang === null) {
+      out.push(line);
+      if (lang) inLang = lang;
+      continue;
+    }
+    if (lang === "") {
+      // Bare ``` : close du bloc courant OU close/open d'une fence imbriquée.
+      if (nestedOpen) { nestedOpen = false; continue; }
+      if (inLang === "probleme") {
+        // Lookahead : si la prochaine fence rencontrée est aussi bare, on est
+        // sur l'OUVERTURE d'un encadré imbriqué et non sur le close de probleme.
+        let isNested = false;
+        for (let j = i + 1; j < lines.length; j++) {
+          const f = lines[j].match(/^\s*```(\w*)\s*$/);
+          if (f) { isNested = (f[1] === ""); break; }
+        }
+        if (isNested) { nestedOpen = true; continue; }
+      }
+      out.push(line);
+      inLang = null;
+    } else {
+      // ```<lang> alors qu'un bloc est encore ouvert → le LLM a oublié le close.
+      out.push("```");
+      out.push("");
+      out.push(line);
+      inLang = lang;
+    }
+  }
+  if (inLang !== null) out.push("```");
+  return out.join("\n");
+}
 
 async function processVideoBlock(text) {
   const match = text.match(/```video\n([\s\S]*?)```/);
@@ -81,7 +134,8 @@ async function streamChatWithWorkspace(
   } else {
     ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
   }
-  const intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions) : "";
+  const userLang = getUserLanguage(user);
+  const intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions, userLang) : "";
 
   // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
   if (isDicteeThread) chatMode = "chat";
@@ -133,10 +187,11 @@ async function streamChatWithWorkspace(
         const titleBase = thread?.name || competence || "Quiz";
         const urls = [];
         for (let i = 0; i < questions.length; i++) {
-          const payload = toH5pPayload(questions[i]);
+          const payload = toH5pPayload(questions[i], userLang);
           const { url } = await generateH5P({
             ...payload,
             title: `${titleBase} — Q${i + 1}`,
+            language: userLang,
           });
           urls.push(url);
         }
@@ -547,6 +602,21 @@ async function streamChatWithWorkspace(
   }
 
   if (completeText?.length > 0) {
+    // Patch les fences mal placées avant la persistance DB et l'émission finale
+    // (cas typiques sur exercices : ``` imbriqués dans probleme, blocs non clos).
+    const normalized = normalizeRichBlocks(completeText);
+    if (normalized !== completeText) {
+      writeResponseChunk(response, {
+        uuid,
+        sources,
+        type: "textResponse",
+        textResponse: normalized,
+        close: false,
+        error: false,
+      });
+      completeText = normalized;
+    }
+
     const { chat } = await WorkspaceChats.new({
       workspaceId: workspace.id,
       prompt: message,

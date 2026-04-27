@@ -341,7 +341,7 @@ export default forwardRef(function (
                           <button
                             onClick={() => {
                               setShowProgress(false);
-                              sendCommand({ text: `Entraîne-moi sur : ${group.competence}`, autoSubmit: true });
+                              sendCommand({ text: `${t("sara.progress.retry_prompt")} : ${group.competence}`, autoSubmit: true });
                             }}
                             className="text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 light:text-emerald-700 transition-colors"
                           >

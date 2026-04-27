@@ -474,6 +474,14 @@ a {
   -webkit-overflow-scrolling: touch !important;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .show-scrollbar::-webkit-scrollbar {
   width: 8px !important;
   display: block !important;

@@ -11,19 +11,22 @@
     "fiche pour réviser",
     "tu peux résumer ce cours",
     "je veux une fiche de révision",
-    "fais une fiche stp",
     "synthèse à apprendre",
     "points clés du cours",
     "résumé du chapitre",
-    "fais-moi un récapitulatif"
+    "fais-moi un récapitulatif",
+    "make me a study sheet",
+    "create a study sheet",
+    "summarize the lesson",
+    "write a revision sheet",
+    "make a cheat sheet",
+    "give me a summary sheet"
   ],
   "carte_mentale": [
     "fais-moi une carte mentale",
     "crée une carte mentale",
     "génère une mindmap",
-    "carte mentale sur le cours",
     "mind map",
-    "mindmap stp",
     "fais un schéma du cours",
     "représente le cours en schéma",
     "visualise le cours en carte",
@@ -31,14 +34,17 @@
     "arbre de concepts",
     "organisation visuelle du cours",
     "je veux une carte mentale",
-    "tu peux me faire un mindmap"
+    "tu peux me faire un mindmap",
+    "create a mind map",
+    "make me a mind map",
+    "generate a mindmap",
+    "draw a concept map"
   ],
   "exercice": [
     "donne-moi des exercices",
     "fais-moi des exercices",
     "entraîne-moi sur ce sujet",
     "fais un QCM",
-    "des QCM stp",
     "crée un quiz",
     "donne-moi un quiz",
     "questions d'entraînement",
@@ -67,6 +73,19 @@
     "génère-moi un exercice",
     "exercice avec questions de compréhension",
     "exercice avec corrigé détaillé",
+    "give me an exercise",
+    "create an exercise",
+    "generate an exercise",
+    "write an exercise",
+    "textbook-quality exercise",
+    "textbook-style exercise",
+    "exercise with word problem",
+    "exercise with step-by-step solution",
+    "exercise with detailed answer key",
+    "practice problems",
+    "give me practice questions",
+    "quiz me on this topic",
+    "test my knowledge",
     "donne-moi un sujet type brevet",
     "sujet type brevet",
     "sujet du brevet",
@@ -81,7 +100,19 @@
     "entraînement au brevet",
     "préparation au brevet",
     "fais-moi un brevet blanc",
-    "génère-moi un sujet brevet"
+    "génère-moi un sujet brevet",
+    "give me exercises",
+    "make me practice",
+    "create practice problems",
+    "give me a textbook-style exercise",
+    "give me a textbook-quality exercise",
+    "write a textbook exercise",
+    "give me practice problems with solutions",
+    "create a worksheet",
+    "give me a problem set",
+    "make me a quiz on this",
+    "write me an exercise",
+    "give me a word problem"
   ],
   "aide_devoir": [
     "aide-moi pour mon devoir",
@@ -93,7 +124,11 @@
     "aide pour ce problème",
     "je suis bloqué sur cette question",
     "tu peux m'aider sur",
-    "j'arrive pas à faire"
+    "j'arrive pas à faire",
+    "help me with my homework",
+    "i didn't understand this exercise",
+    "correct my work",
+    "check my answer"
   ],
   "exemple": [
     "donne-moi un exemple",
@@ -103,7 +138,10 @@
     "cas pratique d'utilisation",
     "exemples d'application",
     "exemple du quotidien",
-    "tu peux donner un exemple"
+    "tu peux donner un exemple",
+    "give me an example",
+    "show me an example",
+    "illustrate with an example"
   ],
   "explication": [
     "explique-moi",
@@ -117,7 +155,11 @@
     "pourquoi ça fonctionne ainsi",
     "comment fonctionne",
     "explique simplement",
-    "explique avec des mots simples"
+    "explique avec des mots simples",
+    "explain to me",
+    "can you explain",
+    "what is",
+    "how does it work"
   ],
   "cours": [
     "fais un cours complet",
@@ -129,7 +171,11 @@
     "présente le chapitre",
     "cours sur le thème",
     "développe le cours",
-    "fais-moi une leçon"
+    "fais-moi une leçon",
+    "give me a full lesson",
+    "teach me about",
+    "explain the lesson",
+    "give me a complete course"
   ],
   "video": [
     "fais une vidéo",
@@ -142,12 +188,10 @@
     "explique en vidéo",
     "cours en vidéo",
     "vidéo pédagogique",
-    "vidéo sur le cours",
     "présentation vidéo",
     "je veux une vidéo",
     "je voudrais une vidéo",
     "tu peux me faire une vidéo",
-    "fais-moi une vidéo stp",
     "j'aimerais une vidéo",
     "fais la vidéo plus grande",
     "fais la vidéo en plus grand",
@@ -162,7 +206,12 @@
     "vidéo de bonne qualité",
     "fais une vidéo cool",
     "vidéo dynamique",
-    "vidéo intéressante"
+    "vidéo intéressante",
+    "make a video",
+    "create a video",
+    "generate a video",
+    "make me a short pedagogical video",
+    "make a short video lesson"
   ],
   "dictee": [
     "fais-moi une dictée",
@@ -174,12 +223,8 @@
     "dicte-moi des phrases à écrire",
     "dictée audio à trous",
     "entraîne-moi à la dictée",
-    "lis-moi un texte pour que je l'écrive",
     "dictée niveau brevet",
-    "dictée sur les accords",
-    "exercice d'orthographe à l'oral",
-    "épelle-moi des phrases",
-    "lis-moi des phrases pour orthographe"
+    "dictée sur les accords"
   ],
   "generate_h5p": [
     "fais-moi un quiz h5p",
@@ -190,9 +235,30 @@
     "fais un h5p",
     "génère un quiz h5p",
     "fais-moi du h5p",
-    "h5p sur le cours",
     "h5p quiz",
-    "crée un h5p"
+    "crée un h5p",
+    "make me an h5p quiz",
+    "generate an h5p",
+    "create an h5p exercise",
+    "make an interactive quiz"
+  ],
+  "again": [
+    "encore",
+    "un autre",
+    "une autre",
+    "pareil",
+    "refais",
+    "redis",
+    "à nouveau",
+    "encore une fois",
+    "donne-m'en un autre",
+    "fais-en un autre",
+    "j'en veux un autre",
+    "again",
+    "another one",
+    "do it again",
+    "once more",
+    "same"
   ],
   "_h5p_format_book": [
     "livre interactif",
@@ -202,7 +268,9 @@
     "interactive book",
     "fais un livre interactif",
     "génère un livre avec chapitres",
-    "livre pédagogique en chapitres"
+    "livre pédagogique en chapitres",
+    "multi-chapter book",
+    "book with chapters"
   ],
   "_h5p_format_flashcards": [
     "flashcards",
@@ -212,7 +280,9 @@
     "fais des flashcards",
     "génère des flashcards",
     "cartes de révision",
-    "fiches recto-verso"
+    "fiches recto-verso",
+    "memory cards",
+    "front-back cards"
   ],
   "_video_format_landscape": [
     "vidéo horizontale",
@@ -226,14 +296,20 @@
     "format ordinateur",
     "vidéo desktop",
     "vidéo plein écran ordi",
-    "format pc"
+    "format pc",
+    "horizontal video",
+    "landscape format",
+    "youtube video"
   ],
   "_video_format_square": [
     "vidéo carrée",
     "format carré",
     "post instagram",
     "format 1:1",
-    "vidéo carré pour insta"
+    "vidéo carré pour insta",
+    "square video",
+    "square format",
+    "instagram post"
   ],
   "_video_format_portrait": [
     "vidéo verticale",
@@ -243,7 +319,10 @@
     "vidéo pour téléphone",
     "format mobile",
     "story instagram",
-    "format 9:16"
+    "format 9:16",
+    "vertical video",
+    "tiktok format",
+    "reels format"
   ],
   "_video_no_karaoke": [
     "vidéo sans karaoké",
@@ -253,7 +332,10 @@
     "vidéo avec sous-titres simples",
     "vidéo avec sous-titres classiques",
     "vidéo pas de karaoké",
-    "vidéo avec sous-titres en phrase complète"
+    "vidéo avec sous-titres en phrase complète",
+    "video without karaoke",
+    "video with normal subtitles",
+    "video with full sentences"
   ],
   "_video_karaoke": [
     "vidéo avec karaoké",
@@ -261,6 +343,9 @@
     "vidéo style tiktok karaoké",
     "vidéo dynamique mot à mot",
     "vidéo sous-titres karaoké",
-    "vidéo avec mots animés"
+    "vidéo avec mots animés",
+    "video with karaoke",
+    "word-by-word video",
+    "tiktok karaoke style"
   ]
 }

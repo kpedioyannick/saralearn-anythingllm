@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import Appearance from "@/models/appearance";
 import usePromptInputStorage from "@/hooks/usePromptInputStorage";
 import ToolsMenu, { TOOLS_MENU_KEYBOARD_EVENT } from "./ToolsMenu";
+import { ActivitiesButton, ActivitiesChipStrip } from "../IntentChips";
 import { useSearchParams } from "react-router-dom";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
 
@@ -35,6 +36,7 @@ const MAX_EDIT_STACK_SIZE = 100;
  */
 export default function PromptInput({
   workspace = {},
+  activeThread = null,
   submit,
   isStreaming,
   sendCommand,
@@ -364,6 +366,16 @@ export default function PromptInput({
                   placeholder={t("chat_window.send_message")}
                 />
               </div>
+              {!centered && (
+                <div className="hidden md:block">
+                  <ActivitiesChipStrip
+                    workspace={workspace}
+                    activeThread={activeThread}
+                    sendCommand={sendCommand}
+                    textareaRef={textareaRef}
+                  />
+                </div>
+              )}
               <div className="flex justify-between items-center pt-3.5 pb-3">
                 <div className="flex items-center gap-x-0.25">
                   <div className="flex items-center gap-x-1">
@@ -384,6 +396,16 @@ export default function PromptInput({
                     textareaRef={textareaRef}
                     autoOpenedToolsRef={autoOpenedToolsRef}
                   />
+                  {!centered && (
+                    <div className="md:hidden">
+                      <ActivitiesButton
+                        workspace={workspace}
+                        activeThread={activeThread}
+                        sendCommand={sendCommand}
+                        textareaRef={textareaRef}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-x-2 items-center">
                   <SpeechToText sendCommand={sendCommand} />

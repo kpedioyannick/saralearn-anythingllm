@@ -108,6 +108,9 @@ markdown.renderer.rules.fence = function (tokens, idx, options, env, self) {
   if (lang === "video-url") {
     return `<div class="video-url-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
   }
+  if (lang === "video-preview") {
+    return `<div class="video-preview-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
+  }
   if (lang === "h5p") {
     return `<div class="h5p-block" data-content="${encodeURIComponent(code.trim())}"></div>\n`;
   }

@@ -50,7 +50,7 @@ function parseText2Book(rawOrFullText) {
     const blocks = [];
     for (const q of questions) {
       try {
-        const { type, params } = toH5pPayload(q);
+        const { type, params } = toH5pPayload(q, language);
         const library = TYPE_TO_LIBRARY[type];
         if (library) blocks.push({ library, params });
       } catch {

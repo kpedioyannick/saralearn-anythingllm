@@ -154,13 +154,16 @@ function workspaceParsedFilesEndpoints(app) {
           });
         }
 
-        // Get thread ID if we have a slug
-        const { threadSlug = null } = reqBody(request);
+        // Get thread ID if we have a slug.
+        // Filter on slug + workspace_id only (no user_id) to match shared threads
+        // whose user_id is NULL — same behavior as the GET parsed-files route.
+        const rawThreadSlug = reqBody(request).threadSlug ?? null;
+        const threadSlug =
+          rawThreadSlug && rawThreadSlug !== "null" ? rawThreadSlug : null;
         const thread = threadSlug
           ? await WorkspaceThread.get({
               slug: String(threadSlug),
               workspace_id: workspace.id,
-              user_id: user?.id || null,
             })
           : null;
         const files = await Promise.all(

@@ -166,6 +166,22 @@ function saraEndpoints(app) {
     }
   });
 
+  // Upgrade preview → HD : relance le rendu en quality "hd" sur le même job.
+  app.post("/sara/video/:videoId/upgrade", async (req, res) => {
+    try {
+      const { videoId } = req.params;
+      const r = await fetch(`${VIDEO_API_URL}/api/videos/${videoId}/upgrade`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await r.json();
+      res.status(r.status).json(data);
+    } catch (e) {
+      console.error("[Sara] Video upgrade error:", e.message);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   app.get("/sara/video/:videoId", async (req, res) => {
     try {
       const { videoId } = req.params;

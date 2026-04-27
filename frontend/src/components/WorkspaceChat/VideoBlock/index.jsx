@@ -7,6 +7,9 @@ export default function VideoBlock({ content }) {
   const [status, setStatus] = useState("parsing"); // parsing | queued | rendering | done | error
   const [videoUrl, setVideoUrl] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [videoId, setVideoId] = useState(null);
+  const [quality, setQuality] = useState("preview");
+  const [upgrading, setUpgrading] = useState(false);
   const pollRef = useRef(null);
 
   useEffect(() => {
@@ -34,14 +37,15 @@ export default function VideoBlock({ content }) {
       .then((r) => r.json())
       .then((data) => {
         if (!data.videoId) throw new Error(data.error || "Pas de videoId");
-        const videoId = data.videoId;
+        setVideoId(data.videoId);
         pollRef.current = setInterval(async () => {
           try {
-            const r = await fetch(`${API_BASE}/sara/video/${videoId}`);
+            const r = await fetch(`${API_BASE}/sara/video/${data.videoId}`);
             const d = await r.json();
             if (d.status === "done") {
               clearInterval(pollRef.current);
               setVideoUrl(d.videoUrl);
+              setQuality(d.quality || "preview");
               setStatus("done");
             } else if (d.status === "error") {
               clearInterval(pollRef.current);
@@ -65,17 +69,60 @@ export default function VideoBlock({ content }) {
     return () => clearInterval(pollRef.current);
   }, []);
 
+  // Lance un upgrade vers la qualité HD : le même job se relance en scale 1.
+  const handleUpgradeHD = async () => {
+    if (!videoId || upgrading) return;
+    setUpgrading(true);
+    try {
+      await fetch(`${API_BASE}/sara/video/${videoId}/upgrade`, { method: "POST" });
+      // Re-poll : on attend que le statut repasse à "done" avec quality:hd.
+      setStatus("rendering");
+      setVideoUrl(null);
+      pollRef.current = setInterval(async () => {
+        const r = await fetch(`${API_BASE}/sara/video/${videoId}`);
+        const d = await r.json();
+        if (d.status === "done") {
+          clearInterval(pollRef.current);
+          // Cache-bust pour forcer le browser à recharger le MP4 ré-encodé.
+          setVideoUrl(`${d.videoUrl}?v=${Date.now()}`);
+          setQuality(d.quality || "hd");
+          setStatus("done");
+          setUpgrading(false);
+        } else if (d.status === "error") {
+          clearInterval(pollRef.current);
+          setStatus("error");
+          setErrorMsg(d.error || "Erreur HD.");
+          setUpgrading(false);
+        }
+      }, POLL_INTERVAL);
+    } catch (e) {
+      setUpgrading(false);
+    }
+  };
+
   if (status === "done" && videoUrl) {
     return (
-      <div className="my-2 w-full min-w-0 sm:my-4 rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
-        <video
-          src={videoUrl}
-          controls
-          autoPlay
-          playsInline
-          preload="metadata"
-          className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
-        />
+      <div className="my-2 w-full min-w-0 sm:my-4">
+        <div className="rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
+          <video
+            src={videoUrl}
+            controls
+            autoPlay
+            playsInline
+            preload="metadata"
+            className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
+          />
+        </div>
+        {quality !== "hd" && (
+          <button
+            type="button"
+            onClick={handleUpgradeHD}
+            disabled={upgrading}
+            className="mt-2 px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-emerald-500/40 bg-emerald-600/15 text-emerald-200 hover:bg-emerald-600/25 disabled:opacity-50 disabled:cursor-wait"
+          >
+            {upgrading ? "Rendu HD en cours…" : "🎬 Télécharger en HD (1080p)"}
+          </button>
+        )}
       </div>
     );
   }
