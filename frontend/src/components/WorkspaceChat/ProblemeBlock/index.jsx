@@ -5,9 +5,11 @@ import DOMPurify from "@/utils/chat/purify";
 import renderMarkdown from "@/utils/chat/markdown";
 import { API_BASE } from "@/utils/constants";
 import { getDeviceId } from "@/utils/deviceId";
+import useUser from "@/hooks/useUser";
 
 function QuestionOuverte({ question, corrige, index, competence, workspace, activeThread }) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const [answer, setAnswer] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [evaluated, setEvaluated] = useState(false);
@@ -19,6 +21,7 @@ function QuestionOuverte({ question, corrige, index, competence, workspace, acti
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         deviceId: getDeviceId(),
+        userId: user?.id ?? null,
         workspaceId: workspace?.id ?? 0,
         threadId: activeThread.id,
         competence: competence || activeThread?.name || "",

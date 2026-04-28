@@ -15,6 +15,7 @@ import Correspondance from "./types/Correspondance";
 import Etiquettes from "./types/Etiquettes";
 import { API_BASE } from "@/utils/constants";
 import { getDeviceId } from "@/utils/deviceId";
+import useUser from "@/hooks/useUser";
 
 const COMPONENTS = {
   QCM, VF, QR, Flashcard, QRC, Trous, TrousRC, Ordre, Association, Correspondance, Etiquettes,
@@ -24,6 +25,7 @@ const SCORABLE = ["QCM", "VF", "QRC", "Trous", "TrousRC", "Ordre", "Association"
 
 export default function QuizBlock({ content, workspace = null, activeThread = null }) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const { questions, competence } = parseQuiz(content);
   const [answers, setAnswers] = useState({});
 
@@ -40,6 +42,7 @@ export default function QuizBlock({ content, workspace = null, activeThread = nu
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             deviceId: getDeviceId(),
+            userId: user?.id ?? null,
             workspaceId: workspace?.id ?? 0,
             threadId: activeThread?.id ?? 0,
             competence: competence || activeThread?.name || "",

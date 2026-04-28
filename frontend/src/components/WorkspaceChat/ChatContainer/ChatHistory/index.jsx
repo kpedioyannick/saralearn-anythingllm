@@ -24,6 +24,7 @@ import { useParams } from "react-router-dom";
 import paths from "@/utils/paths";
 import Appearance from "@/models/appearance";
 import useTextSize from "@/hooks/useTextSize";
+import useUser from "@/hooks/useUser";
 import useChatHistoryScrollHandle from "@/hooks/useChatHistoryScrollHandle";
 import { ThoughtExpansionProvider } from "./ThoughtContainer";
 import { MessageActionsProvider } from "./MessageActionsContext";
@@ -50,6 +51,7 @@ export default forwardRef(function (
   const [progressData, setProgressData] = useState([]);
   const isStreaming = history[history.length - 1]?.animate;
   const { t } = useTranslation();
+  const { user } = useUser();
   const { showScrollbar } = Appearance.getSettings();
   const { textSizeClass } = useTextSize();
 
@@ -210,9 +212,12 @@ export default forwardRef(function (
 
   async function fetchProgress() {
     if (!activeThread?.id) return;
-    const r = await fetch(
-      `${API_BASE}/v1/user/exercises/progress?deviceId=${getDeviceId()}&threadId=${activeThread.id}`
-    );
+    const params = new URLSearchParams({
+      threadId: String(activeThread.id),
+      deviceId: getDeviceId(),
+    });
+    if (user?.id) params.set("userId", String(user.id));
+    const r = await fetch(`${API_BASE}/v1/user/exercises/progress?${params.toString()}`);
     const data = await r.json();
     setProgressData(data.progress ?? []);
     setShowProgress(true);
@@ -257,7 +262,10 @@ export default forwardRef(function (
   return (
     <MessageActionsProvider>
       <ThoughtExpansionProvider>
-        <div className="hidden md:block absolute top-0 left-0 right-0 h-11 z-[25] pointer-events-none bg-white/95 border-b-2 border-emerald-500/35" />
+        <div
+          className="hidden md:block absolute top-0 left-0 right-0 h-11 z-[25] pointer-events-none bg-white/95 border-b-2 border-emerald-500/35"
+          style={{ background: "#118c4440", padding: "30px" }}
+        />
 
         {activeThread && !showProgress && (
           <div className="fixed md:absolute top-3 md:top-5 z-[120] md:z-30 right-[102px] md:right-[107px]">

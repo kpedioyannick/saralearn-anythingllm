@@ -401,6 +401,7 @@ model external_communication_connectors {
 model user_exercises {
   id            Int      @id @default(autoincrement())
   deviceId      String
+  userId        Int?
   workspaceId   Int
   threadId      Int
   competence    String   @default("")
@@ -415,4 +416,5 @@ model user_exercises {
 
   @@index([deviceId])
   @@index([threadId])
+  @@index([userId])
 }

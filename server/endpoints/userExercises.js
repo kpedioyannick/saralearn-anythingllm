@@ -8,6 +8,7 @@ router.post("/", async (req, res) => {
   try {
     const {
       deviceId,
+      userId,
       workspaceId,
       threadId,
       competence,
@@ -27,6 +28,7 @@ router.post("/", async (req, res) => {
     const exercise = await prisma.user_exercises.create({
       data: {
         deviceId,
+        userId: userId ? Number(userId) : null,
         workspaceId: Number(workspaceId) || 0,
         threadId: Number(threadId) || 0,
         competence: competence || "",
@@ -47,13 +49,17 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET /api/v1/user/exercises/progress?deviceId=&threadId=
+// GET /api/v1/user/exercises/progress?deviceId=&threadId=&userId=
+// Filtre par userId si fourni (priorité sur deviceId pour cross-device).
 router.get("/progress", async (req, res) => {
   try {
-    const { deviceId, threadId } = req.query;
-    if (!deviceId) return res.status(400).json({ error: "deviceId required" });
+    const { deviceId, threadId, userId } = req.query;
+    if (!deviceId && !userId)
+      return res.status(400).json({ error: "deviceId or userId required" });
 
-    const where = { deviceId };
+    const where = {};
+    if (userId) where.userId = Number(userId);
+    else where.deviceId = deviceId;
     if (threadId) where.threadId = Number(threadId);
 
     const rows = await prisma.user_exercises.findMany({
