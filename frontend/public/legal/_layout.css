@@ -22,15 +22,38 @@ body {
 header {
   background: var(--sara-green);
   color: white;
-  padding: 20px 24px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
 }
 
+header .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background .15s;
+}
+header .back-link:hover, header .back-link:focus {
+  background: rgba(255,255,255,.15);
+  outline: none;
+}
+
+header .back-link .arrow { font-size: 20px; line-height: 1; }
+
 header .logo {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: white;
   color: var(--sara-green);
   border-radius: 50%;
@@ -38,11 +61,12 @@ header .logo {
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 22px;
+  font-size: 20px;
+  margin-left: auto;
 }
 
-header h1 { margin: 0; font-size: 20px; font-weight: 600; }
-header a { color: white; text-decoration: none; }
+header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+header a:not(.back-link) { color: white; text-decoration: none; }
 
 main {
   max-width: 760px;

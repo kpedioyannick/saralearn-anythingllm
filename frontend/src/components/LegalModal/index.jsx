@@ -43,7 +43,21 @@ const DOCS = [
   },
 ];
 
+function isInCapacitorApp() {
+  return typeof window !== "undefined" &&
+    !!window.Capacitor &&
+    typeof window.Capacitor.isNativePlatform === "function" &&
+    window.Capacitor.isNativePlatform();
+}
+
 export default function LegalModal({ onClose }) {
+  const handleDocClick = (e, href) => {
+    if (isInCapacitorApp()) {
+      e.preventDefault();
+      window.location.href = href;
+    }
+  };
+
   const modal = (
     <div
       className="fixed inset-0 z-[9999] flex items-end justify-center p-0 sm:items-center sm:p-4"
@@ -92,6 +106,7 @@ export default function LegalModal({ onClose }) {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => handleDocClick(e, href)}
                 className="group flex items-start gap-3 rounded-xl border border-transparent bg-zinc-800/40 p-3 transition-all hover:border-emerald-500/40 hover:bg-zinc-800/70 sm:p-4 light:bg-zinc-50 light:hover:border-emerald-500/60 light:hover:bg-emerald-50/40"
               >
                 <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400 light:bg-emerald-500/10 light:text-emerald-700">
@@ -118,7 +133,7 @@ export default function LegalModal({ onClose }) {
         </ul>
 
         <div className="shrink-0 border-t border-zinc-600/30 bg-zinc-800/30 px-4 py-3 text-center text-xs text-zinc-400 sm:px-5 sm:text-sm light:border-zinc-200/80 light:bg-zinc-50/80 light:text-zinc-600">
-          Sara AI © 2026 — Édité par Yannick KPEDIO
+          Sara AI © 2026 — Plateforme éducative
         </div>
       </div>
     </div>
