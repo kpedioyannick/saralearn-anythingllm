@@ -50,16 +50,28 @@ jobs:
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
               <title>Sara AI</title>
+              <style>
+                body { margin:0; background:#118c44; color:#fff; font-family:system-ui,sans-serif; height:100vh; display:flex; align-items:center; justify-content:center; }
+                .S { font-size:25vh; font-weight:900; }
+              </style>
             </head>
-            <body>
-              <p style="font-family:system-ui;text-align:center;margin-top:40vh;">Chargement de Sara AI…</p>
-            </body>
+            <body><div class="S">S</div></body>
           </html>
           EOF
 
       - name: Add Android platform
         working-directory: mobile
         run: npx cap add android
+
+      - name: Generate icons & splash from resources/
+        working-directory: mobile
+        run: |
+          npx capacitor-assets generate --android \
+            --assetPath resources \
+            --iconBackgroundColor '#118c44' \
+            --iconBackgroundColorDark '#118c44' \
+            --splashBackgroundColor '#118c44' \
+            --splashBackgroundColorDark '#118c44'
 
       - name: Sync Capacitor
         working-directory: mobile
