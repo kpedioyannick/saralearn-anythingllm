@@ -1,0 +1,139 @@
+name: iOS Build (Sara AI)
+
+# Build iOS unsigned (.app simulator) — sert à valider que le projet compile.
+# Pas installable sur iPhone physique sans compte Apple Developer.
+# Quand tu seras prêt à payer 99 €/an : ajouter signing + TestFlight ici.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ios-build.yml'
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mobile/package.json
+
+      - name: Show Xcode & macOS versions
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcrun simctl list runtimes | head -20
+
+      - name: Install Capacitor deps
+        working-directory: mobile
+        run: npm install
+
+      - name: Prepare web assets stub
+        working-directory: mobile
+        run: |
+          mkdir -p www
+          cat > www/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="fr">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+              <title>Sara AI</title>
+              <style>
+                body { margin:0; background:#118c44; color:#fff; font-family:-apple-system,sans-serif; height:100vh; display:flex; align-items:center; justify-content:center; }
+                .S { font-size:25vh; font-weight:900; }
+              </style>
+            </head>
+            <body><div class="S">S</div></body>
+          </html>
+          EOF
+
+      - name: Add iOS platform
+        working-directory: mobile
+        run: npx cap add ios
+
+      - name: Generate icons & splash
+        working-directory: mobile
+        run: |
+          npx capacitor-assets generate --ios \
+            --assetPath resources \
+            --iconBackgroundColor '#118c44' \
+            --iconBackgroundColorDark '#118c44' \
+            --splashBackgroundColor '#118c44' \
+            --splashBackgroundColorDark '#118c44'
+
+      - name: Sync Capacitor
+        working-directory: mobile
+        run: npx cap sync ios
+
+      - name: Install CocoaPods dependencies
+        working-directory: mobile/ios/App
+        run: pod install --repo-update
+
+      - name: Show available simulator destinations
+        run: |
+          xcrun simctl list devices available | grep -E "iPhone (15|16|17|18)" | head -5
+
+      - name: Build .app for iOS Simulator (unsigned)
+        working-directory: mobile/ios/App
+        run: |
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO \
+            build | xcpretty --color || (cat build/Logs/Build/*.log | tail -200; exit 1)
+
+      - name: Locate built .app
+        id: locate
+        working-directory: mobile/ios/App
+        run: |
+          APP_PATH=$(find build/Build/Products -name "App.app" -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "ERREUR : aucun App.app trouvé"
+            find build -name "*.app" -type d
+            exit 1
+          fi
+          echo "Trouvé : $APP_PATH"
+          echo "app_path=$APP_PATH" >> $GITHUB_OUTPUT
+
+      - name: Zip .app bundle for artifact
+        working-directory: mobile/ios/App
+        run: |
+          cd "$(dirname '${{ steps.locate.outputs.app_path }}')"
+          zip -r sara-ai-ios-simulator.app.zip App.app
+          ls -lh sara-ai-ios-simulator.app.zip
+
+      - name: Upload .app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sara-ai-ios-simulator-app
+          path: mobile/ios/App/build/Build/Products/Debug-iphonesimulator/sara-ai-ios-simulator.app.zip
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Build summary
+        if: always()
+        run: |
+          echo "## 📱 iOS Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build .app simulator iOS (non signé)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Artifact : sara-ai-ios-simulator-app" >> $GITHUB_STEP_SUMMARY
+          echo "- ⚠️  Pour installer sur iPhone physique : compte Apple Developer (99 €/an) requis" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧪 Pour tester : ouvrir avec Xcode → glisser dans iOS Simulator" >> $GITHUB_STEP_SUMMARY
