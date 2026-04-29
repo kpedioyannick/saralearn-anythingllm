@@ -1,0 +1,19 @@
+{
+  "name": "sara-ai-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sara AI mobile app (Capacitor wrapper)",
+  "scripts": {
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "android:build:debug": "cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}

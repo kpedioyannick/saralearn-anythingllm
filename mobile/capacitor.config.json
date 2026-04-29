@@ -1,0 +1,18 @@
+{
+  "appId": "education.sara.ai",
+  "appName": "Sara AI",
+  "webDir": "www",
+  "server": {
+    "url": "https://sara.education",
+    "cleartext": false,
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "contentInset": "always"
+  }
+}

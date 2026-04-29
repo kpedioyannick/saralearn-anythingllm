@@ -1,0 +1,16 @@
+# Capacitor — generated par CI à chaque build
+node_modules/
+www/
+android/
+ios/
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+*.keystore
+
+# Système
+.DS_Store
+.vscode/
+*.log
