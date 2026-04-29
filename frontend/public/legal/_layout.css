@@ -70,6 +70,15 @@ main ul { padding-left: 20px; }
   color: #6c5b00;
 }
 
+.todo {
+  background: #ffeb99;
+  color: #6c5b00;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
 footer {
   border-top: 1px solid var(--border);
   padding: 24px;
