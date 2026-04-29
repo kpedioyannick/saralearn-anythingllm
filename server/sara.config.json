@@ -22,7 +22,8 @@
         "2nde": "2nde"
       },
       "shared_workspaces": {
-        "brevet": ["3eme", "4eme"]
+        "brevet": ["3eme", "4eme"],
+        "coach-scolaire": ["3eme"]
       }
     },
     "usa": {

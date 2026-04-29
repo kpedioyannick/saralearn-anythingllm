@@ -300,4 +300,15 @@ function getIntentTemplate(intent, threadName = "ce sujet", options = {}, lang =
   return fn(threadName);
 }
 
-module.exports = { detectIntent, detectIntentAndOptions, getIntentTemplate, getUserLanguage, initAnchorVectors };
+module.exports = {
+  detectIntent,
+  detectIntentAndOptions,
+  getIntentTemplate,
+  getUserLanguage,
+  initAnchorVectors,
+  // Helpers réutilisés par coachIntentDetector.js (même infra embeddings).
+  embedQuery,
+  embedPassage,
+  cosineSimilarity,
+  bestScoreAgainst,
+};

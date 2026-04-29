@@ -14,6 +14,8 @@ const {
 } = require("./index");
 
 const { detectIntentAndOptions, getIntentTemplate, getUserLanguage } = require("../sara/intentDetector");
+const { detectCoachIntent } = require("../sara/coachIntentDetector");
+const { getCoachingContext } = require("../sara/coachingContext");
 const { Document } = require("../../models/documents");
 
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
@@ -126,19 +128,32 @@ async function streamChatWithWorkspace(
 ) {
   const uuid = uuidv4();
   const updatedMessage = await grepCommand(message, user);
-  // Thread "Dictée" → intent dictée automatique, sinon détection par vecteurs
-  const isDicteeThread = thread?.name?.toLowerCase().includes("dict");
-  let intent, intentOptions = {};
-  if (isDicteeThread) {
-    intent = "dictee";
-  } else {
-    ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
-  }
-  const userLang = getUserLanguage(user);
-  const intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions, userLang) : "";
+  const isCoachWorkspace = workspace?.slug === "coach-scolaire";
 
-  // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
-  if (isDicteeThread) chatMode = "chat";
+  let intent, intentOptions = {}, intentPrefix = "";
+  let coachContextBlock = "";
+  const userLang = getUserLanguage(user);
+
+  if (isCoachWorkspace) {
+    // Coach scolaire : détecteur dédié, jamais de générateur de contenu
+    // pédagogique (fiche/quiz/probleme/video/dictee/h5p). Le contexte de
+    // progression (plan + goals + agrégat user_exercises) est injecté dans le
+    // system prompt plus bas.
+    const coach = await detectCoachIntent(updatedMessage);
+    intent = coach.intent; // coach_today / coach_delays / ... / null — log/debug
+    coachContextBlock = await getCoachingContext(user);
+  } else {
+    // Thread "Dictée" → intent dictée automatique, sinon détection par vecteurs
+    const isDicteeThread = thread?.name?.toLowerCase().includes("dict");
+    if (isDicteeThread) {
+      intent = "dictee";
+      // Thread Dictée : pas de RAG, le LLM génère le texte lui-même
+      chatMode = "chat";
+    } else {
+      ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
+    }
+    intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions, userLang) : "";
+  }
 
   // Intent H5P : 3 sous-formats selon intentOptions.format
   //   - quiz (défaut) → ```quiz → N URLs h5p individuelles (multiple_choice/true_false/blanks)
@@ -555,9 +570,12 @@ async function streamChatWithWorkspace(
 
   // Compress & Assemble message to ensure prompt passes token limit with room for response
   // and build system messages based on inputs and history.
+  const baseSystemPrompt = await chatPrompt(workspace, user);
   const messages = await LLMConnector.compressMessages(
     {
-      systemPrompt: await chatPrompt(workspace, user),
+      systemPrompt: isCoachWorkspace
+        ? `${baseSystemPrompt}\n\n${coachContextBlock}`
+        : baseSystemPrompt,
       userPrompt: updatedMessage + intentPrefix,
       contextTexts,
       chatHistory,
