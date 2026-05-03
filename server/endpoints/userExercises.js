@@ -1,5 +1,9 @@
 const { Router } = require("express");
 const prisma = require("../utils/prisma");
+const {
+  autoLinkExercise,
+  computeThreadProgression,
+} = require("../utils/sara/objectivesProgression");
 
 const router = Router();
 
@@ -19,6 +23,9 @@ router.post("/", async (req, res) => {
       isCorrect,
       total = 0,
       correct = 0,
+      // Optionnel : objectiveTitle si Sara a annoté l'exo avec `objective: ...`
+      // (extrait côté frontend depuis le bloc ```quiz)
+      objectiveTitle = null,
     } = req.body;
 
     if (!deviceId || !threadId) {
@@ -42,9 +49,43 @@ router.post("/", async (req, res) => {
       },
     });
 
+    // Auto-link à un thread_objective via embedding (best-effort, ne bloque pas la réponse)
+    autoLinkExercise({
+      threadId: Number(threadId),
+      statement,
+      objectiveTitle,
+    })
+      .then(async (objectiveId) => {
+        if (objectiveId) {
+          await prisma.user_exercises.update({
+            where: { id: exercise.id },
+            data: { threadObjectiveId: objectiveId },
+          });
+        }
+      })
+      .catch((err) => console.error("[autoLinkExercise] post-insert error:", err.message));
+
     res.json({ exercise });
   } catch (err) {
     console.error("user_exercises POST error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/v1/user/exercises/objectives?threadId=&userId=&deviceId=
+// Retourne la progression sur les objectifs d'un thread pour cet utilisateur.
+router.get("/objectives", async (req, res) => {
+  try {
+    const { threadId, userId, deviceId } = req.query;
+    if (!threadId) return res.status(400).json({ error: "threadId required" });
+    const progress = await computeThreadProgression({
+      threadId: Number(threadId),
+      userId: userId ? Number(userId) : null,
+      deviceId: deviceId || null,
+    });
+    res.json({ objectives: progress });
+  } catch (err) {
+    console.error("user_exercises GET /objectives error:", err);
     res.status(500).json({ error: err.message });
   }
 });

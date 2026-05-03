@@ -16,6 +16,9 @@ const {
 const { detectIntentAndOptions, getIntentTemplate, getUserLanguage } = require("../sara/intentDetector");
 const { detectCoachIntent } = require("../sara/coachIntentDetector");
 const { getCoachingContext } = require("../sara/coachingContext");
+const { loadPhonoContext } = require("../sara/phonoLoader");
+const { buildScheduleContextBlock } = require("../users/scheduleContext");
+const { buildUserActionContext } = require("../users/userActionContext");
 const { Document } = require("../../models/documents");
 
 const VIDEO_API_URL = process.env.SARA_VIDEO_API_URL || "http://localhost:3457";
@@ -129,10 +132,20 @@ async function streamChatWithWorkspace(
   const uuid = uuidv4();
   const updatedMessage = await grepCommand(message, user);
   const isCoachWorkspace = workspace?.slug === "coach-scolaire";
+  const isPhonoWorkspace = workspace?.slug === "phonetique";
 
   let intent, intentOptions = {}, intentPrefix = "";
   let coachContextBlock = "";
+  let phonoContextBlock = "";
   const userLang = getUserLanguage(user);
+
+  if (isPhonoWorkspace) {
+    // Workspace dys-phono : on charge le MD de la confusion correspondante
+    // (1 thread = 1 paire) et on l'injecte dans le system prompt pour que
+    // Sara ait accès au cours + aux exos prêts à l'emploi.
+    const ctx = await loadPhonoContext(workspace, thread, updatedMessage);
+    if (ctx) phonoContextBlock = ctx;
+  }
 
   if (isCoachWorkspace) {
     // Coach scolaire : détecteur dédié, jamais de générateur de contenu
@@ -153,6 +166,25 @@ async function streamChatWithWorkspace(
       ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
     }
     intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions, userLang) : "";
+
+    // Pour intent "exercice" + thread avec objectifs en DB : on injecte la liste
+    // exacte des objectifs en suffixe du prompt. Le LLM ajoute `objective: <titre>`
+    // dans son bloc. Le serveur résout via embedding cosine côté user_exercises.
+    if (intent === "exercice" && thread?.id) {
+      try {
+        const prisma = require("../prisma");
+        const objs = await prisma.thread_objectives.findMany({
+          where: { threadId: thread.id },
+          orderBy: { orderIndex: "asc" },
+          select: { title: true },
+        });
+        if (objs.length > 0) {
+          const list = objs.map((o, i) => `${i + 1}. ${o.title}`).join("\n");
+          const heading = userLang === "en" ? "## Available objectives for this thread" : "## Objectifs disponibles pour ce thread";
+          intentPrefix += `\n\n${heading}\n${list}\n`;
+        }
+      } catch (_) {}
+    }
   }
 
   // Intent H5P : 3 sous-formats selon intentOptions.format
@@ -571,11 +603,26 @@ async function streamChatWithWorkspace(
   // Compress & Assemble message to ensure prompt passes token limit with room for response
   // and build system messages based on inputs and history.
   const baseSystemPrompt = await chatPrompt(workspace, user);
+  // Intents `planning` / `quoi_faire` : on remplace le bloc planning standard
+  // par un bloc enrichi (slots scope-aware + threads assignés + objectifs).
+  const isScheduleIntent = intent === "planning" || intent === "quoi_faire";
+  const userActionContextBlock = isScheduleIntent
+    ? await buildUserActionContext(user, intentOptions?.scope || "today")
+    : null;
+  const scheduleContextBlock = isScheduleIntent
+    ? null
+    : buildScheduleContextBlock(user);
+  const composedSystemPrompt = (() => {
+    let prompt = baseSystemPrompt;
+    if (isCoachWorkspace) prompt = `${prompt}\n\n${coachContextBlock}`;
+    else if (phonoContextBlock) prompt = `${prompt}\n\n${phonoContextBlock}`;
+    if (scheduleContextBlock) prompt = `${prompt}\n\n${scheduleContextBlock}`;
+    if (userActionContextBlock) prompt = `${prompt}\n\n${userActionContextBlock}`;
+    return prompt;
+  })();
   const messages = await LLMConnector.compressMessages(
     {
-      systemPrompt: isCoachWorkspace
-        ? `${baseSystemPrompt}\n\n${coachContextBlock}`
-        : baseSystemPrompt,
+      systemPrompt: composedSystemPrompt,
       userPrompt: updatedMessage + intentPrefix,
       contextTexts,
       chatHistory,

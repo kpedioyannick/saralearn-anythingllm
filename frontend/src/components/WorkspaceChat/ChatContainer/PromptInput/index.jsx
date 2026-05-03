@@ -5,6 +5,7 @@ import StopGenerationButton from "./StopGenerationButton";
 import SpeechToText from "./SpeechToText";
 import { Tooltip } from "react-tooltip";
 import AttachmentManager from "./Attachments";
+import ObjectiveProgress from "./ObjectiveProgress";
 import AttachItem from "./AttachItem";
 import {
   ATTACHMENTS_PROCESSED_EVENT,
@@ -345,6 +346,10 @@ export default function PromptInput({
               centered={centered}
               highlightedIndexRef={toolsHighlightRef}
             />
+            <ObjectiveProgress
+              activeThread={activeThread}
+              sendCommand={sendCommand}
+            />
             <div className="bg-zinc-800 light:bg-white light:border light:border-slate-300 rounded-[20px] pwa:rounded-3xl flex flex-col px-5 overflow-hidden">
               <AttachmentManager attachments={attachments} />
               <div className="flex items-center">
@@ -382,7 +387,9 @@ export default function PromptInput({
                       sendCommand={sendCommand}
                       promptInput={promptInput}
                       textareaRef={textareaRef}
-                      visible={isAdmin && !agentSessionActive && showAgentCommand}
+                      visible={
+                        isAdmin && !agentSessionActive && showAgentCommand
+                      }
                     />
                   </div>
                   {isAdmin && (
