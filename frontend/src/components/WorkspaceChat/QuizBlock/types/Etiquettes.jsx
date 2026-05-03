@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import MultiSlot from "../MultiSlot";
+import Hint from "../Hint";
+import Feedback from "../Feedback";
 
 function shuffle(arr) {
   const a = [...arr];
@@ -10,7 +13,17 @@ function shuffle(arr) {
   return a;
 }
 
-export default function Etiquettes({ segments, blanks, labels, onAnswer, answered }) {
+export default function Etiquettes({
+  segments,
+  blanks,
+  labels,
+  hint,
+  feedback_ok,
+  feedback_ko,
+  onAnswer,
+  answered,
+  lang,
+}) {
   const { t } = useTranslation();
   const pool = useMemo(() => shuffle(labels.length ? labels : blanks), []);
   const [placed, setPlaced] = useState(Array(blanks.length).fill(null));
@@ -22,9 +35,17 @@ export default function Etiquettes({ segments, blanks, labels, onAnswer, answere
     if (answered !== undefined) return;
     if (placed[i]) {
       setSelected(placed[i]);
-      setPlaced((p) => { const n = [...p]; n[i] = null; return n; });
+      setPlaced((p) => {
+        const n = [...p];
+        n[i] = null;
+        return n;
+      });
     } else if (selected) {
-      setPlaced((p) => { const n = [...p]; n[i] = selected; return n; });
+      setPlaced((p) => {
+        const n = [...p];
+        n[i] = selected;
+        return n;
+      });
       setSelected(null);
       const next = [...placed];
       next[i] = selected;
@@ -40,13 +61,17 @@ export default function Etiquettes({ segments, blanks, labels, onAnswer, answere
     setSelected((s) => (s === label ? null : label));
   };
 
+  const isCorrect = answered === true;
+
   return (
     <div className="mb-5 p-4 rounded-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{t("sara.quiz.place_labels")}</p>
-      <p className="text-gray-800 dark:text-gray-100 text-sm leading-9 flex flex-wrap items-center gap-1 mb-4">
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+        {t("sara.quiz.place_labels")}
+      </p>
+      <div className="text-gray-800 dark:text-gray-100 text-sm leading-9 flex flex-wrap items-center gap-1 mb-4">
         {segments.map((seg, i) => (
           <React.Fragment key={i}>
-            <span>{seg}</span>
+            <MultiSlot value={seg} lang={lang} />
             {i < blanks.length && (
               <span
                 onClick={() => clickBlank(i)}
@@ -60,12 +85,16 @@ export default function Etiquettes({ segments, blanks, labels, onAnswer, answere
                     : "border-gray-300 dark:border-gray-500 text-gray-400 hover:border-green-400"
                 }`}
               >
-                {placed[i] || "..."}
+                {placed[i] ? (
+                  <MultiSlot value={placed[i]} lang={lang} />
+                ) : (
+                  "..."
+                )}
               </span>
             )}
           </React.Fragment>
         ))}
-      </p>
+      </div>
       <div className="flex flex-wrap gap-2">
         {pool.map((label) => {
           const isUsed = usedLabels.includes(label);
@@ -78,15 +107,24 @@ export default function Etiquettes({ segments, blanks, labels, onAnswer, answere
                 isUsed
                   ? "opacity-30 cursor-default border-gray-200 text-gray-400"
                   : isSel
-                  ? "border-green-500 bg-green-100 text-green-700"
-                  : "border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300 hover:border-green-400"
+                    ? "border-green-500 bg-green-100 text-green-700"
+                    : "border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300 hover:border-green-400"
               }`}
             >
-              {label}
+              <MultiSlot value={label} lang={lang} />
             </span>
           );
         })}
       </div>
+      {answered === undefined && <Hint text={hint} lang={lang} />}
+      {answered !== undefined && (
+        <Feedback
+          isCorrect={isCorrect}
+          feedback_ok={feedback_ok}
+          feedback_ko={feedback_ko}
+          lang={lang}
+        />
+      )}
     </div>
   );
 }

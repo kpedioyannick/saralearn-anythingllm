@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import MultiSlot from "../MultiSlot";
 
-export default function Flashcard({ front, back, onAnswer, answered }) {
+export default function Flashcard({ front, back, onAnswer, answered, lang }) {
   const { t } = useTranslation();
   const [flipped, setFlipped] = useState(false);
 
@@ -12,23 +13,34 @@ export default function Flashcard({ front, back, onAnswer, answered }) {
         style={{ backgroundColor: flipped ? "#f0fdf4" : "#f9fafb" }}
         onClick={() => setFlipped((f) => !f)}
       >
-        <p className="text-gray-800 dark:text-gray-100 font-medium text-base">
-          {flipped ? back : front}
-        </p>
+        <div className="text-gray-800 dark:text-gray-100 font-medium text-base">
+          <MultiSlot value={flipped ? back : front} lang={lang} />
+        </div>
       </div>
-      <p className="text-xs text-gray-400 text-center mt-2">{t("sara.quiz.click_to_flip")}</p>
+      <p className="text-xs text-gray-400 text-center mt-2">
+        {t("sara.quiz.click_to_flip")}
+      </p>
       {answered === undefined && flipped && (
         <div className="flex gap-3 mt-3">
-          <button onClick={() => onAnswer(false)} className="flex-1 py-1.5 rounded-lg text-sm font-semibold border border-red-300 text-red-600 hover:bg-red-50">
+          <button
+            onClick={() => onAnswer(false)}
+            className="flex-1 py-1.5 rounded-lg text-sm font-semibold border border-red-300 text-red-600 hover:bg-red-50"
+          >
             {t("sara.quiz.to_review")}
           </button>
-          <button onClick={() => onAnswer(true)} className="flex-1 py-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "#118c44" }}>
+          <button
+            onClick={() => onAnswer(true)}
+            className="flex-1 py-1.5 rounded-lg text-sm font-semibold text-white"
+            style={{ backgroundColor: "#118c44" }}
+          >
             {t("sara.quiz.i_knew")}
           </button>
         </div>
       )}
       {answered !== undefined && (
-        <p className={`mt-2 text-sm font-medium text-center ${answered ? "text-green-600" : "text-orange-500"}`}>
+        <p
+          className={`mt-2 text-sm font-medium text-center ${answered ? "text-green-600" : "text-orange-500"}`}
+        >
           {answered ? t("sara.quiz.well_done") : t("sara.quiz.keep_revising")}
         </p>
       )}

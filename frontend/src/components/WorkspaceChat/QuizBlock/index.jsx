@@ -16,22 +16,68 @@ import Etiquettes from "./types/Etiquettes";
 import { API_BASE } from "@/utils/constants";
 import { getDeviceId } from "@/utils/deviceId";
 import useUser from "@/hooks/useUser";
+import { safeJsonParse } from "@/utils/request";
 
 const COMPONENTS = {
-  QCM, VF, QR, Flashcard, QRC, Trous, TrousRC, Ordre, Association, Correspondance, Etiquettes,
+  QCM,
+  VF,
+  QR,
+  Flashcard,
+  QRC,
+  Trous,
+  TrousRC,
+  Ordre,
+  Association,
+  Correspondance,
+  Etiquettes,
 };
 
-const SCORABLE = ["QCM", "VF", "QRC", "Trous", "TrousRC", "Ordre", "Association", "Correspondance", "Etiquettes"];
+const SCORABLE = [
+  "QCM",
+  "VF",
+  "QRC",
+  "Trous",
+  "TrousRC",
+  "Ordre",
+  "Association",
+  "Correspondance",
+  "Etiquettes",
+];
 
-export default function QuizBlock({ content, workspace = null, activeThread = null }) {
+const LANG_TO_BCP47 = {
+  fr: "fr-FR",
+  en: "en-US",
+  es: "es-ES",
+  de: "de-DE",
+  it: "it-IT",
+  pt: "pt-PT",
+};
+
+export default function QuizBlock({
+  content,
+  workspace = null,
+  activeThread = null,
+}) {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { questions, competence } = parseQuiz(content);
+  const { questions, competence, objective } = parseQuiz(content);
   const [answers, setAnswers] = useState({});
+
+  const userLang = (() => {
+    try {
+      const settings = safeJsonParse(user?.userSettings, {});
+      const raw = (settings?.lang || "fr").toString().toLowerCase();
+      if (raw.includes("-")) return raw;
+      return LANG_TO_BCP47[raw] || "fr-FR";
+    } catch {
+      return "fr-FR";
+    }
+  })();
 
   const total = questions.filter((q) => SCORABLE.includes(q.type)).length;
   const correct = Object.entries(answers).filter(([, v]) => v === true).length;
-  const done = questions.length > 0 && Object.keys(answers).length === questions.length;
+  const done =
+    questions.length > 0 && Object.keys(answers).length === questions.length;
 
   const handleAnswer = (index, isCorrect) => {
     setAnswers((prev) => {
@@ -47,14 +93,25 @@ export default function QuizBlock({ content, workspace = null, activeThread = nu
             threadId: activeThread?.id ?? 0,
             competence: competence || activeThread?.name || "",
             subchapter: activeThread?.name ?? "",
-            statement: questions[index]?.question || questions[index]?.front || `Q${index + 1}`,
+            statement:
+              questions[index]?.question ||
+              questions[index]?.front ||
+              `Q${index + 1}`,
             response: isCorrect ? "correct" : "incorrect",
             questionType: (questions[index]?.type || "qcm").toLowerCase(),
             isCorrect,
             total: 1,
             correct: isCorrect ? 1 : 0,
+            // Si Sara a annoté `objective: <titre>` dans le bloc, on transmet :
+            // le serveur l'utilisera directement (sinon embedding sur le statement).
+            objectiveTitle: objective || null,
           }),
-        }).catch(() => {});
+        })
+          .then(() => {
+            // Notifie ObjectiveProgress de re-fetch la progression
+            window.dispatchEvent(new CustomEvent("sara:exerciseSaved"));
+          })
+          .catch(() => {});
       }
       return next;
     });
@@ -65,7 +122,9 @@ export default function QuizBlock({ content, workspace = null, activeThread = nu
   return (
     <div className="my-4 ml-2 md:ml-4 rounded-2xl overflow-hidden border border-emerald-700/40 bg-zinc-900/60 dark:bg-gray-900 p-4">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{t("sara.quiz.header")}</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+          {t("sara.quiz.header")}
+        </p>
         {competence && (
           <span className="text-xs font-medium text-emerald-400 bg-emerald-900/30 px-2 py-0.5 rounded-full border border-emerald-700/40">
             {competence}
@@ -79,6 +138,7 @@ export default function QuizBlock({ content, workspace = null, activeThread = nu
           <Comp
             key={i}
             {...q}
+            lang={userLang}
             onAnswer={(isCorrect) => handleAnswer(i, isCorrect)}
             answered={answers[i]}
           />
