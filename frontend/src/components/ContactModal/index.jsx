@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { CheckCircle, X } from "@phosphor-icons/react";
 import { API_BASE } from "@/utils/constants";
 
+const SHEET_ANIM_MS = 280;
+
 export default function ContactModal({ onClose }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState(null); // null | "sending" | "ok" | "error"
+  const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const requestClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => onClose?.(), SHEET_ANIM_MS);
+  }, [onClose]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") requestClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [requestClose]);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -31,18 +53,24 @@ export default function ContactModal({ onClose }) {
     "transition-[border-color,box-shadow] sm:px-4 sm:py-3 " +
     "light:border-zinc-200 light:bg-white light:text-zinc-900 light:placeholder:text-zinc-400 light:focus:border-emerald-500/60";
 
+  const visible = entered && !closing;
+
   const modal = (
     <div
-      className="fixed inset-0 z-[9999] flex items-end justify-center p-0 sm:items-center sm:p-4"
-      onClick={onClose}
+      className="fixed inset-0 z-[9999]"
+      onClick={requestClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="contact-modal-title"
     >
-      <div className="absolute inset-0 bg-zinc-950/70 backdrop-blur-[3px] sm:backdrop-blur-sm" />
       <div
-        className="relative z-10 m-0 flex w-full max-w-md flex-col overflow-hidden border-zinc-600/40 bg-zinc-900/98 sm:m-0 sm:max-h-[min(92dvh,36rem)] sm:rounded-2xl sm:border sm:shadow-2xl sm:shadow-black/50 sm:ring-1 sm:ring-inset sm:ring-white/5 light:bg-white light:shadow-zinc-900/10 max-sm:max-h-[min(90dvh,32rem)] max-sm:rounded-t-3xl max-sm:border-x max-sm:border-t max-sm:border-b-0"
+        className={`absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px] transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+      />
+      <div
+        className={`absolute right-0 top-0 z-10 flex h-full w-[90%] max-w-[560px] flex-col overflow-hidden border-l border-zinc-600/40 bg-zinc-900/98 shadow-2xl shadow-black/50 ring-1 ring-inset ring-white/5 transform transition-transform duration-300 ease-out light:bg-white light:shadow-zinc-900/10 ${visible ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="shrink-0 border-b border-zinc-600/30 bg-zinc-800/30 px-4 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5 light:border-zinc-200/80 light:bg-zinc-50/80">
-          <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-zinc-500/50 sm:hidden light:bg-zinc-300" aria-hidden />
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h2
@@ -57,7 +85,7 @@ export default function ContactModal({ onClose }) {
             </div>
             <button
               type="button"
-              onClick={onClose}
+              onClick={requestClose}
               className="shrink-0 rounded-xl p-2 text-zinc-400 transition hover:bg-zinc-700/50 hover:text-zinc-200 light:hover:bg-zinc-200/80 light:text-zinc-500"
               aria-label="Fermer"
             >
@@ -74,7 +102,7 @@ export default function ContactModal({ onClose }) {
             <p className="text-base font-semibold text-zinc-50 light:text-zinc-900">Message envoyé !</p>
             <p className="max-w-[18rem] text-sm text-zinc-400 light:text-zinc-600">Nous te répondrons dès que possible.</p>
             <button
-              onClick={onClose}
+              onClick={requestClose}
               type="button"
               className="mt-4 w-full max-w-xs rounded-xl bg-[#118c44] py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-[#0d7438] sm:mt-2"
             >

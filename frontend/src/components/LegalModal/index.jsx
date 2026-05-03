@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import {
   X,
@@ -9,6 +9,8 @@ import {
   Baby,
   ArrowSquareOut,
 } from "@phosphor-icons/react";
+
+const SHEET_ANIM_MS = 280;
 
 const DOCS = [
   {
@@ -51,6 +53,27 @@ function isInCapacitorApp() {
 }
 
 export default function LegalModal({ onClose }) {
+  const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const requestClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => onClose?.(), SHEET_ANIM_MS);
+  }, [onClose]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") requestClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [requestClose]);
+
   const handleDocClick = (e, href) => {
     if (isInCapacitorApp()) {
       e.preventDefault();
@@ -58,24 +81,24 @@ export default function LegalModal({ onClose }) {
     }
   };
 
+  const visible = entered && !closing;
+
   const modal = (
     <div
-      className="fixed inset-0 z-[9999] flex items-end justify-center p-0 sm:items-center sm:p-4"
-      onClick={onClose}
+      className="fixed inset-0 z-[9999]"
+      onClick={requestClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="legal-modal-title"
     >
-      <div className="absolute inset-0 bg-zinc-950/70 backdrop-blur-[3px] sm:backdrop-blur-sm" />
       <div
-        className="relative z-10 m-0 flex w-full max-w-md flex-col overflow-hidden border-zinc-600/40 bg-zinc-900/98 sm:m-0 sm:max-h-[min(92dvh,40rem)] sm:rounded-2xl sm:border sm:shadow-2xl sm:shadow-black/50 sm:ring-1 sm:ring-inset sm:ring-white/5 light:bg-white light:shadow-zinc-900/10 max-sm:max-h-[min(90dvh,36rem)] max-sm:rounded-t-3xl max-sm:border-x max-sm:border-t max-sm:border-b-0"
+        className={`absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px] transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+      />
+      <div
+        className={`absolute right-0 top-0 z-10 flex h-full w-[90%] max-w-[560px] flex-col overflow-hidden border-l border-zinc-600/40 bg-zinc-900/98 shadow-2xl shadow-black/50 ring-1 ring-inset ring-white/5 transform transition-transform duration-300 ease-out light:bg-white light:shadow-zinc-900/10 ${visible ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="shrink-0 border-b border-zinc-600/30 bg-zinc-800/30 px-4 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5 light:border-zinc-200/80 light:bg-zinc-50/80">
-          <div
-            className="mx-auto mb-1 h-1 w-10 rounded-full bg-zinc-500/50 sm:hidden light:bg-zinc-300"
-            aria-hidden
-          />
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h2
@@ -90,7 +113,7 @@ export default function LegalModal({ onClose }) {
             </div>
             <button
               type="button"
-              onClick={onClose}
+              onClick={requestClose}
               aria-label="Fermer"
               className="rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-zinc-700/40 hover:text-zinc-100 light:text-zinc-500 light:hover:bg-zinc-200/60 light:hover:text-zinc-900"
             >
@@ -99,7 +122,7 @@ export default function LegalModal({ onClose }) {
           </div>
         </div>
 
-        <ul className="flex flex-col gap-1 overflow-y-auto p-3 sm:p-4">
+        <ul className="flex flex-1 flex-col gap-1 overflow-y-auto p-3 sm:p-4">
           {DOCS.map(({ href, title, desc, Icon }) => (
             <li key={href}>
               <a
