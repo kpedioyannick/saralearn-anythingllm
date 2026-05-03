@@ -67,16 +67,19 @@ export default function ObjectiveProgress({ activeThread, sendCommand }) {
 
   const handleObjectiveClick = (obj) => {
     if (!sendCommand) return;
-    sendCommand(`Donne-moi un exercice sur l'objectif : ${obj.title}`, true);
+    sendCommand({
+      text: `Donne-moi un exercice sur l'objectif : ${obj.title}`,
+      autoSubmit: true,
+    });
     setOpen(false);
   };
 
   const handleShowProgressInChat = () => {
     if (!sendCommand) return;
-    sendCommand(
-      "Quels sont les objectifs de ce chapitre et où j'en suis ?",
-      true
-    );
+    sendCommand({
+      text: "Quels sont les objectifs de ce chapitre et où j'en suis ?",
+      autoSubmit: true,
+    });
     setOpen(false);
   };
 
