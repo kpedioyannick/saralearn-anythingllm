@@ -9,4 +9,17 @@ v-env
 aws_cf_deploy_anything_llm.json
 yarn.lock
 *.bak
+*.bak.*
 .idea
+
+# Claude Code project cache (local memory + transcripts, sans intérêt en git)
+.claude/
+
+# Backups de la DB SQLite Sara (gros fichiers, contenu dynamique)
+server/storage/anythingllm.db.bak.*
+
+# Backups vector cache (lourds, regénérables)
+server/storage/vector-cache.bak.*
+
+# Fichiers temporaires de test
+test.tx.save
