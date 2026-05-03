@@ -120,13 +120,13 @@ export default function QuizBlock({
   if (!questions.length) return null;
 
   return (
-    <div className="my-4 ml-2 md:ml-4 rounded-2xl overflow-hidden border border-emerald-700/40 bg-zinc-900/60 dark:bg-gray-900 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+    <div className="my-3 rounded-xl border border-emerald-700/20 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.03] light:bg-emerald-50/40 px-2.5 py-2 md:px-3 md:py-2.5">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 light:text-slate-500">
           {t("sara.quiz.header")}
         </p>
         {competence && (
-          <span className="text-xs font-medium text-emerald-400 bg-emerald-900/30 px-2 py-0.5 rounded-full border border-emerald-700/40">
+          <span className="text-[10px] font-medium text-emerald-400 light:text-emerald-700 bg-emerald-900/20 light:bg-emerald-100/70 px-2 py-0.5 rounded-full border border-emerald-700/30 light:border-emerald-300">
             {competence}
           </span>
         )}

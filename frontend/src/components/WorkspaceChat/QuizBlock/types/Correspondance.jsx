@@ -13,7 +13,7 @@ export default function Correspondance({
   lang,
 }) {
   return (
-    <div className="mb-5">
+    <div className="mb-2.5 last:mb-0">
       {title && (
         <div className="font-semibold mb-2 text-gray-800 dark:text-gray-100">
           <MultiSlot value={title} lang={lang} />

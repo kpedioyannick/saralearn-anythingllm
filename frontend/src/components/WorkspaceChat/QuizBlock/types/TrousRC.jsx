@@ -36,7 +36,7 @@ export default function TrousRC({
   const isCorrect = answered === true;
 
   return (
-    <div className="mb-5 p-4 rounded-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+    <div className="mb-2.5 last:mb-0 p-3 rounded-lg border border-gray-200/60 bg-white/50 dark:bg-white/[0.025] dark:border-white/10">
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
         Complète le texte :
       </p>

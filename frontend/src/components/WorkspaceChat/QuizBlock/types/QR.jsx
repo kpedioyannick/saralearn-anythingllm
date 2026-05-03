@@ -22,7 +22,7 @@ export default function QR({
   };
 
   return (
-    <div className="mb-5 p-4 rounded-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+    <div className="mb-2.5 last:mb-0 p-3 rounded-lg border border-gray-200/60 bg-white/50 dark:bg-white/[0.025] dark:border-white/10">
       <div className="font-semibold mb-3 text-gray-800 dark:text-gray-100">
         <MultiSlot value={question} lang={lang} />
       </div>
