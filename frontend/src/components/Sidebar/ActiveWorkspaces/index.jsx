@@ -127,11 +127,11 @@ export default function ActiveWorkspaces() {
                           className={`
                             transition-colors duration-[200ms]
                             flex flex-grow w-full gap-x-2 py-[8px] pl-[6px] pr-[8px] rounded-[8px] text-white justify-start items-start
-                            border border-transparent bg-theme-sidebar-item-default
+                            border-l-2 border-y border-r border-y-transparent border-r-transparent bg-theme-sidebar-item-default
                             ${
                               isActive
-                                ? "bg-[rgba(17,140,68,0.28)] light:bg-[rgba(17,140,68,0.16)] border-[rgba(74,222,128,0.45)] light:border-[rgba(17,140,68,0.35)]"
-                                : "hover:bg-[rgba(17,140,68,0.14)] light:hover:bg-[rgba(17,140,68,0.1)]"
+                                ? "bg-zinc-800/70 light:bg-slate-100 border-l-emerald-500 light:border-l-emerald-600"
+                                : "border-l-transparent hover:bg-zinc-800/40 light:hover:bg-slate-100/60"
                             }
                           `}
                         >
@@ -142,7 +142,7 @@ export default function ActiveWorkspaces() {
                             >
                               <DotsSixVertical
                                 size={20}
-                                className={`${isActive ? "text-emerald-200 light:text-emerald-800" : "text-zinc-300 light:text-slate-500"}`}
+                                className={`${isActive ? "text-white light:text-slate-800" : "text-zinc-400 light:text-slate-500"}`}
                                 weight="bold"
                               />
                             </div>
@@ -150,7 +150,7 @@ export default function ActiveWorkspaces() {
                               <p
                                 className={`
                                   text-[14px] leading-[1.4] break-words whitespace-normal
-                                  ${isActive ? "font-bold text-emerald-100 light:text-emerald-900" : "font-medium text-white light:text-theme-text-primary"}
+                                  ${isActive ? "font-bold text-white light:text-slate-900" : "font-medium text-zinc-300 light:text-theme-text-primary"}
                                   w-full
                                 `}
                               >
@@ -166,10 +166,10 @@ export default function ActiveWorkspaces() {
                                     setSelectedWs(workspace);
                                     showModal();
                                   }}
-                                  className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-emerald-700/40 light:hover:bg-emerald-700/20" : "hover:bg-emerald-700/30 light:hover:bg-emerald-700/20"}`}
+                                  className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] hover:bg-zinc-700/50 light:hover:bg-slate-200`}
                                 >
                                   <UploadSimple
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-emerald-200 hover:text-white light:text-emerald-800 light:group-hover/upload:text-emerald-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/upload:text-emerald-900"}`}
+                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-100 hover:text-white light:text-slate-700 light:group-hover/upload:text-slate-900" : "text-zinc-400 hover:text-white light:text-slate-500 light:group-hover/upload:text-slate-700"}`}
                                   />
                                 </button>
                                 <button
@@ -184,7 +184,7 @@ export default function ActiveWorkspaces() {
                                           )
                                     );
                                   }}
-                                  className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-emerald-700/40 light:hover:bg-emerald-700/20" : "hover:bg-emerald-700/30 light:hover:bg-emerald-700/20"}`}
+                                  className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] hover:bg-zinc-700/50 light:hover:bg-slate-200`}
                                   aria-label="General appearance settings"
                                 >
                                   <GearSix
@@ -194,7 +194,7 @@ export default function ActiveWorkspaces() {
                                         ? "#22C55E"
                                         : undefined
                                     }
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-emerald-200 hover:text-white light:text-emerald-800 light:group-hover/gear:text-emerald-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/gear:text-emerald-900"}`}
+                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-100 hover:text-white light:text-slate-700 light:group-hover/gear:text-slate-900" : "text-zinc-400 hover:text-white light:text-slate-500 light:group-hover/gear:text-slate-700"}`}
                                   />
                                 </button>
                               </div>

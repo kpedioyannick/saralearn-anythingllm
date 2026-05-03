@@ -150,7 +150,7 @@ export function SidebarMobileHeader() {
     <>
       <div
         aria-label="Show sidebar"
-        className="fixed top-0 left-0 right-0 z-[120] flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar/95 light:bg-white/95 backdrop-blur-md border-b border-emerald-500/30 light:border-emerald-700/20 text-slate-200 shadow-lg h-16"
+        className="fixed top-0 left-0 right-0 z-[120] flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar/95 light:bg-white/95 backdrop-blur-md border-b border-zinc-700/60 light:border-slate-200 text-slate-200 shadow-sm h-16"
       >
         <button
           onClick={() => setShowSidebar((prev) => !prev)}

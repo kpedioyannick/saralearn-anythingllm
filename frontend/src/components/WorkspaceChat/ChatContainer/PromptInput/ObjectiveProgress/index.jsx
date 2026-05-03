@@ -86,15 +86,15 @@ export default function ObjectiveProgress({ activeThread, sendCommand }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800/60 hover:bg-zinc-800 light:bg-slate-100 light:hover:bg-slate-200 transition-colors text-xs"
+        className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800/40 hover:bg-zinc-800/70 light:bg-slate-100/70 light:hover:bg-slate-200 transition-colors text-xs"
         title="Cliquer pour voir le détail des objectifs"
       >
-        <Target size={14} className="text-emerald-400" weight="fill" />
+        <Target size={14} className="text-zinc-400 light:text-slate-500" weight="fill" />
         <span className="font-semibold text-white light:text-slate-700">
           {validated}/{total} objectifs
         </span>
-        <span className="text-emerald-400 font-medium">{globalPct}%</span>
-        <div className="flex-1 h-1.5 rounded-full bg-zinc-700 light:bg-slate-300 overflow-hidden">
+        <span className="text-zinc-400 light:text-slate-500 font-medium">{globalPct}%</span>
+        <div className="flex-1 h-1.5 rounded-full bg-zinc-700/50 light:bg-slate-300 overflow-hidden">
           <div
             className="h-full bg-emerald-500 transition-all"
             style={{ width: `${globalPct}%` }}
@@ -122,7 +122,7 @@ export default function ObjectiveProgress({ activeThread, sendCommand }) {
             <button
               type="button"
               onClick={handleShowProgressInChat}
-              className="text-xs text-emerald-400 hover:text-emerald-300 hover:underline"
+              className="text-xs text-zinc-400 hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-700 hover:underline"
             >
               Voir détail dans le chat →
             </button>
@@ -151,7 +151,7 @@ export default function ObjectiveProgress({ activeThread, sendCommand }) {
                   <span className="text-base">
                     {STATUS_ICON[status] || "⚪"}
                   </span>
-                  <span className="flex-1 text-xs text-white light:text-slate-700 truncate group-hover:text-emerald-400">
+                  <span className="flex-1 text-xs text-white light:text-slate-700 truncate group-hover:text-zinc-100 light:group-hover:text-slate-900">
                     {o.title}
                   </span>
                   <div className="flex items-center gap-1.5 shrink-0">
