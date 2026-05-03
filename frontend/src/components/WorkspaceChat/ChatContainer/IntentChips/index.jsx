@@ -32,12 +32,43 @@ function buildText(template, threadTitle) {
   return template.endsWith(" ") && threadTitle ? template + threadTitle : template;
 }
 
-const CHIP_BTN_CLASS =
-  "text-xs md:text-sm px-3 py-1.5 rounded-full border border-zinc-700/60 hover:border-zinc-600 text-zinc-400 hover:text-white hover:bg-zinc-700/60 light:border-slate-300 light:hover:border-slate-400 light:text-slate-500 light:hover:text-slate-900 light:hover:bg-slate-200 transition-all duration-150 whitespace-nowrap";
+/** Bordure + hover par type de puce (dark / light). */
+const INTENT_CHIP_BORDER = {
+  exercice:
+    "border-amber-500/55 hover:border-amber-400 light:border-amber-500/50 light:hover:border-amber-600",
+  fiche:
+    "border-sky-500/55 hover:border-sky-400 light:border-sky-500/50 light:hover:border-sky-600",
+  carte_mentale:
+    "border-violet-500/55 hover:border-violet-400 light:border-violet-500/50 light:hover:border-violet-600",
+  cours:
+    "border-emerald-500/55 hover:border-emerald-400 light:border-emerald-600/45 light:hover:border-emerald-700",
+  video:
+    "border-rose-500/55 hover:border-rose-400 light:border-rose-500/50 light:hover:border-rose-600",
+  explication:
+    "border-yellow-500/55 hover:border-yellow-400 light:border-amber-600/45 light:hover:border-amber-700",
+  exemple:
+    "border-cyan-500/55 hover:border-cyan-400 light:border-cyan-500/50 light:hover:border-cyan-600",
+  dictee:
+    "border-fuchsia-500/55 hover:border-fuchsia-400 light:border-fuchsia-500/50 light:hover:border-fuchsia-600",
+  brevet:
+    "border-orange-500/55 hover:border-orange-400 light:border-orange-500/50 light:hover:border-orange-600",
+};
+
+const CHIP_BTN_BASE =
+  "text-xs md:text-sm px-3 py-1.5 rounded-full border bg-zinc-800/95 hover:bg-zinc-700 text-zinc-200 hover:text-white light:bg-white light:text-slate-700 light:hover:bg-slate-50 light:hover:text-slate-900 shadow-sm transition-all duration-150 whitespace-nowrap";
+
+const CHIP_BTN_FALLBACK_BORDER =
+  "border-zinc-700/60 hover:border-zinc-600 light:border-slate-300 light:hover:border-slate-400";
 
 function ChipButton({ chip, label, onClick }) {
+  const borderClass =
+    INTENT_CHIP_BORDER[chip.id] ?? CHIP_BTN_FALLBACK_BORDER;
   return (
-    <button type="button" onClick={onClick} className={CHIP_BTN_CLASS}>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${CHIP_BTN_BASE} ${borderClass}`}
+    >
       {chip.icon} {label}
     </button>
   );
@@ -164,7 +195,7 @@ export function ActivitiesButton({
               maxHeight: coords.maxHeight,
               width: "min(80vw, 360px)",
             }}
-            className="z-[60] bg-zinc-900 light:bg-white border border-emerald-500/30 rounded-xl shadow-xl p-3 overflow-y-auto"
+            className="z-[60] bg-zinc-900 light:bg-white border border-zinc-700/50 light:border-slate-200 rounded-xl shadow-xl p-3 overflow-y-auto"
           >
             <div className="flex flex-wrap gap-2">
               {visible.map((c) => {
@@ -202,6 +233,9 @@ const FOLLOWUP_CHIPS = [
   { id: "explication", icon: "💡" },
 ];
 
+const FOLLOWUP_CHIP_BASE =
+  "text-[11px] px-2 py-1 md:px-2.5 rounded-full border bg-zinc-800/95 hover:bg-zinc-700 text-zinc-200 hover:text-white light:bg-white light:text-slate-700 light:hover:bg-slate-50 light:hover:text-slate-900 shadow-sm transition-all duration-150 whitespace-nowrap";
+
 export function FollowUpChips({ sendCommand }) {
   const { t } = useTranslation();
   return (
@@ -217,7 +251,9 @@ export function FollowUpChips({ sendCommand }) {
               onClick={() => sendCommand({ text, autoSubmit: true })}
               title={label}
               aria-label={label}
-              className="text-[11px] px-2 py-1 md:px-2.5 rounded-full border border-zinc-700/60 hover:border-zinc-600 text-zinc-400 hover:text-white hover:bg-zinc-700/60 light:border-slate-300 light:hover:border-slate-400 light:text-slate-500 light:hover:text-slate-900 light:hover:bg-slate-200 transition-all duration-150 whitespace-nowrap"
+              className={`${FOLLOWUP_CHIP_BASE} ${
+                INTENT_CHIP_BORDER[c.id] ?? CHIP_BTN_FALLBACK_BORDER
+              }`}
             >
               <span>{c.icon}</span>
               <span className="hidden md:inline ml-1">{label}</span>
@@ -256,7 +292,9 @@ export function ActivitiesChipStrip({
                 sendCommand({ text, autoSubmit: false });
                 textareaRef?.current?.focus();
               }}
-              className="text-[11px] md:text-xs px-2.5 py-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 light:text-emerald-700 transition-colors whitespace-nowrap"
+              className={`text-[11px] md:text-xs px-2.5 py-1 rounded-full border bg-zinc-800/95 hover:bg-zinc-700 text-zinc-200 hover:text-white light:bg-white light:text-slate-700 light:hover:bg-slate-50 shadow-sm transition-colors whitespace-nowrap ${
+                INTENT_CHIP_BORDER[c.id] ?? CHIP_BTN_FALLBACK_BORDER
+              }`}
             >
               {c.icon} {t(`sara.intent_chips.${c.id}.label`)}
             </button>

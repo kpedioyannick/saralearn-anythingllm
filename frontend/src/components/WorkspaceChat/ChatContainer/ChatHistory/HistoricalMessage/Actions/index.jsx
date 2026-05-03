@@ -127,8 +127,8 @@ function CopyMessage({ message }) {
           data-tooltip-content={t("chat_window.copy")}
           className={`h-7 w-7 rounded-md border border-transparent flex items-center justify-center transition-colors ${
             copied
-              ? "text-emerald-100 bg-emerald-700/35 border-emerald-500/40 light:text-emerald-900 light:bg-emerald-300/40"
-              : "text-zinc-300 light:text-slate-500 hover:text-emerald-200 hover:bg-emerald-700/20 light:hover:text-emerald-900 light:hover:bg-emerald-200/50"
+              ? "text-slate-100 bg-slate-600/45 border-slate-400/40 light:text-slate-900 light:bg-slate-200 light:border-slate-300"
+              : "text-zinc-300 light:text-slate-500 hover:text-slate-200 hover:bg-slate-700/35 light:hover:text-slate-900 light:hover:bg-slate-200"
           }`}
           aria-label={t("chat_window.copy")}
         >
@@ -152,7 +152,7 @@ function RegenerateMessage({ regenerateMessage, chatId }) {
         onClick={() => regenerateMessage(chatId)}
         data-tooltip-id="regenerate-assistant-text"
         data-tooltip-content={t("chat_window.regenerate_response")}
-        className="h-7 w-7 rounded-md border border-transparent text-zinc-300 light:text-slate-500 flex items-center justify-center transition-colors hover:text-emerald-200 hover:bg-emerald-700/20 light:hover:text-emerald-900 light:hover:bg-emerald-200/50"
+        className="h-7 w-7 rounded-md border border-transparent text-zinc-300 light:text-slate-500 flex items-center justify-center transition-colors hover:text-slate-200 hover:bg-slate-700/30 light:hover:text-slate-900 light:hover:bg-slate-200"
         aria-label={t("chat_window.regenerate")}
       >
         <ArrowsClockwise size={16} weight="fill" />

@@ -130,7 +130,7 @@ export default function ActiveWorkspaces() {
                             border-l-2 border-y border-r border-y-transparent border-r-transparent bg-theme-sidebar-item-default
                             ${
                               isActive
-                                ? "bg-zinc-800/70 light:bg-slate-100 border-l-emerald-500 light:border-l-emerald-600"
+                                ? "bg-zinc-800/70 light:bg-slate-100 border-l-slate-400 light:border-l-slate-700"
                                 : "border-l-transparent hover:bg-zinc-800/40 light:hover:bg-slate-100/60"
                             }
                           `}

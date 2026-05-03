@@ -36,6 +36,16 @@ import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import IntentChips from "./IntentChips";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
 
+/** Bandeau haut : fond sous compte (UserMenu) et progression (ChatHistory). */
+function WorkspaceChatHeaderBar() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-x-0 top-0 z-[19] h-[52px] bg-zinc-900/98 light:bg-slate-50 border-b border-white/10 light:border-slate-200 shadow-sm md:rounded-t-[16px]"
+      aria-hidden
+    />
+  );
+}
+
 export default function ChatContainer({ workspace, knownHistory = [], activeThread = null }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -370,6 +380,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         {isMobile && <SidebarMobileHeader />}
         <TextSizeMenu />
         <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+        <WorkspaceChatHeaderBar />
         <DnDFileUploaderWrapper>
           <div className="flex flex-col h-full w-full items-center justify-center">
             <div className="flex flex-col items-center w-full">
@@ -423,6 +434,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         <div className="flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           {isMobile && <SidebarMobileHeader />}
           <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+          <WorkspaceChatHeaderBar />
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full pb-20 md:pb-0">
               <div className="contents">

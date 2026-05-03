@@ -229,7 +229,7 @@ export default forwardRef(function (
         label: "Acquise",
         type: "full",
         className:
-          "text-emerald-200 light:text-emerald-900 bg-emerald-700/25 light:bg-emerald-200/60 border-emerald-500/35 light:border-emerald-700/25",
+          "text-slate-200 light:text-slate-900 bg-slate-600/30 light:bg-slate-200/80 border-slate-500/35 light:border-slate-400/50",
       };
     if (pct > 0)
       return {
@@ -262,13 +262,8 @@ export default forwardRef(function (
   return (
     <MessageActionsProvider>
       <ThoughtExpansionProvider>
-        <div
-          className="hidden md:block absolute top-0 left-0 right-0 h-11 z-[25] pointer-events-none bg-white/95 border-b-2 border-emerald-500/35"
-          style={{ background: "#118c4440", padding: "30px" }}
-        />
-
         {activeThread && !showProgress && (
-          <div className="fixed md:absolute top-3 md:top-5 z-[120] md:z-30 right-[102px] md:right-[107px]">
+          <div className="fixed md:absolute top-2.5 md:top-[9px] z-[120] md:z-30 right-[102px] md:right-[107px]">
             <button
               type="button"
               onClick={fetchProgress}
@@ -287,7 +282,7 @@ export default forwardRef(function (
               onClick={() => setShowProgress(false)}
             />
             <div className="fixed md:absolute top-16 md:top-0 right-0 z-[130] h-[calc(100%-4rem)] md:h-full w-[86vw] max-w-72 bg-zinc-900/98 light:bg-white border-l border-white/10 light:border-gray-200 flex flex-col shadow-2xl">
-            <div className="flex items-start justify-between gap-2 px-4 py-3 border-b-2 border-emerald-500/30 bg-theme-action-menu-bg/85 light:bg-white">
+            <div className="flex items-start justify-between gap-2 px-4 py-3 border-b border-white/10 light:border-slate-200 bg-theme-action-menu-bg/85 light:bg-white">
               <p className="text-white light:text-gray-800 text-sm font-semibold whitespace-normal break-words leading-snug">
                 {activeThread?.name}
               </p>
@@ -310,7 +305,7 @@ export default forwardRef(function (
                             <span
                               className={`relative mt-0.5 h-3.5 w-3.5 shrink-0 rounded-[3px] border ${
                                 skillState.type === "full"
-                                  ? "bg-emerald-500 border-emerald-400"
+                                  ? "bg-slate-400 border-slate-300 light:bg-slate-600 light:border-slate-500"
                                   : skillState.type === "half"
                                     ? "border-amber-400 bg-transparent"
                                     : "border-zinc-400 bg-transparent light:border-slate-500"
@@ -325,9 +320,9 @@ export default forwardRef(function (
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 rounded-full bg-white/10 light:bg-gray-200 overflow-hidden">
+                            <div className="flex-1 h-1.5 rounded-full bg-white/10 light:bg-gray-200 overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-emerald-500"
+                              className="h-full rounded-full bg-slate-400 light:bg-slate-600"
                               style={{ width: `${Math.round(pct * 100)}%` }}
                             />
                           </div>
@@ -353,7 +348,7 @@ export default forwardRef(function (
                               setShowProgress(false);
                               sendCommand({ text: `${t("sara.progress.retry_prompt")} : ${group.competence}`, autoSubmit: true });
                             }}
-                            className="text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 light:text-emerald-700 transition-colors"
+                            className="text-[10px] px-2 py-0.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white/90 light:border-slate-300 light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-700 transition-colors"
                           >
                             🔁 {t("sara.progress.retry")}
                           </button>
@@ -369,7 +364,7 @@ export default forwardRef(function (
         )}
 
         <div
-          className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} h-full md:h-[83%] pb-[100px] pt-16 md:pt-12 md:pb-20 md:mx-0 overflow-y-scroll flex flex-col items-center justify-start ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
+          className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} h-full md:h-[83%] pb-[100px] pt-16 md:pt-14 md:pb-20 md:mx-0 overflow-y-scroll flex flex-col items-center justify-start ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
           id="chat-history"
           ref={chatHistoryRef}
           onScroll={handleScroll}
