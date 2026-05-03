@@ -30,6 +30,17 @@ const {
 const { WorkspaceChats } = require("../models/workspaceChats");
 const { convertToChatHistory } = require("../utils/helpers/chat/responses");
 const { getModelTag } = require("./utils");
+const {
+  listAssignedThreads,
+  addAssignment,
+  removeAssignment,
+} = require("../utils/users/assignedThreads");
+const {
+  getSchedule,
+  addSlot,
+  updateSlot,
+  deleteSlot,
+} = require("../utils/users/schedule");
 
 function workspaceThreadEndpoints(app) {
   if (!app) return;
@@ -221,6 +232,139 @@ function workspaceThreadEndpoints(app) {
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // List the current user's assigned threads (enriched with workspace + thread names)
+  app.get(
+    "/user/assigned-threads",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ assignedThreads: [] });
+        const assignedThreads = await listAssignedThreads(user.id);
+        response.status(200).json({ assignedThreads });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // Assign a thread to the current user (favorite/bookmark style)
+  app.post(
+    "/user/assigned-threads",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ success: false });
+        const { workspaceSlug, threadSlug } = reqBody(request);
+        if (!workspaceSlug || !threadSlug) {
+          return response
+            .status(400)
+            .json({ success: false, error: "workspaceSlug and threadSlug required" });
+        }
+        await addAssignment(user.id, workspaceSlug, threadSlug);
+        response.status(200).json({ success: true });
+      } catch (e) {
+        console.error(e.message, e);
+        response
+          .status(500)
+          .json({ success: false, error: e.message || "Internal error" });
+      }
+    }
+  );
+
+  // Remove an assignment for the current user
+  app.delete(
+    "/user/assigned-threads/:workspaceSlug/:threadSlug",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ success: false });
+        const { workspaceSlug, threadSlug } = request.params;
+        await removeAssignment(user.id, workspaceSlug, threadSlug);
+        response.status(200).json({ success: true });
+      } catch (e) {
+        console.error(e.message, e);
+        response
+          .status(500)
+          .json({ success: false, error: e.message || "Internal error" });
+      }
+    }
+  );
+
+  // ----- User schedule (révision + cours scolaires) -----
+  app.get(
+    "/user/schedule",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ slots: [] });
+        const slots = await getSchedule(user.id);
+        response.status(200).json({ slots });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/user/schedule/slots",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ success: false });
+        const slot = await addSlot(user.id, reqBody(request));
+        response.status(200).json({ success: true, slot });
+      } catch (e) {
+        console.error(e.message, e);
+        response
+          .status(400)
+          .json({ success: false, error: e.message || "Invalid slot" });
+      }
+    }
+  );
+
+  app.patch(
+    "/user/schedule/slots/:id",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ success: false });
+        const slot = await updateSlot(user.id, request.params.id, reqBody(request));
+        response.status(200).json({ success: true, slot });
+      } catch (e) {
+        console.error(e.message, e);
+        response
+          .status(400)
+          .json({ success: false, error: e.message || "Invalid update" });
+      }
+    }
+  );
+
+  app.delete(
+    "/user/schedule/slots/:id",
+    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        if (!user?.id) return response.status(401).json({ success: false });
+        const removed = await deleteSlot(user.id, request.params.id);
+        response.status(200).json({ success: removed });
+      } catch (e) {
+        console.error(e.message, e);
+        response
+          .status(500)
+          .json({ success: false, error: e.message || "Internal error" });
       }
     }
   );

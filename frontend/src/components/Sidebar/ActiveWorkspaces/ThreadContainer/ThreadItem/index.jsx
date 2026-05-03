@@ -6,12 +6,14 @@ import {
   ArrowCounterClockwise,
   DotsThree,
   PencilSimple,
+  Star,
   Trash,
   X,
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useUser from "@/hooks/useUser";
+import useAssignedThreads from "@/hooks/useAssignedThreads";
 
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 export default function ThreadItem({
@@ -30,7 +32,22 @@ export default function ThreadItem({
   const optionsContainer = useRef(null);
   const [showOptions, setShowOptions] = useState(false);
   const { user } = useUser();
+  const { isAssigned, assign, unassign } = useAssignedThreads();
   const canModify = user?.role !== "default";
+  const assigned = !!thread.slug && isAssigned(workspaceSlug, thread.slug);
+  const toggleAssigned = async (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    if (!thread.slug) return;
+    if (assigned) await unassign(workspaceSlug, thread.slug);
+    else
+      await assign(
+        workspaceSlug,
+        thread.slug,
+        thread.name,
+        workspace?.name
+      );
+  };
   const linkTo = thread.virtual
     ? "/"
     : !thread.slug
@@ -120,37 +137,59 @@ export default function ThreadItem({
             </p>
           </a>
         )}
-        {canModify && !!thread.slug && !thread.deleted && !thread.virtual && (
-          <div ref={optionsContainer} className="flex items-center">
-            {" "}
-            {/* Added flex and items-center */}
-            {ctrlPressed ? (
+        {!!thread.slug && !thread.deleted && !thread.virtual && (
+          <div ref={optionsContainer} className="flex items-center gap-x-1">
+            {/* Star toggle — visible if assigned, on hover otherwise. Available to all roles. */}
+            {ctrlPressed ? null : (
               <button
                 type="button"
-                className="border-none"
-                onClick={() => toggleMarkForDeletion(thread.id)}
+                className={`border-none ${assigned ? "" : "md:invisible group-hover:visible"}`}
+                onClick={toggleAssigned}
+                aria-label={assigned ? "Retirer des threads assignés" : "Ajouter aux threads assignés"}
+                data-tooltip-id="workspace-thread-name"
+                data-tooltip-content={
+                  assigned ? "Retirer des assignés" : "Ajouter aux assignés"
+                }
               >
-                <X
-                  className="text-zinc-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
-                  weight="bold"
-                  size={18}
+                <Star
+                  size={16}
+                  weight={assigned ? "fill" : "regular"}
+                  className={
+                    assigned
+                      ? "text-yellow-400"
+                      : "text-slate-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
+                  }
                 />
               </button>
-            ) : (
-              <div className="flex items-center w-fit group-hover:visible md:invisible gap-x-1">
+            )}
+            {canModify &&
+              (ctrlPressed ? (
                 <button
                   type="button"
                   className="border-none"
-                  onClick={() => setShowOptions(!showOptions)}
-                  aria-label="Thread options"
+                  onClick={() => toggleMarkForDeletion(thread.id)}
                 >
-                  <DotsThree
-                    className="text-slate-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
-                    size={25}
+                  <X
+                    className="text-zinc-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
+                    weight="bold"
+                    size={18}
                   />
                 </button>
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center w-fit group-hover:visible md:invisible gap-x-1">
+                  <button
+                    type="button"
+                    className="border-none"
+                    onClick={() => setShowOptions(!showOptions)}
+                    aria-label="Thread options"
+                  >
+                    <DotsThree
+                      className="text-slate-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
+                      size={25}
+                    />
+                  </button>
+                </div>
+              ))}
             {showOptions && (
               <OptionsMenu
                 containerRef={optionsContainer}

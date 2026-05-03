@@ -2,11 +2,15 @@ import { useLanguageOptions } from "@/hooks/useLanguageOptions";
 import usePfp from "@/hooks/usePfp";
 import System from "@/models/system";
 import Appearance from "@/models/appearance";
+import Workspace from "@/models/workspace";
+import WorkspaceThread from "@/models/workspaceThread";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Info, Plus, X } from "@phosphor-icons/react";
+import { Info, Plus, Star, Trash, X } from "@phosphor-icons/react";
 import ModalWrapper from "@/components/ModalWrapper";
 import { useTheme } from "@/hooks/useTheme";
+import useAssignedThreads from "@/hooks/useAssignedThreads";
+import ScheduleSection from "./ScheduleSection";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Tooltip } from "react-tooltip";
@@ -202,6 +206,8 @@ export default function AccountModal({ user, hideModal }) {
                   <AutoSpeakPreference />
                 </div>
               </div>
+              <AssignedThreadsSection />
+              <ScheduleSection />
             </div>
             <div className="flex justify-between items-center border-t border-theme-modal-border pt-4 p-6">
               <button
@@ -324,6 +330,154 @@ function AutoSubmitPreference() {
         delayShow={300}
         className="allm-tooltip !allm-text-xs"
       />
+    </div>
+  );
+}
+
+function AssignedThreadsSection() {
+  const { assignedThreads, assign, unassign, refresh } = useAssignedThreads();
+  const [workspaces, setWorkspaces] = useState([]);
+  const [pickerWorkspace, setPickerWorkspace] = useState("");
+  const [pickerThreads, setPickerThreads] = useState([]);
+  const [pickerThread, setPickerThread] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    Workspace.all().then((ws) => setWorkspaces(ws || []));
+    refresh();
+  }, []);
+
+  useEffect(() => {
+    if (!pickerWorkspace) {
+      setPickerThreads([]);
+      setPickerThread("");
+      return;
+    }
+    WorkspaceThread.all(pickerWorkspace).then(({ threads }) => {
+      const list = (threads || []).filter((t) => !!t.slug && !t.deleted);
+      setPickerThreads(list);
+      setPickerThread(list[0]?.slug || "");
+    });
+  }, [pickerWorkspace]);
+
+  const handleAdd = async () => {
+    if (!pickerWorkspace || !pickerThread) return;
+    setAdding(true);
+    const ws = workspaces.find((w) => w.slug === pickerWorkspace);
+    const th = pickerThreads.find((t) => t.slug === pickerThread);
+    const ok = await assign(
+      pickerWorkspace,
+      pickerThread,
+      th?.name,
+      ws?.name
+    );
+    setAdding(false);
+    if (!ok) {
+      showToast("Impossible d'ajouter ce thread", "error", { clear: true });
+      return;
+    }
+    showToast("Thread ajouté à tes assignés", "success", { clear: true });
+  };
+
+  const handleRemove = async (workspaceSlug, threadSlug) => {
+    const ok = await unassign(workspaceSlug, threadSlug);
+    if (!ok) showToast("Impossible de retirer ce thread", "error", { clear: true });
+  };
+
+  // Threads still available to add (not already assigned)
+  const availableInWorkspace = pickerThreads.filter(
+    (t) =>
+      !assignedThreads.some(
+        (a) => a.workspaceSlug === pickerWorkspace && a.threadSlug === t.slug
+      )
+  );
+
+  return (
+    <div className="mt-2 pt-6 border-t border-theme-modal-border">
+      <div className="flex items-center gap-x-2 mb-3">
+        <Star size={18} weight="fill" className="text-yellow-400" />
+        <h4 className="text-sm font-semibold text-white">
+          Mes threads assignés
+        </h4>
+      </div>
+      <p className="text-xs text-white/60 mb-3">
+        Tes threads favoris sont mis en évidence dans la barre latérale.
+      </p>
+
+      {assignedThreads.length === 0 ? (
+        <p className="text-sm text-white/50 italic mb-4">
+          Aucun thread assigné pour le moment.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-y-2 mb-4">
+          {assignedThreads.map((a) => (
+            <li
+              key={`${a.workspaceSlug}::${a.threadSlug}`}
+              className="flex items-center justify-between bg-theme-bg-primary rounded-md px-3 py-2"
+            >
+              <div className="flex flex-col">
+                <span className="text-sm text-white">{a.threadName}</span>
+                <span className="text-xs text-white/50">
+                  {a.workspaceName}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRemove(a.workspaceSlug, a.threadSlug)}
+                className="border-none p-1 hover:bg-red-500/20 rounded"
+                aria-label="Retirer ce thread"
+              >
+                <Trash size={16} className="text-white/70" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
+        <div className="flex-1">
+          <label className="block text-xs text-white/70 mb-1">Workspace</label>
+          <select
+            value={pickerWorkspace}
+            onChange={(e) => setPickerWorkspace(e.target.value)}
+            className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2"
+          >
+            <option value="">— Choisir —</option>
+            {workspaces.map((w) => (
+              <option key={w.slug} value={w.slug}>
+                {w.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex-1">
+          <label className="block text-xs text-white/70 mb-1">Thread</label>
+          <select
+            value={pickerThread}
+            onChange={(e) => setPickerThread(e.target.value)}
+            disabled={!pickerWorkspace || availableInWorkspace.length === 0}
+            className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 disabled:opacity-50"
+          >
+            {availableInWorkspace.length === 0 ? (
+              <option value="">— Aucun disponible —</option>
+            ) : (
+              availableInWorkspace.map((t) => (
+                <option key={t.slug} value={t.slug}>
+                  {t.name}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!pickerWorkspace || !pickerThread || adding}
+          className="bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm disabled:opacity-30"
+        >
+          {adding ? "..." : "Ajouter"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -184,6 +184,33 @@ const WorkspaceThread = {
         return false;
       });
   },
+  // ----- Assigned threads (per-user favorites) -----
+  listAssigned: async function () {
+    const { assignedThreads } = await fetch(
+      `${API_BASE}/user/assigned-threads`,
+      { method: "GET", headers: baseHeaders() }
+    )
+      .then((res) => res.json())
+      .catch(() => ({ assignedThreads: [] }));
+    return assignedThreads || [];
+  },
+  assign: async function (workspaceSlug, threadSlug) {
+    return await fetch(`${API_BASE}/user/assigned-threads`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ workspaceSlug, threadSlug }),
+    })
+      .then((res) => res.ok)
+      .catch(() => false);
+  },
+  unassign: async function (workspaceSlug, threadSlug) {
+    return await fetch(
+      `${API_BASE}/user/assigned-threads/${encodeURIComponent(workspaceSlug)}/${encodeURIComponent(threadSlug)}`,
+      { method: "DELETE", headers: baseHeaders() }
+    )
+      .then((res) => res.ok)
+      .catch(() => false);
+  },
   _updateChat: async function (
     workspaceSlug = "",
     threadSlug = "",

@@ -2,10 +2,11 @@ import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams } from "react-router-dom";
 import useUser from "@/hooks/useUser";
+import useAssignedThreads from "@/hooks/useAssignedThreads";
 export const THREAD_RENAME_EVENT = "renameThread";
 
 export default function ThreadContainer({
@@ -16,6 +17,7 @@ export default function ThreadContainer({
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [ctrlPressed, setCtrlPressed] = useState(false);
+  const { isAssigned } = useAssignedThreads();
 
   useEffect(() => {
     const chatHandler = (event) => {
@@ -113,9 +115,22 @@ export default function ThreadContainer({
     }, 500);
   }
 
+  // Sort assigned threads to the top while preserving relative order otherwise.
+  const sortedThreads = useMemo(() => {
+    const slug = workspace?.slug;
+    if (!slug) return threads;
+    const assigned = [];
+    const rest = [];
+    for (const t of threads) {
+      if (t?.slug && isAssigned(slug, t.slug)) assigned.push(t);
+      else rest.push(t);
+    }
+    return [...assigned, ...rest];
+  }, [threads, workspace?.slug, isAssigned]);
+
   function getActiveThreadIdx() {
-    if (isVirtualThread) return threads.length + 1;
-    const idx = threads.findIndex((t) => t?.slug === threadSlug);
+    if (isVirtualThread) return sortedThreads.length + 1;
+    const idx = sortedThreads.findIndex((t) => t?.slug === threadSlug);
     return idx >= 0 ? idx + 1 : 0;
   }
 
@@ -137,9 +152,9 @@ export default function ThreadContainer({
         isActive={activeThreadIdx === 0}
         workspace={workspace}
         thread={{ slug: null, name: "default" }}
-        hasNext={threads.length > 0 || isVirtualThread}
+        hasNext={sortedThreads.length > 0 || isVirtualThread}
       />
-      {threads.map((thread, i) => (
+      {sortedThreads.map((thread, i) => (
         <ThreadItem
           key={thread.slug}
           idx={i + 1}
@@ -150,7 +165,7 @@ export default function ThreadContainer({
           workspace={workspace}
           onRemove={removeThread}
           thread={thread}
-          hasNext={i !== threads.length - 1 || isVirtualThread}
+          hasNext={i !== sortedThreads.length - 1 || isVirtualThread}
         />
       ))}
       {isVirtualThread && (
