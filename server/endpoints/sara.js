@@ -44,6 +44,55 @@ function getAllClasses() {
 function saraEndpoints(app) {
   if (!app) return;
 
+  // Public — sert les images dys-phono (Mulberry SVG / ARASAAC PNG) et plus
+  // tard les vidéos d'articulation. Chemin disque :
+  //   server/storage/sara/dys_images/mulberry/FR/<slug>.{svg,png}
+  // URL : GET /api/sara/asset/mulberry/<slug>
+  // Tente .svg en 1er (Mulberry), .png en fallback (ARASAAC).
+  const fs = require("fs");
+  app.get("/sara/asset/mulberry/:slug", async (req, res) => {
+    try {
+      const slug = String(req.params.slug || "").replace(/[^\w-éèêëàâäîïôöùûüÿñç]/gi, "");
+      if (!slug) return res.status(400).end();
+      const dir = path.resolve(__dirname, "../storage/sara/dys_images/mulberry/FR");
+      const svgPath = path.join(dir, `${slug}.svg`);
+      const pngPath = path.join(dir, `${slug}.png`);
+      if (fs.existsSync(svgPath)) {
+        res.setHeader("Content-Type", "image/svg+xml");
+        res.setHeader("Cache-Control", "public, max-age=86400");
+        return fs.createReadStream(svgPath).pipe(res);
+      }
+      if (fs.existsSync(pngPath)) {
+        res.setHeader("Content-Type", "image/png");
+        res.setHeader("Cache-Control", "public, max-age=86400");
+        return fs.createReadStream(pngPath).pipe(res);
+      }
+      return res.status(404).end();
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500).end();
+    }
+  });
+
+  // Public — sert les vidéos d'articulation (placeholder pour quand elles seront tournées)
+  app.get("/sara/asset/articulation/:phoneme", async (req, res) => {
+    try {
+      const phoneme = String(req.params.phoneme || "").replace(/[^\w-]/g, "");
+      if (!phoneme) return res.status(400).end();
+      const mp4Path = path.resolve(
+        __dirname,
+        `../storage/sara/articulation/${phoneme}.mp4`
+      );
+      if (!fs.existsSync(mp4Path)) return res.status(404).end();
+      res.setHeader("Content-Type", "video/mp4");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      return fs.createReadStream(mp4Path).pipe(res);
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500).end();
+    }
+  });
+
   // Public — retourne la config d'inscription (classes, langs, programs)
   app.get("/sara/config", async (_req, res) => {
     try {
