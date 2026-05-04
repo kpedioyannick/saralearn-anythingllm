@@ -67,6 +67,7 @@ function describeSlot(slot, dayInfo) {
   } else {
     if (slot.workspaceSlug) parts.push(`workspace: ${slot.workspaceSlug}`);
     if (slot.threadSlug) parts.push(`thread: ${slot.threadSlug}`);
+    else if (slot.threadLabel) parts.push(`thread (libellé libre): ${slot.threadLabel}`);
   }
   if (slot.note) parts.push(`note: ${slot.note}`);
   return parts.join(" · ");
@@ -144,6 +145,29 @@ async function fetchObjectivesProgress(userId, threadIds) {
   return byThread;
 }
 
+// Per-thread aggregate over all user_exercises (correct/total ratio), used for
+// concrete % numbers the LLM can ground in instead of hallucinating chapter scores.
+async function fetchExerciseScores(userId, threadIds) {
+  if (!threadIds || threadIds.length === 0) return new Map();
+  const rows = await prisma.user_exercises.findMany({
+    where: {
+      userId: parseInt(userId),
+      threadId: { in: threadIds },
+    },
+    select: { threadId: true, isCorrect: true, total: true, correct: true },
+  });
+  const byThread = new Map();
+  for (const r of rows) {
+    if (!byThread.has(r.threadId))
+      byThread.set(r.threadId, { total: 0, correct: 0, attempts: 0 });
+    const agg = byThread.get(r.threadId);
+    agg.total += r.total || 1;
+    agg.correct += r.correct || (r.isCorrect ? 1 : 0);
+    agg.attempts += 1;
+  }
+  return byThread;
+}
+
 /**
  * Builds the [CONTEXTE ACTION ÉLÈVE] block injected in system prompt for
  * intents `planning` and `quoi_faire`.
@@ -172,10 +196,11 @@ async function buildUserActionContext(user, scope = "today", now = new Date()) {
   });
 
   const assigned = await fetchAssignedDetails(user);
-  const objectivesByThread = await fetchObjectivesProgress(
-    user.id,
-    assigned.map((a) => a.threadId)
-  );
+  const threadIds = assigned.map((a) => a.threadId);
+  const [objectivesByThread, scoresByThread] = await Promise.all([
+    fetchObjectivesProgress(user.id, threadIds),
+    fetchExerciseScores(user.id, threadIds),
+  ]);
 
   const lines = [];
   const scopeLabel =
@@ -185,7 +210,10 @@ async function buildUserActionContext(user, scope = "today", now = new Date()) {
         ? "cette semaine"
         : "aujourd'hui";
   lines.push(
-    `[CONTEXTE ACTION ÉLÈVE — scope: ${scope} — ${scopeLabel} (référence: ${todayInfo.isoDate} ${todayInfo.time}, Europe/Paris)]`
+    `[CONTEXTE ACTION ÉLÈVE — DONNÉES RÉELLES — PRIORITÉ ABSOLUE — scope: ${scope} — ${scopeLabel} (référence: ${todayInfo.isoDate} ${todayInfo.time}, Europe/Paris)]`
+  );
+  lines.push(
+    "RÈGLE STRICTE : Quand l'élève demande \"que dois-je faire\", \"mes threads\", \"mes objectifs\", \"où en suis-je\", tu DOIS te baser EXCLUSIVEMENT sur les threads et objectifs listés ci-dessous. N'INVENTE JAMAIS de nom de thread, de chapitre, ou de score. Si la liste est vide, dis-le honnêtement plutôt que d'inventer. Cite les threads par leur titre exact entre guillemets."
   );
 
   // Current slot (only meaningful for "today")
@@ -221,9 +249,21 @@ async function buildUserActionContext(user, scope = "today", now = new Date()) {
       const objs = objectivesByThread.get(a.threadId) || [];
       const total = objs.length;
       const mastered = objs.filter((o) => o.mastered).length;
-      const summary = total > 0 ? ` — ${total} objectifs (${mastered} maîtrisés)` : "";
+      const score = scoresByThread.get(a.threadId);
+      const parts = [];
+      if (total > 0) {
+        const pct = Math.round((mastered / total) * 100);
+        parts.push(`${mastered}/${total} objectifs maîtrisés (${pct}%)`);
+      }
+      if (score && score.total > 0) {
+        const pct = Math.round((score.correct / score.total) * 100);
+        parts.push(`${score.correct}/${score.total} questions correctes sur ${score.attempts} exercices (${pct}%)`);
+      } else {
+        parts.push("0 exercice tenté");
+      }
+      const summary = parts.length > 0 ? ` — ${parts.join(" · ")}` : "";
       lines.push(
-        `- ${a.workspaceSlug} / ${a.threadSlug} — "${a.threadName}"${summary}`
+        `- "${a.threadName}" (workspace ${a.workspaceSlug}, thread ${a.threadSlug})${summary}`
       );
     }
   }

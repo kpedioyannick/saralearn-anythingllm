@@ -612,7 +612,20 @@ async function streamChatWithWorkspace(
   const baseSystemPrompt = await chatPrompt(workspace, user);
   // Intents `planning` / `quoi_faire` : on remplace le bloc planning standard
   // par un bloc enrichi (slots scope-aware + threads assignés + objectifs).
-  const isScheduleIntent = intent === "planning" || intent === "quoi_faire";
+  // Intents qui doivent voir le bloc CONTEXTE ACTION ÉLÈVE (planning + threads
+  // assignés + objectifs réels). Couvre les intents généraux (planning, quoi_faire)
+  // ET les intents coach équivalents (coach_today, coach_delays, coach_catchup,
+  // coach_progress) — sinon le coach hallucine des threads/chapitres au lieu de
+  // citer les threads réellement assignés par l'élève.
+  const ACTION_INTENTS = new Set([
+    "planning",
+    "quoi_faire",
+    "coach_today",
+    "coach_delays",
+    "coach_catchup",
+    "coach_progress",
+  ]);
+  const isScheduleIntent = ACTION_INTENTS.has(intent);
   const userActionContextBlock = isScheduleIntent
     ? await buildUserActionContext(user, intentOptions?.scope || "today")
     : null;
@@ -623,16 +636,19 @@ async function streamChatWithWorkspace(
     let prompt = baseSystemPrompt;
     if (isCoachWorkspace) prompt = `${prompt}\n\n${coachContextBlock}`;
     if (scheduleContextBlock) prompt = `${prompt}\n\n${scheduleContextBlock}`;
-    if (userActionContextBlock) prompt = `${prompt}\n\n${userActionContextBlock}`;
     return prompt;
   })();
   // Le contexte phono (MD Mazade avec exos prêts) est placé EN SUFFIXE DU USER
   // PROMPT — donc juste avant la génération du LLM. Recency bias : un bloc placé
   // loin dans le system prompt se fait écraser par l'intentPrefix et le RAG. En
   // queue de user prompt, les exos prêts à copier sont la dernière chose vue.
-  const composedUserPrompt = phonoContextBlock
-    ? `${updatedMessage}${intentPrefix}\n\n${phonoContextBlock}`
-    : `${updatedMessage}${intentPrefix}`;
+  // Le bloc CONTEXTE ACTION ÉLÈVE est aussi mis en suffixe pour la même raison
+  // (sinon le coach prompt long écrase la consigne "ne rien inventer").
+  const userPromptSuffixes = [intentPrefix];
+  if (phonoContextBlock) userPromptSuffixes.push(`\n\n${phonoContextBlock}`);
+  if (userActionContextBlock)
+    userPromptSuffixes.push(`\n\n${userActionContextBlock}`);
+  const composedUserPrompt = `${updatedMessage}${userPromptSuffixes.join("")}`;
   const messages = await LLMConnector.compressMessages(
     {
       systemPrompt: composedSystemPrompt,

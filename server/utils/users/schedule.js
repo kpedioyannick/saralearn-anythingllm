@@ -69,6 +69,8 @@ function validateAndNormalize(slot, { allowPartial = false } = {}) {
     out.workspaceSlug = asString(slot.workspaceSlug, 120) || null;
   if (slot.threadSlug !== undefined)
     out.threadSlug = asString(slot.threadSlug, 120) || null;
+  if (slot.threadLabel !== undefined)
+    out.threadLabel = asString(slot.threadLabel, 120);
   if (slot.color !== undefined) out.color = asString(slot.color, 16) || null;
 
   return out;
@@ -99,6 +101,7 @@ async function addSlot(userId, payload) {
     room: "",
     workspaceSlug: null,
     threadSlug: null,
+    threadLabel: "",
     color: null,
     ...validated,
     createdAt: new Date().toISOString(),

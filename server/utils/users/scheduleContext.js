@@ -56,6 +56,7 @@ function describeSlot(slot) {
   } else {
     if (slot.workspaceSlug) parts.push(`workspace: ${slot.workspaceSlug}`);
     if (slot.threadSlug) parts.push(`thread: ${slot.threadSlug}`);
+    else if (slot.threadLabel) parts.push(`thread (libellé libre): ${slot.threadLabel}`);
   }
   if (slot.note) parts.push(`note: ${slot.note}`);
   return parts.join(" ");

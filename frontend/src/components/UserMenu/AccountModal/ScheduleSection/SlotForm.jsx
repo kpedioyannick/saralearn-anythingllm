@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { Trash, X } from "@phosphor-icons/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Trash, X } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
 import WorkspaceThread from "@/models/workspaceThread";
+import paths from "@/utils/paths";
 import { DAYS, RECURRENCES } from "./utils";
 
 const DEFAULTS = {
@@ -13,66 +15,134 @@ const DEFAULTS = {
   end: "19:00",
   recurrence: "weekly",
   date: "",
-  teacher: "",
-  room: "",
   workspaceSlug: "",
   threadSlug: "",
+  threadLabel: "",
   note: "",
 };
 
-export default function SlotForm({ slot, onClose, onSave, onDelete }) {
+export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }) {
   const [form, setForm] = useState({ ...DEFAULTS, ...(slot || {}) });
   const [workspaces, setWorkspaces] = useState([]);
   const [threads, setThreads] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (form.type === "revision" && workspaces.length === 0) {
-      Workspace.all().then((ws) => setWorkspaces(ws || []));
-    }
-  }, [form.type]);
+  const [matiereInput, setMatiereInput] = useState(form.subject || "");
+  const [threadInput, setThreadInput] = useState(form.threadLabel || "");
+
+  const matierePrefilled = useRef(false);
+  const threadPrefilled = useRef(false);
 
   useEffect(() => {
-    if (form.type !== "revision" || !form.workspaceSlug) {
+    Workspace.all().then((ws) => setWorkspaces(ws || []));
+  }, []);
+
+  useEffect(() => {
+    if (matierePrefilled.current || workspaces.length === 0) return;
+    matierePrefilled.current = true;
+    if (form.workspaceSlug) {
+      const ws = workspaces.find((w) => w.slug === form.workspaceSlug);
+      if (ws) setMatiereInput(ws.name);
+    }
+  }, [workspaces, form.workspaceSlug]);
+
+  const resolvedWorkspace = useMemo(() => {
+    const txt = (matiereInput || "").trim().toLowerCase();
+    if (!txt) return null;
+    return (
+      workspaces.find((w) => (w?.name || "").toLowerCase() === txt) || null
+    );
+  }, [matiereInput, workspaces]);
+
+  useEffect(() => {
+    if (!resolvedWorkspace?.slug) {
       setThreads([]);
       return;
     }
-    WorkspaceThread.all(form.workspaceSlug).then(({ threads }) => {
+    WorkspaceThread.all(resolvedWorkspace.slug).then(({ threads }) => {
       setThreads((threads || []).filter((t) => !!t.slug && !t.deleted));
     });
-  }, [form.type, form.workspaceSlug]);
+  }, [resolvedWorkspace?.slug]);
+
+  useEffect(() => {
+    if (threadPrefilled.current || threads.length === 0) return;
+    threadPrefilled.current = true;
+    if (form.threadSlug) {
+      const th = threads.find((t) => t.slug === form.threadSlug);
+      if (th) setThreadInput(th.name);
+    }
+  }, [threads, form.threadSlug]);
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+
+    const matiereTxt = (matiereInput || "").trim();
+    if (!matiereTxt) {
+      window.alert("Choisis ou tape une matière avant d'enregistrer.");
+      return;
+    }
+    if (form.recurrence === "once" && !form.date) {
+      window.alert(
+        "Une date est requise quand la récurrence est « Une seule fois »."
+      );
+      return;
+    }
+    if (form.start >= form.end) {
+      window.alert("L'heure de fin doit être après l'heure de début.");
+      return;
+    }
     setSubmitting(true);
+
+    const threadTxt = (threadInput || "").trim();
+    const wsMatch = matiereTxt
+      ? workspaces.find(
+          (w) => (w?.name || "").toLowerCase() === matiereTxt.toLowerCase()
+        )
+      : null;
+    const thMatch =
+      threadTxt && wsMatch
+        ? threads.find(
+            (t) => (t?.name || "").toLowerCase() === threadTxt.toLowerCase()
+          )
+        : null;
+
     const payload = {
       type: form.type,
-      title: form.title?.trim(),
-      subject: form.subject?.trim(),
+      title: matiereTxt,
+      subject: matiereTxt,
       dayOfWeek: form.dayOfWeek,
       start: form.start,
       end: form.end,
       recurrence: form.recurrence,
       date: form.recurrence === "once" ? form.date : null,
       note: form.note?.trim(),
-      ...(form.type === "school"
-        ? {
-            teacher: form.teacher?.trim(),
-            room: form.room?.trim(),
-            workspaceSlug: null,
-            threadSlug: null,
-          }
-        : {
-            teacher: "",
-            room: "",
-            workspaceSlug: form.workspaceSlug || null,
-            threadSlug: form.threadSlug || null,
-          }),
+      teacher: "",
+      room: "",
+      workspaceSlug: wsMatch?.slug || null,
+      threadSlug: thMatch?.slug || null,
+      threadLabel: thMatch ? "" : threadTxt,
     };
     await onSave(payload);
     setSubmitting(false);
+  };
+
+  const matiereListId = "slot-matiere-list";
+  const threadListId = "slot-thread-list";
+  const threadDisabled = !resolvedWorkspace;
+
+  // SlotForm sits inside AccountModal's outer <form>. HTML5 disallows nested
+  // forms, so the inner <form> would be silently dropped and any submit/Enter
+  // would fire the OUTER form (closing the right-sheet). We use a <div> root
+  // and absorb Enter ourselves to keep submission scoped to this component.
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSubmit();
+    }
   };
 
   return (
@@ -91,7 +161,28 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-3">
+      <div onKeyDown={handleKeyDown} className="p-4 space-y-3">
+        {slot && slot.workspaceSlug && (
+          <Link
+            to={
+              slot.threadSlug
+                ? paths.workspace.thread(slot.workspaceSlug, slot.threadSlug)
+                : paths.workspace.chat(slot.workspaceSlug)
+            }
+            onClick={() => onNavigate?.()}
+            className={`flex items-center justify-center gap-x-2 w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors no-underline ${
+              slot.type === "school"
+                ? "bg-blue-500/30 border border-blue-400 text-white hover:bg-blue-500/40 light:bg-blue-100 light:border-blue-500 light:text-blue-900 light:hover:bg-blue-200"
+                : "bg-emerald-500/30 border border-emerald-400 text-white hover:bg-emerald-500/40 light:bg-emerald-100 light:border-emerald-500 light:text-emerald-900 light:hover:bg-emerald-200"
+            }`}
+          >
+            {slot.type === "school"
+              ? "Travailler mon cours"
+              : "Travailler ma révision"}
+            <ArrowRight size={16} weight="bold" />
+          </Link>
+        )}
+
         <div>
           <label className="block text-xs font-medium text-white/80 mb-1">
             Type
@@ -121,35 +212,70 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
 
         <div>
           <label className="block text-xs font-medium text-white/80 mb-1">
-            Titre
+            Matière
           </label>
           <input
             type="text"
-            value={form.title}
-            onChange={(e) => update("title", e.target.value)}
-            required
-            maxLength={120}
-            placeholder={
-              form.type === "school"
-                ? "Maths, Français…"
-                : "Révision figures de style"
-            }
+            list={matiereListId}
+            value={matiereInput}
+            onChange={(e) => {
+              setMatiereInput(e.target.value);
+              setThreadInput("");
+            }}
+            maxLength={60}
+            placeholder="Choisis dans la liste ou tape une matière…"
             className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none focus:outline-primary-button"
           />
+          <datalist id={matiereListId}>
+            {workspaces.map((w) => (
+              <option key={w.slug} value={w.name} />
+            ))}
+          </datalist>
+          {resolvedWorkspace ? (
+            <p className="mt-1 text-[11px] text-emerald-300/80">
+              Lié au workspace « {resolvedWorkspace.name} »
+            </p>
+          ) : matiereInput.trim() ? (
+            <p className="mt-1 text-[11px] text-white/40">
+              Libellé libre — non lié à un workspace
+            </p>
+          ) : null}
         </div>
 
         <div>
           <label className="block text-xs font-medium text-white/80 mb-1">
-            Matière (optionnel)
+            Thread (optionnel)
           </label>
           <input
             type="text"
-            value={form.subject}
-            onChange={(e) => update("subject", e.target.value)}
-            maxLength={60}
-            placeholder="maths, français, histoire…"
-            className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none focus:outline-primary-button"
+            list={threadListId}
+            value={threadInput}
+            onChange={(e) => setThreadInput(e.target.value)}
+            disabled={threadDisabled}
+            maxLength={120}
+            placeholder={
+              threadDisabled
+                ? "Choisis d'abord une matière liée à un workspace"
+                : "Choisis un thread existant ou tape un libellé"
+            }
+            className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none focus:outline-primary-button disabled:opacity-50"
           />
+          <datalist id={threadListId}>
+            {threads.map((t) => (
+              <option key={t.slug} value={t.name} />
+            ))}
+          </datalist>
+          {!threadDisabled && threadInput.trim() && (
+            <p className="mt-1 text-[11px] text-white/40">
+              {threads.some(
+                (t) =>
+                  (t?.name || "").toLowerCase() ===
+                  threadInput.trim().toLowerCase()
+              )
+                ? "Lié à un thread existant"
+                : "Libellé libre — aucun thread pinné"}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-2">
@@ -202,7 +328,17 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
             </label>
             <select
               value={form.recurrence}
-              onChange={(e) => update("recurrence", e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                setForm((f) => ({
+                  ...f,
+                  recurrence: next,
+                  date:
+                    next === "once" && !f.date
+                      ? new Date().toISOString().slice(0, 10)
+                      : f.date,
+                }));
+              }}
               className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
             >
               {RECURRENCES.map((r) => (
@@ -227,78 +363,6 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
             </div>
           )}
         </div>
-
-        {form.type === "school" && (
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-xs font-medium text-white/80 mb-1">
-                Professeur (optionnel)
-              </label>
-              <input
-                type="text"
-                value={form.teacher}
-                onChange={(e) => update("teacher", e.target.value)}
-                maxLength={80}
-                className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/80 mb-1">
-                Salle (optionnel)
-              </label>
-              <input
-                type="text"
-                value={form.room}
-                onChange={(e) => update("room", e.target.value)}
-                maxLength={60}
-                className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
-              />
-            </div>
-          </div>
-        )}
-
-        {form.type === "revision" && (
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-xs font-medium text-white/80 mb-1">
-                Workspace (optionnel)
-              </label>
-              <select
-                value={form.workspaceSlug || ""}
-                onChange={(e) => {
-                  update("workspaceSlug", e.target.value);
-                  update("threadSlug", "");
-                }}
-                className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
-              >
-                <option value="">— Aucun —</option>
-                {workspaces.map((w) => (
-                  <option key={w.slug} value={w.slug}>
-                    {w.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/80 mb-1">
-                Thread (optionnel)
-              </label>
-              <select
-                value={form.threadSlug || ""}
-                onChange={(e) => update("threadSlug", e.target.value)}
-                disabled={!form.workspaceSlug || threads.length === 0}
-                className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none disabled:opacity-50"
-              >
-                <option value="">— Aucun —</option>
-                {threads.map((t) => (
-                  <option key={t.slug} value={t.slug}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
 
         <div>
           <label className="block text-xs font-medium text-white/80 mb-1">
@@ -334,7 +398,8 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
               Annuler
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               disabled={submitting}
               className="bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
@@ -342,7 +407,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete }) {
             </button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
