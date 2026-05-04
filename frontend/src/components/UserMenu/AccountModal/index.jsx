@@ -7,12 +7,12 @@ import WorkspaceThread from "@/models/workspaceThread";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
 import { Info, Plus, Star, Trash, X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
+import ReactDOM from "react-dom";
 import { useTheme } from "@/hooks/useTheme";
 import useAssignedThreads from "@/hooks/useAssignedThreads";
 import ScheduleSection from "./ScheduleSection";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Tooltip } from "react-tooltip";
 import { safeJsonParse } from "@/utils/request";
 import Toggle from "@/components/lib/Toggle";
@@ -22,9 +22,40 @@ import {
   USERNAME_PATTERN,
 } from "@/utils/username";
 
-export default function AccountModal({ user, hideModal }) {
+const SHEET_ANIM_MS = 280;
+
+export default function AccountModal({ user, hideModal, initialSection = null }) {
   const { pfp, setPfp } = usePfp();
   const { t } = useTranslation();
+  const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    if (!entered || !initialSection) return;
+    const target = document.getElementById(`space-section-${initialSection}`);
+    if (target && scrollRef.current) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [entered, initialSection]);
+
+  const requestClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => hideModal?.(), SHEET_ANIM_MS);
+  }, [hideModal]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") requestClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [requestClose]);
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -74,129 +105,172 @@ export default function AccountModal({ user, hideModal }) {
       showToast(t("profile_settings.profile_updated"), "success", {
         clear: true,
       });
-      hideModal();
+      requestClose();
     } else {
       showToast(t("profile_settings.failed_update_user", { error }), "error");
     }
   };
-  return (
-    <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+
+  const visible = entered && !closing;
+
+  const sheet = (
+    <div
+      className="fixed inset-0 z-[9999]"
+      onClick={requestClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="account-sheet-title"
+    >
+      <div
+        className={`absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px] transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+      />
+      <div
+        className={`absolute right-0 top-0 z-10 flex h-full w-[90%] max-w-[680px] flex-col overflow-hidden border-l border-theme-modal-border bg-theme-bg-secondary shadow-2xl shadow-black/50 transform transition-transform duration-300 ease-out ${visible ? "translate-x-0" : "translate-x-full"}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative shrink-0 p-6 border-b border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {t("profile_settings.edit_account")}
+            <h3
+              id="account-sheet-title"
+              className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap"
+            >
+              Mon espace
             </h3>
           </div>
           <button
-            onClick={hideModal}
+            onClick={requestClose}
             type="button"
             className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
           >
             <X size={24} weight="bold" className="text-white" />
           </button>
         </div>
-        <div
-          className="h-full w-full overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
-          <form onSubmit={handleUpdate} className="space-y-6">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-              <div className="flex flex-col items-center">
-                <label className="group w-48 h-48 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full mt-8 border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
-                  {pfp ? (
-                    <img
-                      src={pfp}
-                      alt="User profile picture"
-                      className="w-48 h-48 rounded-full object-cover bg-white"
+        <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto">
+          <form onSubmit={handleUpdate} className="flex flex-col">
+            <section
+              id="space-section-schedule"
+              className="px-6 pt-6 scroll-mt-4"
+            >
+              <ScheduleSection />
+            </section>
+
+            <section
+              id="space-section-favorites"
+              className="px-6 scroll-mt-4"
+            >
+              <AssignedThreadsSection />
+            </section>
+
+            <section
+              id="space-section-profile"
+              className="px-6 mt-6 pt-6 border-t border-theme-modal-border scroll-mt-4"
+            >
+              <h4 className="text-sm font-semibold text-white mb-4">
+                Mon profil
+              </h4>
+              <div className="flex flex-col md:flex-row md:items-start gap-6">
+                <div className="flex flex-col items-center md:items-start shrink-0">
+                  <label className="group w-32 h-32 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileUpload}
                     />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-3">
-                      <Plus className="w-8 h-8 text-theme-text-secondary m-2" />
-                      <span className="text-theme-text-secondary text-opacity-80 text-sm font-semibold">
-                        {t("profile_settings.profile_picture")}
-                      </span>
-                      <span className="text-theme-text-secondary text-opacity-60 text-xs">
-                        800 x 800
-                      </span>
-                    </div>
+                    {pfp ? (
+                      <img
+                        src={pfp}
+                        alt="User profile picture"
+                        className="w-32 h-32 rounded-full object-cover bg-white"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-2">
+                        <Plus className="w-6 h-6 text-theme-text-secondary" />
+                        <span className="text-theme-text-secondary text-opacity-80 text-xs font-semibold mt-1">
+                          {t("profile_settings.profile_picture")}
+                        </span>
+                      </div>
+                    )}
+                  </label>
+                  {pfp && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePfp}
+                      className="mt-2 text-theme-text-secondary text-opacity-60 text-xs font-medium hover:underline"
+                    >
+                      {t("profile_settings.remove_profile_picture")}
+                    </button>
                   )}
-                </label>
-                {pfp && (
-                  <button
-                    type="button"
-                    onClick={handleRemovePfp}
-                    className="mt-3 text-theme-text-secondary text-opacity-60 text-sm font-medium hover:underline"
-                  >
-                    {t("profile_settings.remove_profile_picture")}
-                  </button>
-                )}
+                </div>
+                <div className="flex-1 flex flex-col gap-y-4 w-full">
+                  <div>
+                    <label
+                      htmlFor="username"
+                      className="block mb-2 text-sm font-medium text-theme-text-primary"
+                    >
+                      {t("profile_settings.username")}
+                    </label>
+                    <input
+                      name="username"
+                      type="text"
+                      className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+                      placeholder="User's username"
+                      minLength={USERNAME_MIN_LENGTH}
+                      maxLength={USERNAME_MAX_LENGTH}
+                      pattern={USERNAME_PATTERN}
+                      defaultValue={user.username}
+                      required
+                      autoComplete="off"
+                    />
+                    <p className="mt-2 text-xs text-white/60">
+                      {t("common.username_requirements")}
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block mb-2 text-sm font-medium text-white"
+                    >
+                      {t("profile_settings.new_password")}
+                    </label>
+                    <input
+                      name="password"
+                      type="text"
+                      className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+                      placeholder={`${user.username}'s new password`}
+                      minLength={8}
+                    />
+                    <p className="mt-2 text-xs text-white/60">
+                      {t("profile_settings.password_description")}
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="bio"
+                      className="block mb-2 text-sm font-medium text-white"
+                    >
+                      Bio
+                    </label>
+                    <textarea
+                      name="bio"
+                      className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[80px] resize-y"
+                      placeholder="Tell us about yourself..."
+                      defaultValue={user.bio}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-y-4 px-6">
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-theme-text-primary"
-                >
-                  {t("profile_settings.username")}
-                </label>
-                <input
-                  name="username"
-                  type="text"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-                  placeholder="User's username"
-                  minLength={USERNAME_MIN_LENGTH}
-                  maxLength={USERNAME_MAX_LENGTH}
-                  pattern={USERNAME_PATTERN}
-                  defaultValue={user.username}
-                  required
-                  autoComplete="off"
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("common.username_requirements")}
-                </p>
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  {t("profile_settings.new_password")}
-                </label>
-                <input
-                  name="password"
-                  type="text"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-                  placeholder={`${user.username}'s new password`}
-                  minLength={8}
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("profile_settings.password_description")}
-                </p>
-              </div>
-              <div>
-                <label
-                  htmlFor="bio"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  Bio
-                </label>
-                <textarea
-                  name="bio"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[100px] resize-y"
-                  placeholder="Tell us about yourself..."
-                  defaultValue={user.bio}
-                />
-              </div>
-              <div className="flex gap-x-16">
+            </section>
+
+            <section
+              id="space-section-preferences"
+              className="px-6 mt-6 pt-6 border-t border-theme-modal-border scroll-mt-4"
+            >
+              <h4 className="text-sm font-semibold text-white mb-4">
+                Préférences
+              </h4>
+              <div className="flex flex-wrap gap-x-16 gap-y-6">
                 <div className="flex flex-col gap-y-6">
                   <ThemePreference />
                   <LanguagePreference />
@@ -206,12 +280,11 @@ export default function AccountModal({ user, hideModal }) {
                   <AutoSpeakPreference />
                 </div>
               </div>
-              <AssignedThreadsSection />
-              <ScheduleSection />
-            </div>
-            <div className="flex justify-between items-center border-t border-theme-modal-border pt-4 p-6">
+            </section>
+
+            <div className="sticky bottom-0 mt-6 flex justify-between items-center border-t border-theme-modal-border bg-theme-bg-secondary p-4">
               <button
-                onClick={hideModal}
+                onClick={requestClose}
                 type="button"
                 className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
               >
@@ -227,8 +300,10 @@ export default function AccountModal({ user, hideModal }) {
           </form>
         </div>
       </div>
-    </ModalWrapper>
+    </div>
   );
+
+  return ReactDOM.createPortal(sheet, document.body);
 }
 
 function LanguagePreference() {

@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { chatQueryRefusalResponse } from "@/utils/chat";
 import HistoricalOutputs from "./HistoricalOutputs";
+import SaraLogo from "@/media/logo/sara-logo.svg";
 
 const HistoricalMessage = ({
   uuid = v4(),
@@ -149,9 +150,16 @@ const HistoricalMessage = ({
         ) : (
           <div className="break-words rounded-[16px] border border-[rgba(74,222,128,0.22)] light:border-[rgba(17,140,68,0.22)] bg-[rgba(17,140,68,0.08)] light:bg-white px-3 py-3 md:px-4 md:py-3 shadow-[0_6px_18px_rgba(0,0,0,0.14)]">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[12px] font-semibold tracking-wide uppercase text-emerald-300 light:text-emerald-800">
-                Sara AI
-              </p>
+              <div className="flex items-center gap-x-2">
+                <img
+                  src={SaraLogo}
+                  alt="Sara"
+                  className="w-6 h-6 rounded-full shrink-0"
+                />
+                <p className="text-[12px] font-semibold tracking-wide uppercase text-emerald-300 light:text-emerald-800 m-0">
+                  Sara AI
+                </p>
+              </div>
             </div>
             <div className="flex flex-col gap-y-2">
               <RenderChatContent role={role} message={message} messageId={uuid} workspace={workspace} activeThread={activeThread} />

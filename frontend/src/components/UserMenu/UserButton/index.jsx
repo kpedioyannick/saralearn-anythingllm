@@ -1,10 +1,15 @@
 import useLoginMode from "@/hooks/useLoginMode";
 import usePfp from "@/hooks/usePfp";
 import useUser from "@/hooks/useUser";
-import System from "@/models/system";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
-import { Person } from "@phosphor-icons/react";
+import {
+  CalendarBlank,
+  Person,
+  SignOut,
+  Star,
+  UserCircle,
+} from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import AccountModal from "../AccountModal";
 import {
@@ -24,7 +29,7 @@ export default function UserButton() {
   const buttonRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
   const [showAccountSettings, setShowAccountSettings] = useState(false);
-  const [supportEmail, setSupportEmail] = useState("");
+  const [accountSection, setAccountSection] = useState(null);
 
   const handleClose = (event) => {
     if (
@@ -36,7 +41,8 @@ export default function UserButton() {
     }
   };
 
-  const handleOpenAccountModal = () => {
+  const openSpace = (section) => {
+    setAccountSection(section);
     setShowAccountSettings(true);
     setShowMenu(false);
   };
@@ -47,18 +53,6 @@ export default function UserButton() {
     }
     return () => document.removeEventListener("mousedown", handleClose);
   }, [showMenu]);
-
-  useEffect(() => {
-    const fetchSupportEmail = async () => {
-      const supportEmail = await System.fetchSupportEmail();
-      setSupportEmail(
-        supportEmail?.email
-          ? `mailto:${supportEmail.email}`
-          : paths.mailToMintplex()
-      );
-    };
-    fetchSupportEmail();
-  }, []);
 
   if (mode === null) return null;
   return (
@@ -75,26 +69,32 @@ export default function UserButton() {
       {showMenu && (
         <div
           ref={menuRef}
-          className="w-fit rounded-lg absolute top-12 right-0 bg-theme-action-menu-bg p-2 flex items-center-justify-center"
+          className="min-w-[220px] rounded-lg absolute top-12 right-0 bg-theme-action-menu-bg p-2 shadow-xl shadow-black/40"
         >
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-1">
             {mode === "multi" && !!user && (
-              <button
-                onClick={handleOpenAccountModal}
-                className="border-none text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
-              >
-                {t("profile_settings.account")}
-              </button>
+              <>
+                <MenuItem
+                  icon={<CalendarBlank size={18} weight="duotone" />}
+                  label="Mon planning"
+                  onClick={() => openSpace("schedule")}
+                />
+                <MenuItem
+                  icon={<Star size={18} weight="duotone" />}
+                  label="Mes favoris"
+                  onClick={() => openSpace("favorites")}
+                />
+                <MenuItem
+                  icon={<UserCircle size={18} weight="duotone" />}
+                  label="Mon profil"
+                  onClick={() => openSpace("profile")}
+                />
+                <div className="my-1 h-px bg-white/10" />
+              </>
             )}
-            {(!user || user?.role === "admin") && (
-              <a
-                href={supportEmail}
-                className="text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
-              >
-                {t("profile_settings.support")}
-              </a>
-            )}
-            <button
+            <MenuItem
+              icon={<SignOut size={18} weight="duotone" />}
+              label={t("profile_settings.signout")}
               onClick={() => {
                 window.localStorage.removeItem(AUTH_USER);
                 window.localStorage.removeItem(AUTH_TOKEN);
@@ -103,21 +103,34 @@ export default function UserButton() {
                 window.localStorage.removeItem(USER_PROMPT_INPUT_MAP);
                 window.location.replace(paths.home());
               }}
-              type="button"
-              className="text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
-            >
-              {t("profile_settings.signout")}
-            </button>
+            />
           </div>
         </div>
       )}
       {user && showAccountSettings && (
         <AccountModal
           user={user}
-          hideModal={() => setShowAccountSettings(false)}
+          initialSection={accountSection}
+          hideModal={() => {
+            setShowAccountSettings(false);
+            setAccountSection(null);
+          }}
         />
       )}
     </div>
+  );
+}
+
+function MenuItem({ icon, label, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="border-none flex items-center gap-x-2 text-white hover:bg-theme-action-menu-item-hover w-full text-left px-3 py-2 rounded-md text-sm"
+    >
+      <span className="text-white/80 shrink-0">{icon}</span>
+      <span>{label}</span>
+    </button>
   );
 }
 

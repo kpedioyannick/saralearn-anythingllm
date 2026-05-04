@@ -5,6 +5,7 @@ import { API_BASE } from "@/utils/constants";
 import { getDeviceId } from "@/utils/deviceId";
 import Citations from "../Citation";
 import RichMessageRenderer from "@/components/WorkspaceChat/RichMessageRenderer";
+import SaraLogo from "@/media/logo/sara-logo.svg";
 import {
   THOUGHT_REGEX_CLOSE,
   THOUGHT_REGEX_COMPLETE,
@@ -44,9 +45,16 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [], workspace = nu
       <div className="py-4 pl-0 pr-4 flex flex-col w-full">
         <div className="break-words rounded-[16px] border border-[rgba(74,222,128,0.22)] light:border-[rgba(17,140,68,0.22)] bg-[rgba(17,140,68,0.08)] light:bg-white px-3 py-3 md:px-4 md:py-3 shadow-[0_6px_18px_rgba(0,0,0,0.14)]">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[12px] font-semibold tracking-wide uppercase text-emerald-300 light:text-emerald-800">
-              Sara AI
-            </p>
+            <div className="flex items-center gap-x-2">
+              <img
+                src={SaraLogo}
+                alt="Sara"
+                className="w-6 h-6 rounded-full shrink-0"
+              />
+              <p className="text-[12px] font-semibold tracking-wide uppercase text-emerald-300 light:text-emerald-800 m-0">
+                Sara AI
+              </p>
+            </div>
           </div>
           <RenderAssistantChatContent
             key={`${uuid}-prompt-reply-content`}

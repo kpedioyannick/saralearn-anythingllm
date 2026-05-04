@@ -6,8 +6,6 @@ import {
   useCallback,
   forwardRef,
 } from "react";
-import { API_BASE } from "@/utils/constants";
-import { getDeviceId } from "@/utils/deviceId";
 import HistoricalMessage from "./HistoricalMessage";
 import PromptReply from "./PromptReply";
 import StatusResponse from "./StatusResponse";
@@ -15,7 +13,7 @@ import ToolApprovalRequest from "./ToolApprovalRequest";
 import FileDownloadCard from "./FileDownloadCard";
 import { useManageWorkspaceModal } from "../../../Modals/ManageWorkspace";
 import ManageWorkspace from "../../../Modals/ManageWorkspace";
-import { ArrowDown, ChartLineUp } from "@phosphor-icons/react";
+import { ArrowDown } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import debounce from "lodash.debounce";
 import Chartable from "./Chartable";
@@ -24,7 +22,6 @@ import { useParams } from "react-router-dom";
 import paths from "@/utils/paths";
 import Appearance from "@/models/appearance";
 import useTextSize from "@/hooks/useTextSize";
-import useUser from "@/hooks/useUser";
 import useChatHistoryScrollHandle from "@/hooks/useChatHistoryScrollHandle";
 import { ThoughtExpansionProvider } from "./ThoughtContainer";
 import { MessageActionsProvider } from "./MessageActionsContext";
@@ -47,11 +44,8 @@ export default forwardRef(function (
   const { showing, hideModal } = useManageWorkspaceModal();
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
-  const [showProgress, setShowProgress] = useState(false);
-  const [progressData, setProgressData] = useState([]);
   const isStreaming = history[history.length - 1]?.animate;
   const { t } = useTranslation();
-  const { user } = useUser();
   const { showScrollbar } = Appearance.getSettings();
   const { textSizeClass } = useTextSize();
 
@@ -84,6 +78,42 @@ export default forwardRef(function (
       return () =>
         chatHistoryElement.removeEventListener("scroll", debouncedScroll);
     }
+  }, []);
+
+  // Quand un media finit son layout, scrollHeight grandit sans event scroll →
+  // on doit ré-ancrer. MAIS : check synchrone du DOM (pas de l'état React qui
+  // est obsolète à cause du debounce 100ms) + listeners synchrones d'input
+  // utilisateur qui suspendent immédiatement l'auto-scroll au moindre geste.
+  useEffect(() => {
+    const el = chatHistoryRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const inner = el.firstElementChild;
+    if (!inner) return;
+
+    let lastUserInputAt = 0;
+    const markInput = () => {
+      lastUserInputAt = Date.now();
+    };
+    el.addEventListener("wheel", markInput, { passive: true });
+    el.addEventListener("touchmove", markInput, { passive: true });
+    el.addEventListener("keydown", markInput);
+
+    const ro = new ResizeObserver(() => {
+      // Suspendre si l'utilisateur a touché quoi que ce soit dans les 800ms.
+      if (Date.now() - lastUserInputAt < 800) return;
+      // Check synchrone : sommes-nous réellement collés au bas du DOM ?
+      const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      if (distFromBottom < 60) {
+        el.scrollTo({ top: el.scrollHeight });
+      }
+    });
+    ro.observe(inner);
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("wheel", markInput);
+      el.removeEventListener("touchmove", markInput);
+      el.removeEventListener("keydown", markInput);
+    };
   }, []);
 
   const scrollToBottom = (smooth = false) => {
@@ -210,41 +240,6 @@ export default forwardRef(function (
   );
   const lastMessageInfo = useMemo(() => getLastMessageInfo(history), [history]);
 
-  async function fetchProgress() {
-    if (!activeThread?.id) return;
-    const params = new URLSearchParams({
-      threadId: String(activeThread.id),
-      deviceId: getDeviceId(),
-    });
-    if (user?.id) params.set("userId", String(user.id));
-    const r = await fetch(`${API_BASE}/v1/user/exercises/progress?${params.toString()}`);
-    const data = await r.json();
-    setProgressData(data.progress ?? []);
-    setShowProgress(true);
-  }
-
-  function getSkillState(pct) {
-    if (pct >= 0.7)
-      return {
-        label: "Acquise",
-        type: "full",
-        className:
-          "text-slate-200 light:text-slate-900 bg-slate-600/30 light:bg-slate-200/80 border-slate-500/35 light:border-slate-400/50",
-      };
-    if (pct > 0)
-      return {
-        label: "En cours",
-        type: "half",
-        className:
-          "text-amber-200 light:text-amber-900 bg-amber-700/25 light:bg-amber-200/60 border-amber-500/35 light:border-amber-700/25",
-      };
-    return {
-      label: "Non acquise",
-      type: "empty",
-      className:
-        "text-zinc-300 light:text-slate-700 bg-zinc-700/25 light:bg-slate-200/80 border-zinc-500/35 light:border-slate-400/40",
-    };
-  }
   const renderStatusResponse = useCallback(
     (item, index) => {
       const hasSubsequentMessages = index < compiledHistory.length - 1;
@@ -262,107 +257,6 @@ export default forwardRef(function (
   return (
     <MessageActionsProvider>
       <ThoughtExpansionProvider>
-        {activeThread && !showProgress && (
-          <div className="fixed md:absolute top-2.5 md:top-[9px] z-[120] md:z-30 right-[102px] md:right-[107px]">
-            <button
-              type="button"
-              onClick={fetchProgress}
-              className="uppercase transition-all duration-300 w-[35px] h-[35px] text-base font-semibold rounded-full flex items-center bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover justify-center text-white p-2 hover:border-slate-100 hover:border-opacity-50 border-transparent border"
-              title={t("sara.progress.button_title")}
-            >
-              <ChartLineUp size={16} weight="bold" />
-            </button>
-          </div>
-        )}
-
-        {showProgress && (
-          <>
-            <div
-              className="fixed inset-0 z-[120] bg-black/35 backdrop-blur-[1px] md:hidden"
-              onClick={() => setShowProgress(false)}
-            />
-            <div className="fixed md:absolute top-16 md:top-0 right-0 z-[130] h-[calc(100%-4rem)] md:h-full w-[86vw] max-w-72 bg-zinc-900/98 light:bg-white border-l border-white/10 light:border-gray-200 flex flex-col shadow-2xl">
-            <div className="flex items-start justify-between gap-2 px-4 py-3 border-b border-white/10 light:border-slate-200 bg-theme-action-menu-bg/85 light:bg-white">
-              <p className="text-white light:text-gray-800 text-sm font-semibold whitespace-normal break-words leading-snug">
-                {activeThread?.name}
-              </p>
-              <button
-                onClick={() => setShowProgress(false)}
-                className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-bold transition-colors border border-white/20"
-              >✕</button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              {!progressData || progressData.length === 0 ? (
-                <p className="text-white/50 text-sm text-center mt-8">{t("sara.progress.empty")}</p>
-              ) : (
-                <div className="space-y-4">
-                  {progressData.map((group) => {
-                    const pct = group.total > 0 ? group.correct / group.total : 0;
-                    const skillState = getSkillState(pct);
-                    return (
-                      <div key={group.competence} className="bg-white/5 light:bg-gray-100 rounded-xl p-3">
-                        <div className="flex items-start gap-2 pr-2 min-w-0 mb-2">
-                            <span
-                              className={`relative mt-0.5 h-3.5 w-3.5 shrink-0 rounded-[3px] border ${
-                                skillState.type === "full"
-                                  ? "bg-slate-400 border-slate-300 light:bg-slate-600 light:border-slate-500"
-                                  : skillState.type === "half"
-                                    ? "border-amber-400 bg-transparent"
-                                    : "border-zinc-400 bg-transparent light:border-slate-500"
-                              }`}
-                            >
-                              {skillState.type === "half" && (
-                                <span className="absolute left-0 top-0 h-full w-1/2 rounded-l-[2px] bg-amber-400" />
-                              )}
-                            </span>
-                            <p className="text-white/90 light:text-gray-800 text-xs font-semibold leading-tight break-words">
-                              {group.competence}
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1.5 rounded-full bg-white/10 light:bg-gray-200 overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-slate-400 light:bg-slate-600"
-                              style={{ width: `${Math.round(pct * 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-white/70 light:text-gray-600 text-xs font-mono shrink-0">
-                            {group.correct}/{group.total}
-                          </span>
-                        </div>
-                        <div className="mt-1 flex items-center justify-between">
-                          <span
-                            className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex ${skillState.className}`}
-                          >
-                            <span className="md:hidden">
-                              {skillState.label === "Non acquise"
-                                ? "Non"
-                                : skillState.label}
-                            </span>
-                            <span className="hidden md:inline">
-                              {skillState.label}
-                            </span>
-                          </span>
-                          <button
-                            onClick={() => {
-                              setShowProgress(false);
-                              sendCommand({ text: `${t("sara.progress.retry_prompt")} : ${group.competence}`, autoSubmit: true });
-                            }}
-                            className="text-[10px] px-2 py-0.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white/90 light:border-slate-300 light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-700 transition-colors"
-                          >
-                            🔁 {t("sara.progress.retry")}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-          </>
-        )}
-
         <div
           className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} h-full md:h-[83%] pb-[100px] pt-16 md:pt-14 md:pb-20 md:mx-0 overflow-y-scroll flex flex-col items-center justify-start ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
           id="chat-history"

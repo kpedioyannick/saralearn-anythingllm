@@ -72,7 +72,7 @@ const Actions = ({
           cible == ce qui est juste au-dessus des chips.
         */}
         {isLastMessage && role !== "user" && !isEditing && sendCommand && (
-          <FollowUpChips sendCommand={sendCommand} />
+          <FollowUpChips sendCommand={sendCommand} slug={slug} />
         )}
         {chatId && role !== "user" && !isEditing && (
           <FeedbackButton

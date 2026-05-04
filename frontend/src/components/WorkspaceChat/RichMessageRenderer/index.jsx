@@ -7,6 +7,7 @@ import DicteeBlock from "@/components/WorkspaceChat/DicteeBlock";
 import GeogebraBlock from "@/components/WorkspaceChat/GeogebraBlock";
 import ProblemeBlock from "@/components/WorkspaceChat/ProblemeBlock";
 import VideoBlock from "@/components/WorkspaceChat/VideoBlock";
+import VideoUrlBlock from "@/components/WorkspaceChat/VideoBlock/VideoUrlBlock";
 import VideoPreviewBlock from "@/components/WorkspaceChat/VideoPreviewBlock";
 import H5PBlock from "@/components/WorkspaceChat/H5PBlock";
 import { Transformer } from "markmap-lib";
@@ -232,21 +233,7 @@ export default function RichMessageRenderer({
           );
         }
         if (part.type === "video-url") {
-          return (
-            <div
-              key={`vidu-${part.content.slice(0, 40)}`}
-              className="my-2 w-full min-w-0 sm:my-4 rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg"
-            >
-              <video
-                src={part.content}
-                controls
-                autoPlay
-                playsInline
-                preload="metadata"
-                className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
-              />
-            </div>
-          );
+          return <VideoUrlBlock key={`vidu-${part.content}`} src={part.content} />;
         }
         if (part.type === "h5p") {
           return <H5PBlock key={`h5p-${part.content}`} url={part.content} />;

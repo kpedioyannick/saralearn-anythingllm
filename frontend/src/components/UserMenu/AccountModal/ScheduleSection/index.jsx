@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { Calendar, Plus, Warning } from "@phosphor-icons/react";
 import useUserSchedule from "@/hooks/useUserSchedule";
 import showToast from "@/utils/toast";
-import SlotModal from "./SlotModal";
+import SlotForm from "./SlotForm";
 import { DAYS, detectOverlaps, groupByDay } from "./utils";
 
 const TYPE_STYLES = {
@@ -15,6 +15,13 @@ export default function ScheduleSection() {
   const [editing, setEditing] = useState(null); // null | "new" | slot object
   const conflicts = useMemo(() => detectOverlaps(slots), [slots]);
   const byDay = useMemo(() => groupByDay(slots), [slots]);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (editing && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [editing]);
 
   const handleSave = async (payload) => {
     if (editing === "new") {
@@ -63,6 +70,17 @@ export default function ScheduleSection() {
           <Plus size={14} weight="bold" /> Ajouter un créneau
         </button>
       </div>
+
+      {editing && (
+        <div ref={formRef}>
+          <SlotForm
+            slot={editing === "new" ? null : editing}
+            onClose={() => setEditing(null)}
+            onSave={handleSave}
+            onDelete={editing !== "new" ? () => handleDelete(editing.id) : null}
+          />
+        </div>
+      )}
 
       <div className="flex items-center gap-x-4 mb-3 text-xs text-white/70">
         <span className="flex items-center gap-x-1">
@@ -145,14 +163,6 @@ export default function ScheduleSection() {
         </div>
       )}
 
-      {editing && (
-        <SlotModal
-          slot={editing === "new" ? null : editing}
-          onClose={() => setEditing(null)}
-          onSave={handleSave}
-          onDelete={editing !== "new" ? () => handleDelete(editing.id) : null}
-        />
-      )}
     </div>
   );
 }

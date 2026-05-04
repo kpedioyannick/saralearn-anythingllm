@@ -16,6 +16,7 @@ import SearchBox from "./SearchBox";
 import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
+import SaraLogoMark from "@/media/logo/sara-logo.svg";
 
 export default function Sidebar() {
   const { user } = useUser();
@@ -66,13 +67,20 @@ export default function Sidebar() {
         )}
         <div className="overflow-hidden h-full">
           <div className="flex shrink-0 w-full justify-center my-[18px]">
-            <div className="flex w-[250px] min-w-[250px]">
-              <Link to={paths.home()} aria-label="Home">
+            <div className="flex w-[250px] min-w-[250px] px-4">
+              <Link
+                to={paths.home()}
+                aria-label="Home"
+                className={`flex items-center gap-x-2 transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
+              >
                 <img
-                  src={logo}
-                  alt="Logo"
-                  className={`rounded max-h-[24px] object-contain transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
+                  src={SaraLogoMark}
+                  alt="Sara"
+                  className="h-9 w-9 rounded-full shrink-0"
                 />
+                <span className="text-white light:text-emerald-900 font-semibold tracking-wide text-base">
+                  Sara AI
+                </span>
               </Link>
             </div>
           </div>
@@ -159,13 +167,15 @@ export function SidebarMobileHeader() {
         >
           {showSidebar ? <X className="h-6 w-6" /> : <List className="h-6 w-6" />}
         </button>
-        <div className="flex items-center justify-center flex-grow">
+        <div className="flex items-center justify-center flex-grow gap-x-2">
           <img
-            src={logo}
-            alt="Logo"
-            className="block mx-auto h-6 w-auto"
-            style={{ maxHeight: "40px", objectFit: "contain" }}
+            src={SaraLogoMark}
+            alt="Sara"
+            className="h-8 w-8 rounded-full shrink-0"
           />
+          <span className="text-white light:text-emerald-900 font-semibold tracking-wide text-base">
+            Sara AI
+          </span>
         </div>
         <div className="w-12"></div>
       </div>
@@ -190,13 +200,15 @@ export function SidebarMobileHeader() {
           <div className="w-full h-full flex flex-col overflow-x-hidden items-between">
             {/* Header Information */}
             <div className="flex w-full items-center justify-between gap-x-4">
-              <div className="flex shrink-1 w-fit items-center justify-start">
+              <div className="flex shrink-1 w-fit items-center justify-start gap-x-2">
                 <img
-                  src={logo}
-                  alt="Logo"
-                  className="rounded w-full max-h-[40px]"
-                  style={{ objectFit: "contain" }}
+                  src={SaraLogoMark}
+                  alt="Sara"
+                  className="h-10 w-10 rounded-full shrink-0"
                 />
+                <span className="text-white light:text-emerald-900 font-semibold tracking-wide text-base">
+                  Sara AI
+                </span>
               </div>
               {(!user || user?.role !== "default") && (
                 <div className="flex gap-x-2 items-center text-slate-500 shink-0">

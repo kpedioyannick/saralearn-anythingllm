@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { API_BASE } from "@/utils/constants";
+import VideoUrlBlock from "./VideoUrlBlock";
 
 const POLL_INTERVAL = 3000;
 
@@ -103,16 +104,7 @@ export default function VideoBlock({ content }) {
   if (status === "done" && videoUrl) {
     return (
       <div className="my-2 w-full min-w-0 sm:my-4">
-        <div className="rounded-lg sm:rounded-xl overflow-hidden border border-emerald-500/30 bg-black shadow-lg">
-          <video
-            src={videoUrl}
-            controls
-            autoPlay
-            playsInline
-            preload="metadata"
-            className="block w-full max-h-[min(52dvh,420px)] object-contain sm:max-h-[min(70dvh,900px)]"
-          />
-        </div>
+        <VideoUrlBlock src={videoUrl} />
         {quality !== "hd" && (
           <button
             type="button"

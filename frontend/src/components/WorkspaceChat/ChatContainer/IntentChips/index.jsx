@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
+const COACH_SLUG = "coach-scolaire";
+const isCoachWorkspace = (ws) => ws?.slug === COACH_SLUG;
+
 const CHIPS = [
   { id: "exercice", icon: "✏️" },
   { id: "fiche", icon: "📚" },
@@ -22,7 +25,19 @@ const CHIPS = [
   },
 ];
 
+const COACH_CHIPS = [
+  { id: "coach_today", icon: "📅" },
+  { id: "coach_bilan", icon: "📊" },
+  { id: "coach_priorites", icon: "🎯" },
+  { id: "coach_semaine", icon: "📆" },
+  { id: "coach_regularite", icon: "🔥" },
+  { id: "coach_examen", icon: "⏰" },
+  { id: "coach_motive", icon: "💪" },
+  { id: "coach_bloque", icon: "🆘" },
+];
+
 function getVisibleChips(workspace) {
+  if (isCoachWorkspace(workspace)) return COACH_CHIPS;
   return CHIPS.filter((c) => !c.showWhen || c.showWhen(workspace));
 }
 
@@ -52,6 +67,30 @@ const INTENT_CHIP_BORDER = {
     "border-fuchsia-500/55 hover:border-fuchsia-400 light:border-fuchsia-500/50 light:hover:border-fuchsia-600",
   brevet:
     "border-orange-500/55 hover:border-orange-400 light:border-orange-500/50 light:hover:border-orange-600",
+  coach_today:
+    "border-sky-500/55 hover:border-sky-400 light:border-sky-500/50 light:hover:border-sky-600",
+  coach_bilan:
+    "border-indigo-500/55 hover:border-indigo-400 light:border-indigo-500/50 light:hover:border-indigo-600",
+  coach_priorites:
+    "border-amber-500/55 hover:border-amber-400 light:border-amber-500/50 light:hover:border-amber-600",
+  coach_semaine:
+    "border-teal-500/55 hover:border-teal-400 light:border-teal-500/50 light:hover:border-teal-600",
+  coach_regularite:
+    "border-rose-500/55 hover:border-rose-400 light:border-rose-500/50 light:hover:border-rose-600",
+  coach_examen:
+    "border-purple-500/55 hover:border-purple-400 light:border-purple-500/50 light:hover:border-purple-600",
+  coach_motive:
+    "border-emerald-500/55 hover:border-emerald-400 light:border-emerald-600/45 light:hover:border-emerald-700",
+  coach_bloque:
+    "border-red-500/55 hover:border-red-400 light:border-red-500/50 light:hover:border-red-600",
+  coach_demain:
+    "border-sky-500/55 hover:border-sky-400 light:border-sky-500/50 light:hover:border-sky-600",
+  coach_detail:
+    "border-indigo-500/55 hover:border-indigo-400 light:border-indigo-500/50 light:hover:border-indigo-600",
+  coach_encore:
+    "border-emerald-500/55 hover:border-emerald-400 light:border-emerald-600/45 light:hover:border-emerald-700",
+  coach_action:
+    "border-amber-500/55 hover:border-amber-400 light:border-amber-500/50 light:hover:border-amber-600",
 };
 
 const CHIP_BTN_BASE =
@@ -233,15 +272,23 @@ const FOLLOWUP_CHIPS = [
   { id: "explication", icon: "💡" },
 ];
 
+const COACH_FOLLOWUP_CHIPS = [
+  { id: "coach_demain", icon: "📅" },
+  { id: "coach_detail", icon: "📊" },
+  { id: "coach_encore", icon: "💪" },
+  { id: "coach_action", icon: "🎯" },
+];
+
 const FOLLOWUP_CHIP_BASE =
   "text-[11px] px-2 py-1 md:px-2.5 rounded-full border bg-zinc-800/95 hover:bg-zinc-700 text-zinc-200 hover:text-white light:bg-white light:text-slate-700 light:hover:bg-slate-50 light:hover:text-slate-900 shadow-sm transition-all duration-150 whitespace-nowrap";
 
-export function FollowUpChips({ sendCommand }) {
+export function FollowUpChips({ sendCommand, slug }) {
   const { t } = useTranslation();
+  const chips = slug === COACH_SLUG ? COACH_FOLLOWUP_CHIPS : FOLLOWUP_CHIPS;
   return (
     <div className="overflow-x-auto no-scrollbar">
       <div className="inline-flex gap-1.5">
-        {FOLLOWUP_CHIPS.map((c) => {
+        {chips.map((c) => {
           const text = t(`chat_window.followup_chips.${c.id}.template`);
           const label = t(`chat_window.followup_chips.${c.id}.label`);
           return (
