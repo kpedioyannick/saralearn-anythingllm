@@ -10,28 +10,9 @@ Les sons **[d]** et **[g]** se distinguent par **point d'articulation (avant vs 
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: dg-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [d], pointe de la langue contre les dents. Pour [g], arrière de la langue contre le palais.
-
-**Astuce :** [d] vient des dents. [g] vient de la gorge.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: dg-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[d]** ou **[g]**.
-[d] vient des dents. [g] vient de la gorge.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:gros] Quel son entends-tu dans « gros » ? || [d] | V: [g] || « gr
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: dg-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **D** se lit [d].
-- **G, GU** se lit [g].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{dos::[d]}}{{dame::[d]}}{{danse::[d]}}{{gâteau::[g]}}{{gomme::[
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: dg-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [d] vient des dents. [g] vient de la gorge.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🎸] {{gu}}itare
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: dg-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [d] vient des dents. [g] vient de la gorge.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

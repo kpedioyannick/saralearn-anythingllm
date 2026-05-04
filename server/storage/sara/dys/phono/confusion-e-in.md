@@ -10,28 +10,9 @@ Les sons **[ɛ]** et **[ɛ̃]** se distinguent par **nasalité (oral vs nasal)**
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: e-in-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [ɛ] (è), bouche entrouverte, son oral. Pour [ɛ̃] (in), même position mais l'air sort aussi par le nez.
-
-**Astuce :** Pince ton nez : si tu ne peux plus prononcer, c'était [ɛ̃] (in, ain, ein).
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: e-in-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[ɛ]** ou **[ɛ̃]**.
-Pince ton nez : si tu ne peux plus prononcer, c'était [ɛ̃] (in, ain, ein).
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:vin] Quel son entends-tu dans « vin » ? || [ɛ] | V: [ɛ̃] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: e-in-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **È, Ê, AI, EI** se lit [ɛ].
-- **IN, AIN, EIN, IM** se lit [ɛ̃].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{mère::[ɛ]}}{{tête::[ɛ]}}{{lait::[ɛ]}}{{pain::[ɛ̃]}}{{mai
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: e-in-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Pince ton nez : si tu ne peux plus prononcer, c'était [ɛ̃] (in, ain, ein).
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🐰] {{l}}apin
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: e-in-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Pince ton nez : si tu ne peux plus prononcer, c'était [ɛ̃] (in, ain, ein).
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

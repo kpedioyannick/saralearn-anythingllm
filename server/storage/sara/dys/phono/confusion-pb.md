@@ -10,40 +10,9 @@ Les sons **[p]** et **[b]** se forment au même endroit dans la bouche (les deux
 
 Tu vas travailler 5 objectifs : sentir la différence dans ta bouche, l'entendre, la lire, l'écrire dans des mots, puis dans des phrases.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: pb-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pose ta main sur ta gorge.
-- Dis **[p]** (comme dans **p**ain) : tes lèvres s'ouvrent d'un coup, mais ta gorge **ne vibre pas** → c'est un son **sourd**.
-- Dis **[b]** (comme dans **b**ain) : tes lèvres s'ouvrent pareil, mais ta gorge **vibre** → c'est un son **sonore**.
-
-Astuce : si tu sens une vibration, c'est **B**. Sinon, c'est **P**.
-
-### Exemples d'exercices
-
-```quiz
-competence: Identifier le caractère sonore ou sourd des sons [p] et [b]
-QCM || Quand tu poses ta main sur ta gorge et que tu dis « PA », que sens-tu ? || Une vibration | V: Pas de vibration | Un souffle chaud || P est un son sourd : les cordes vocales ne vibrent pas.
-QCM || Quand tu dis « BA » avec la main sur la gorge, que sens-tu ? || V: Une vibration | Pas de vibration | Un picotement || B est un son sonore : les cordes vocales vibrent.
-VF || Le son [p] et le son [b] se forment avec les deux lèvres. || V || Vrai : ce sont tous les deux des consonnes bilabiales (formées par les deux lèvres).
-VF || Le son [b] est un son sourd, sans vibration. || F || Faux : [b] est sonore (vibration). C'est [p] qui est sourd.
-```
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: pb-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[p]** ou **[b]**.
-Concentre-toi sur le **tout début** du mot (ou la syllabe demandée). Pense à la vibration : **B = vibre**, **P = ne vibre pas**.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -58,17 +27,9 @@ VF || Les mots « pain » et « bain » commencent par le même son. || F || Fau
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: pb-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis un mot, regarde bien la **première lettre** :
-- **P** se lit **[p]** → souffle sec, sans vibration.
-- **B** se lit **[b]** → souffle avec vibration.
-
-Astuce visuelle : la lettre **B** a un **ventre rond** comme un **b**allon plein → c'est un son rond et sonore. La lettre **P** est plus pointue → c'est un son court et sourd.
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -83,18 +44,9 @@ Association || {{pomme::fruit rouge ou vert}}{{bombe::objet qui explose}}{{poule
 
 ---
 
-## Objectif 4 — Production en mot isolé
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: pb-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour bien écrire **P** ou **B**, fais le test de la **gorge qui vibre** :
-1. Prononce le mot lentement.
-2. Pose ta main sur ta gorge.
-3. Si ça **vibre** au début → tu écris **B**. Si ça **ne vibre pas** → tu écris **P**.
-
-Exemple : « **b**allon » → ma gorge vibre → j'écris **B**.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -121,18 +73,9 @@ QCM || Comment écrit-on le mot qui veut dire « fruit rouge ou vert » ? || V: 
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: pb-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, tu vas écrire des **phrases entières** avec des mots qui contiennent **P** ou **B**.
-
-Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Vibration → **B** ; pas de vibration → **P**.
-3. Relis ta phrase à voix haute pour vérifier.
+<!-- order: 4 -->
 
 ### Exemples d'exercices
 

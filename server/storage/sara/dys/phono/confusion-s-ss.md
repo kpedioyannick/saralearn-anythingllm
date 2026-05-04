@@ -10,28 +10,9 @@ Les sons **[s]** et **[z]** se distinguent par **position dans le mot**. Le S se
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: s-ss-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Le S se prononce différemment selon sa position. Entre 2 voyelles, S = [z] (rose). Au début ou doublé (SS), S = [s] (soleil, poisson).
-
-**Astuce :** Si le S est entre 2 voyelles, il fait [z]. Sinon (début, fin, ou SS), il fait [s].
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: s-ss-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[s]** ou **[z]**.
-Si le S est entre 2 voyelles, il fait [z]. Sinon (début, fin, ou SS), il fait [s].
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:musique] Quel son entends-tu dans « musique » ? || [s] | V: [z] ||
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: s-ss-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **S, SS** se lit [s].
-- **S entre voyelles** se lit [z].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{soleil::[s]}}{{poisson::[s]}}{{tasse::[s]}}{{rose::[z]}}{{vase:
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: s-ss-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Si le S est entre 2 voyelles, il fait [z]. Sinon (début, fin, ou SS), il fait [s].
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🏠] {{m}}aison
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: s-ss-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Si le S est entre 2 voyelles, il fait [z]. Sinon (début, fin, ou SS), il fait [s].
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

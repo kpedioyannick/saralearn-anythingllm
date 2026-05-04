@@ -10,28 +10,9 @@ Les sons **[t]** et **[d]** se distinguent par **sonorité (vibration des cordes
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: td-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pose la pointe de ta langue derrière les dents du haut, puis relâche-la d'un coup. Pour [t], pas de vibration de la gorge. Pour [d], la gorge vibre.
-
-**Astuce :** Pose ta main sur ta gorge : si ça vibre c'est D, sinon c'est T.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: td-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[t]** ou **[d]**.
-Pose ta main sur ta gorge : si ça vibre c'est D, sinon c'est T.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:doigt] Quel son entends-tu dans « doigt » ? || [t] | V: [d] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: td-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **T** se lit [t].
-- **D** se lit [d].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{table::[t]}}{{tortue::[t]}}{{tasse::[t]}}{{dos::[d]}}{{dame::[d
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: td-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Pose ta main sur ta gorge : si ça vibre c'est D, sinon c'est T.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:💃] {{d}}anse
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: td-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Pose ta main sur ta gorge : si ça vibre c'est D, sinon c'est T.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

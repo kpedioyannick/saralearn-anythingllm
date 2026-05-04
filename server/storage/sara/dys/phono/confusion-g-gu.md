@@ -10,28 +10,9 @@ Les sons **[g] avec G** et **[g] avec GU** se distinguent par **règle d'orthogr
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: g-gu-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Le G se prononce [g] toujours, mais s'écrit différemment. G devant a, o, u (gâteau, gomme). GU devant e, i (guêpe, guirlande).
-
-**Astuce :** Sans le U, G devant e/i ferait [ʒ]. Le U ajoute le son [g].
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: g-gu-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[g] avec G** ou **[g] avec GU**.
-Sans le U, G devant e/i ferait [ʒ]. Le U ajoute le son [g].
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:guitare] Quel son entends-tu dans « guitare » ? || [g] avec G | V:
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: g-gu-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **G devant a/o/u** se lit [g] avec G.
-- **GU devant e/i** se lit [g] avec GU.
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{gâteau::[g] avec G}}{{gomme::[g] avec G}}{{légume::[g] avec G
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: g-gu-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Sans le U, G devant e/i ferait [ʒ]. Le U ajoute le son [g].
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || {{gu}}ide
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: g-gu-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Sans le U, G devant e/i ferait [ʒ]. Le U ajoute le son [g].
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

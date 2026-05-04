@@ -16,7 +16,6 @@ const { embedQuery, embedPassage, cosineSimilarity } = require("./intentDetector
 
 const VALIDATE_THRESHOLD_COUNT = 10;
 const VALIDATE_THRESHOLD_SUCCESS = 0.8;
-const MATCH_THRESHOLD = 0.7;
 
 // Cache en mémoire : { threadId: [{ id, title, embedding }] }
 // Vidé au pm2 restart, suffisant pour 99% des cas. Re-fetch si nouveau thread.
@@ -50,7 +49,9 @@ async function getObjectivesWithEmbeddings(threadId) {
 
 /**
  * Trouve l'objectif le plus pertinent pour un texte donné (objective: ou statement).
- * Renvoie l'ID ou null si pas de match au-dessus du seuil.
+ * Politique : retourne TOUJOURS le best match (pas de seuil), tant qu'il y a des
+ * objectifs en DB. Le titre brut LLM reste persisté dans `user_exercises.objectiveTitle`
+ * pour rejouer le matching plus tard si l'algo s'améliore.
  */
 async function matchObjective(threadId, text) {
   if (!text || !threadId) return null;
@@ -69,7 +70,7 @@ async function matchObjective(threadId, text) {
       best = o;
     }
   }
-  if (bestScore < MATCH_THRESHOLD) return null;
+  if (!best) return null;
   return { id: best.id, title: best.title, slug: best.slug, score: bestScore };
 }
 

@@ -10,28 +10,9 @@ Les sons **[f]** et **[ʃ]** se distinguent par **point d'articulation (lèvres 
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: fch-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [f], dents sur la lèvre du bas et souffle. Pour [ʃ], lèvres arrondies et souffle. Tous deux sourds.
-
-**Astuce :** [f] = souffle court avec les dents. [ʃ] = souffle long avec les lèvres en avant.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: fch-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[f]** ou **[ʃ]**.
-[f] = souffle court avec les dents. [ʃ] = souffle long avec les lèvres en avant.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:chien] Quel son entends-tu dans « chien » ? || [f] | V: [ʃ] || «
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: fch-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **F** se lit [f].
-- **CH** se lit [ʃ].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{fête::[f]}}{{fille::[f]}}{{fleur::[f]}}{{chat::[ʃ]}}{{chaud::
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: fch-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [f] = souffle court avec les dents. [ʃ] = souffle long avec les lèvres en avant.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🍫] {{ch}}ocolat
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: fch-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [f] = souffle court avec les dents. [ʃ] = souffle long avec les lèvres en avant.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

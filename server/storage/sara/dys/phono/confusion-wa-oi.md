@@ -10,28 +10,9 @@ Les sons **[wa]** et **[u-a]** se distinguent par **nombre de syllabes**. Pour [
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: wa-oi-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [wa] (oi), une syllabe avec semi-voyelle. Pour [u-a], deux syllabes distinctes.
-
-**Astuce :** Compte les syllabes : « moi » = 1, « il joue à » = 3.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: wa-oi-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[wa]** ou **[u-a]**.
-Compte les syllabes : « moi » = 1, « il joue à » = 3.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:loua] Quel son entends-tu dans « loua » ? || [wa] | V: [u-a] || «
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: wa-oi-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **OI** se lit [wa].
-- **OUA, OU-A** se lit [u-a].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{moi::[wa]}}{{toi::[wa]}}{{soir::[wa]}}{{oua-oua::[u-a]}}{{joua:
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: wa-oi-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Compte les syllabes : « moi » = 1, « il joue à » = 3.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -91,16 +60,9 @@ Trous || {{l}}oua
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: wa-oi-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Compte les syllabes : « moi » = 1, « il joue à » = 3.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

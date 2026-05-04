@@ -23,7 +23,8 @@
       },
       "shared_workspaces": {
         "brevet": ["3eme", "4eme"],
-        "coach-scolaire": ["3eme"]
+        "coach-scolaire": ["3eme"],
+        "phonetique": ["cm2", "6eme", "5eme", "4eme", "3eme", "2nde"]
       }
     },
     "usa": {

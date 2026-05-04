@@ -10,28 +10,9 @@ Les sons **[f]** et **[v]** se distinguent par **sonorité (vibration des cordes
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: fv-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pose tes dents du haut sur ta lèvre du bas et souffle. Pour [f], pas de vibration. Pour [v], la gorge vibre.
-
-**Astuce :** Si la gorge vibre quand tu prolonges le son, c'est V. Sinon, c'est F.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: fv-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[f]** ou **[v]**.
-Si la gorge vibre quand tu prolonges le son, c'est V. Sinon, c'est F.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:voiture] Quel son entends-tu dans « voiture » ? || [f] | V: [v] ||
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: fv-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **F, FF, PH** se lit [f].
-- **V** se lit [v].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{fête::[f]}}{{fille::[f]}}{{feu::[f]}}{{vache::[v]}}{{vélo::[v
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: fv-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Si la gorge vibre quand tu prolonges le son, c'est V. Sinon, c'est F.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🏙️] {{v}}ille
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: fv-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Si la gorge vibre quand tu prolonges le son, c'est V. Sinon, c'est F.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

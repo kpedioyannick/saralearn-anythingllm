@@ -10,28 +10,9 @@ Les sons **[ʃ]** et **[ʒ]** se distinguent par **sonorité (vibration des cord
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: chj-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Arrondis tes lèvres, lève la langue vers le haut sans toucher le palais, et souffle. Pour [ʃ] (CH), pas de vibration. Pour [ʒ] (J), la gorge vibre.
-
-**Astuce :** G devant e/i se lit [ʒ] (genou, gigot). G devant a/o/u se lit [g]. CH s'écrit toujours « ch ».
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: chj-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[ʃ]** ou **[ʒ]**.
-G devant e/i se lit [ʒ] (genou, gigot). G devant a/o/u se lit [g]. CH s'écrit toujours « ch ».
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:jardin] Quel son entends-tu dans « jardin » ? || [ʃ] | V: [ʒ] ||
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: chj-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **CH** se lit [ʃ].
-- **J, G (devant e/i)** se lit [ʒ].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{chat::[ʃ]}}{{chocolat::[ʃ]}}{{chemin::[ʃ]}}{{jouer::[ʒ]}}{{
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: chj-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** G devant e/i se lit [ʒ] (genou, gigot). G devant a/o/u se lit [g]. CH s'écrit toujours « ch ».
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🟡] {{j}}aune
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: chj-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. G devant e/i se lit [ʒ] (genou, gigot). G devant a/o/u se lit [g]. CH s'écrit toujours « ch ».
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

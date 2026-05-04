@@ -10,28 +10,9 @@ Les sons **[s]** et **[z]** se distinguent par **sonorité (vibration des cordes
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: sz-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pose le bout de ta langue près des dents du haut et souffle un mince filet d'air. Pour [s], pas de vibration. Pour [z], la gorge vibre.
-
-**Astuce :** Entre 2 voyelles, S se prononce [z] (rose). SS reste [s] (poisson). Z se prononce toujours [z].
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: sz-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[s]** ou **[z]**.
-Entre 2 voyelles, S se prononce [z] (rose). SS reste [s] (poisson). Z se prononce toujours [z].
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:zéro] Quel son entends-tu dans « zéro » ? || [s] | V: [z] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: sz-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **S, SS, C, Ç, X** se lit [s].
-- **Z, S (entre voyelles)** se lit [z].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{serpent::[s]}}{{soleil::[s]}}{{souris::[s]}}{{zèbre::[z]}}{{zo
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: sz-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Entre 2 voyelles, S se prononce [z] (rose). SS reste [s] (poisson). Z se prononce toujours [z].
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🌹] {{r}}ose
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: sz-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Entre 2 voyelles, S se prononce [z] (rose). SS reste [s] (poisson). Z se prononce toujours [z].
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

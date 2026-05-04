@@ -10,28 +10,9 @@ Les sons **[u]** et **[y]** se distinguent par **lieu de la langue (arrière vs 
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: ou-u-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [u] (ou), lèvres arrondies, langue à l'arrière. Pour [y] (u), lèvres arrondies, langue à l'avant.
-
-**Astuce :** [u] (ou) vient du fond. [y] (u) vient de l'avant.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: ou-u-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[u]** ou **[y]**.
-[u] (ou) vient du fond. [y] (u) vient de l'avant.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:sur] Quel son entends-tu dans « sur » ? || [u] | V: [y] || « sur 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: ou-u-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **OU, OÙ** se lit [u].
-- **U, Û** se lit [y].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{loup::[u]}}{{roue::[u]}}{{soupe::[u]}}{{lu::[y]}}{{rue::[y]}}{{
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: ou-u-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [u] (ou) vient du fond. [y] (u) vient de l'avant.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:💥] {{ch}}ute
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: ou-u-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [u] (ou) vient du fond. [y] (u) vient de l'avant.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

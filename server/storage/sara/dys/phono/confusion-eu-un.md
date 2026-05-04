@@ -10,28 +10,9 @@ Les sons **[ø]/[œ]** et **[œ̃]** se distinguent par **nasalité (oral vs nas
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: eu-un-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [ø]/[œ] (eu), lèvres arrondies, son oral. Pour [œ̃] (un), l'air sort aussi par le nez.
-
-**Astuce :** [œ̃] (un) tend à se confondre avec [ɛ̃] en français moderne.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: eu-un-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[ø]/[œ]** ou **[œ̃]**.
-[œ̃] (un) tend à se confondre avec [ɛ̃] en français moderne.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:chacun] Quel son entends-tu dans « chacun » ? || [ø]/[œ] | V: [�
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: eu-un-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **EU, ŒU** se lit [ø]/[œ].
-- **UN, UM** se lit [œ̃].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{jeu::[ø]/[œ]}}{{feu::[ø]/[œ]}}{{œuf::[ø]/[œ]}}{{lundi::[
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: eu-un-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [œ̃] (un) tend à se confondre avec [ɛ̃] en français moderne.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -91,16 +60,9 @@ Trous || {{ch}}acun
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: eu-un-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [œ̃] (un) tend à se confondre avec [ɛ̃] en français moderne.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

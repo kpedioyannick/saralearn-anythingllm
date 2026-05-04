@@ -2,7 +2,9 @@
  * Seed du workspace "Phonétique" pour le module dys-phono.
  * - Crée le workspace s'il n'existe pas (idempotent)
  * - Crée 34 threads, un par paire de confusion phonétique
- * - Crée 5 objectifs par thread (170 rows total)
+ * - Crée 4 objectifs par thread (136 rows total). L'ancien objectif "Articulation"
+ *   a été retiré : exos de kinesthésie articulatoire (main sur la gorge, pince-nez)
+ *   trop difficiles à réaliser en numérique auto-évaluable.
  *
  * Idempotent : exécution multiple sans effet de bord (UNIQUE sur slug).
  *
@@ -69,13 +71,13 @@ const CONFUSIONS = [
   { pair: "s-ss", title: "Confusion S / SS", desc: "Choisir entre s (entre voyelles → [z]) et ss (entre voyelles → [s])." },
 ];
 
-// 5 objectifs identiques pour chaque confusion (alignés sur le pilote P/B existant).
+// 4 objectifs identiques pour chaque confusion. Articulation retirée (kinesthésie
+// non auto-évaluable en numérique). Titres alignés sur les MDs Mazade.
 const OBJECTIVES = [
-  { slugSuffix: "articulation",       title: "Articulation",                desc: "Sentir physiquement la différence en bouche." },
-  { slugSuffix: "discrimination",     title: "Discrimination auditive",     desc: "Reconnaître les deux sons à l'oreille." },
-  { slugSuffix: "lecture",            title: "Lecture",                     desc: "Lire correctement les graphies des deux sons." },
-  { slugSuffix: "production-mot",     title: "Production en mot isolé",     desc: "Choisir la bonne lettre pour écrire un mot." },
-  { slugSuffix: "production-phrase",  title: "Production en phrase",        desc: "Écrire les sons correctement dans des phrases et dictées." },
+  { slugSuffix: "discrimination",     title: "Reconnaître le son entendu",                    desc: "Reconnaître les deux sons à l'oreille." },
+  { slugSuffix: "lecture",            title: "Lecture",                                       desc: "Lire correctement les graphies des deux sons." },
+  { slugSuffix: "production-mot",     title: "Nomme les dessins et choisis le bon graphème",  desc: "Nommer un dessin et choisir le graphème correct." },
+  { slugSuffix: "production-phrase",  title: "Production en phrase / dictée",                 desc: "Écrire les sons correctement dans des phrases et dictées." },
 ];
 
 const WORKSPACE_NAME = "Phonétique";

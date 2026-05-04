@@ -10,28 +10,9 @@ Les sons **[b]** et **[g]** se distinguent par **point d'articulation (lèvres v
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: bg-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [b], lèvres qui s'ouvrent avec vibration. Pour [g], arrière de la langue qui se décolle.
-
-**Astuce :** [b] vient des lèvres. [g] vient de la gorge.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: bg-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[b]** ou **[g]**.
-[b] vient des lèvres. [g] vient de la gorge.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:gomme] Quel son entends-tu dans « gomme » ? || [b] | V: [g] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: bg-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **B** se lit [b].
-- **G, GU** se lit [g].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{bain::[b]}}{{balle::[b]}}{{bois::[b]}}{{gâteau::[g]}}{{gros::[
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: bg-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [b] vient des lèvres. [g] vient de la gorge.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -91,16 +60,9 @@ Trous || {{g}}arçon
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: bg-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [b] vient des lèvres. [g] vient de la gorge.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

@@ -10,28 +10,9 @@ Les sons **[t]** et **[k]** se distinguent par **point d'articulation (avant vs 
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: tk-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [t], pointe de la langue contre les dents. Pour [k], arrière de la langue contre le palais.
-
-**Astuce :** [t] vient de l'avant. [k] vient de l'arrière (gorge).
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: tk-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[t]** ou **[k]**.
-[t] vient de l'avant. [k] vient de l'arrière (gorge).
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:coq] Quel son entends-tu dans « coq » ? || [t] | V: [k] || « coq 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: tk-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **T** se lit [t].
-- **C, Q, K** se lit [k].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{table::[t]}}{{trois::[t]}}{{tortue::[t]}}{{café::[k]}}{{carte:
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: tk-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [t] vient de l'avant. [k] vient de l'arrière (gorge).
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🟦] {{c}}ube
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: tk-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [t] vient de l'avant. [k] vient de l'arrière (gorge).
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

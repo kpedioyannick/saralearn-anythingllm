@@ -46,6 +46,7 @@ router.post("/", async (req, res) => {
         isCorrect: isCorrect ?? null,
         total: Number(total) || 0,
         correct: Number(correct) || 0,
+        objectiveTitle: objectiveTitle || null,
       },
     });
 

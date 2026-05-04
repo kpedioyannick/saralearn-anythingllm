@@ -116,11 +116,12 @@ function buildPromptBlock(parsed, message = "") {
   lines.push(`Tu accompagnes un élève sur la confusion phonétique : **${meta.title}**.`);
   if (meta.description) lines.push(meta.description);
   lines.push("");
-  lines.push("Voici le contenu pédagogique préparé pour cette confusion. **Réutilise les exercices ci-dessous tels quels** (ne les invente pas), ou adapte-les au niveau et à la demande de l'élève.");
-  lines.push("");
 
-  // On donne TOUJOURS l'articulation + la liste des objectifs pour que Sara
-  // puisse switcher d'objectif si l'élève change de sujet.
+  // On affiche TOUS les objectifs en full content. Volume raisonnable (~4
+  // sections × ~10 lignes), et plus le LLM voit d'exemples concrets, mieux
+  // il reproduit le pattern attendu (format text2quiz dans bloc ```quiz/```dictee).
+  // L'argument `message` / `focused` n'est plus utilisé pour compresser :
+  // tout est full, pour saturer le pattern.
   for (const s of sections) {
     if (!s.title) {
       // Description brute (avant le 1er ##)
@@ -128,26 +129,13 @@ function buildPromptBlock(parsed, message = "") {
       lines.push("");
       continue;
     }
-    const isFocused = focused && s.slug && s.slug.endsWith(`-${focused}`);
-    const isMandatory = s.order === 1; // articulation toujours utile
-    if (focused && !isFocused && !isMandatory) {
-      // Compress : juste le titre + slug
-      lines.push(`## ${s.title}`);
-      lines.push(`<!-- slug: ${s.slug || ""}, order: ${s.order} -->`);
-      lines.push(`(contenu disponible — demande à l'élève s'il veut passer à cet objectif)`);
-      lines.push("");
-    } else {
-      // Full content
-      lines.push(`## ${s.title}`);
-      if (s.content) {
-        lines.push(s.content);
-      }
-      lines.push("");
+    lines.push(`## ${s.title}`);
+    if (s.content) {
+      lines.push(s.content);
     }
+    lines.push("");
   }
 
-  lines.push("---");
-  lines.push("Réponds dans la langue de l'élève. Si tu génères un exo, copie un des blocs ```quiz / ```dictee ci-dessus, en l'adaptant si besoin.");
   return lines.join("\n");
 }
 

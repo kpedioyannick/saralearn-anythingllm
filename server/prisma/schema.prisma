@@ -138,6 +138,7 @@ model workspaces {
   agentModel                   String?
   queryRefusalResponse         String?
   vectorSearchMode             String?                        @default("default")
+  settings                     String?
   workspace_users              workspace_users[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]
@@ -420,6 +421,7 @@ model user_exercises {
   workspaceId        Int
   threadId           Int
   threadObjectiveId  Int?
+  objectiveTitle     String?
   competence         String   @default("")
   subchapter         String
   statement          String

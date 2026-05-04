@@ -10,28 +10,9 @@ Les sons **[n]** et **[ɲ]** se distinguent par **lieu d'articulation (alvéolai
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: ngn-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [n], pointe de la langue derrière les dents du haut. Pour [ɲ] (gn), milieu de la langue contre le palais.
-
-**Astuce :** [ɲ] (gn) = comme dans peigne, montagne. [n] = comme dans nez.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: ngn-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[n]** ou **[ɲ]**.
-[ɲ] (gn) = comme dans peigne, montagne. [n] = comme dans nez.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:ligne] Quel son entends-tu dans « ligne » ? || [n] | V: [ɲ] || «
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: ngn-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **N** se lit [n].
-- **GN** se lit [ɲ].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{nez::[n]}}{{nuit::[n]}}{{neige::[n]}}{{agneau::[ɲ]}}{{montagne
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: ngn-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [ɲ] (gn) = comme dans peigne, montagne. [n] = comme dans nez.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:💆] {{p}}eigne
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: ngn-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [ɲ] (gn) = comme dans peigne, montagne. [n] = comme dans nez.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

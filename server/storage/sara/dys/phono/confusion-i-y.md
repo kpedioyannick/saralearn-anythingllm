@@ -10,28 +10,9 @@ Les sons **[i]** et **[j]** se distinguent par **syllabe (voyelle vs semi-voyell
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: i-y-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [i], voyelle pure. Pour [j], semi-voyelle (transition rapide vers une autre voyelle).
-
-**Astuce :** [i] = syllabe complète. [j] = mouvement avant une autre voyelle (yeux, fille).
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: i-y-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[i]** ou **[j]**.
-[i] = syllabe complète. [j] = mouvement avant une autre voyelle (yeux, fille).
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:paille] Quel son entends-tu dans « paille » ? || [i] | V: [j] || �
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: i-y-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **I, Y** se lit [i].
-- **Y, ILL, Ï** se lit [j].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{lit::[i]}}{{midi::[i]}}{{riz::[i]}}{{yeux::[j]}}{{famille::[j]}
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: i-y-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [i] = syllabe complète. [j] = mouvement avant une autre voyelle (yeux, fille).
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:👧] {{f}}ille
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: i-y-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [i] = syllabe complète. [j] = mouvement avant une autre voyelle (yeux, fille).
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

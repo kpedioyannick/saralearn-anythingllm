@@ -10,28 +10,9 @@ Les sons **[m]** et **[n]** se distinguent par **point d'articulation (lèvres v
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: mn-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [m], lèvres fermées et l'air sort par le nez. Pour [n], pointe de la langue contre les dents et l'air sort par le nez. Tous deux nasaux.
-
-**Astuce :** [m] = bouche fermée. [n] = bouche entrouverte avec langue contre les dents.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: mn-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[m]** ou **[n]**.
-[m] = bouche fermée. [n] = bouche entrouverte avec langue contre les dents.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:neige] Quel son entends-tu dans « neige » ? || [m] | V: [n] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: mn-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **M, MM** se lit [m].
-- **N, NN** se lit [n].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{maman::[m]}}{{main::[m]}}{{maison::[m]}}{{nez::[n]}}{{nuit::[n]
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: mn-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [m] = bouche fermée. [n] = bouche entrouverte avec langue contre les dents.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || {{n}}on
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: mn-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [m] = bouche fermée. [n] = bouche entrouverte avec langue contre les dents.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

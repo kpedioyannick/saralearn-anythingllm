@@ -10,28 +10,9 @@ Les sons **[l]** et **[ʁ]** se distinguent par **lieu d'articulation (avant vs 
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: lr-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [l], pointe de la langue contre les dents du haut, l'air passe sur les côtés. Pour [ʁ], la racine de la langue se rapproche du voile du palais (à l'arrière).
-
-**Astuce :** [l] = langue collée devant. [ʁ] = bruit qui vient du fond de la gorge.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: lr-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[l]** ou **[ʁ]**.
-[l] = langue collée devant. [ʁ] = bruit qui vient du fond de la gorge.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:robe] Quel son entends-tu dans « robe » ? || [l] | V: [ʁ] || « r
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: lr-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **L, LL** se lit [l].
-- **R, RR** se lit [ʁ].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{lampe::[l]}}{{lit::[l]}}{{loup::[l]}}{{rat::[ʁ]}}{{rouge::[ʁ]
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: lr-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [l] = langue collée devant. [ʁ] = bruit qui vient du fond de la gorge.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🛣️] {{r}}ue
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: lr-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [l] = langue collée devant. [ʁ] = bruit qui vient du fond de la gorge.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

@@ -10,28 +10,9 @@ Les sons **[ə]** et **[ø]/[œ]** se distinguent par **durée et arrondi**. [ə
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: e-eu-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-[ə] est un son très court, à peine prononcé. [ø]/[œ] est plus long, lèvres bien arrondies.
-
-**Astuce :** Le [ə] (e muet) disparaît souvent à l'oral. Le [ø] est clairement audible.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: e-eu-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[ə]** ou **[ø]/[œ]**.
-Le [ə] (e muet) disparaît souvent à l'oral. Le [ø] est clairement audible.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:feu] Quel son entends-tu dans « feu » ? || [ə] | V: [ø]/[œ] || 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: e-eu-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **E (e muet)** se lit [ə].
-- **EU, ŒU** se lit [ø]/[œ].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{le::[ə]}}{{ce::[ə]}}{{que::[ə]}}{{deux::[ø]/[œ]}}{{jeu::[�
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: e-eu-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Le [ə] (e muet) disparaît souvent à l'oral. Le [ø] est clairement audible.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🥚] {{œ}}uf
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: e-eu-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Le [ə] (e muet) disparaît souvent à l'oral. Le [ø] est clairement audible.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

@@ -10,28 +10,9 @@ Les sons **[b]** et **[d]** se distinguent par **point d'articulation (lèvres v
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: bd-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [b], lèvres qui s'ouvrent avec vibration. Pour [d], pointe de la langue contre les dents avec vibration.
-
-**Astuce :** [b] = lèvres qui vibrent. [d] = dents/langue qui vibrent.
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: bd-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[b]** ou **[d]**.
-[b] = lèvres qui vibrent. [d] = dents/langue qui vibrent.
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:doigt] Quel son entends-tu dans « doigt » ? || [b] | V: [d] || « 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: bd-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **B** se lit [b].
-- **D** se lit [d].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{bain::[b]}}{{balle::[b]}}{{bébé::[b]}}{{dos::[d]}}{{danse::[d
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: bd-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** [b] = lèvres qui vibrent. [d] = dents/langue qui vibrent.
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || [img:emoji:🦷] {{d}}ent
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: bd-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. [b] = lèvres qui vibrent. [d] = dents/langue qui vibrent.
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 

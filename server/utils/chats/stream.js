@@ -13,7 +13,7 @@ const {
   sourceIdentifier,
 } = require("./index");
 
-const { detectIntentAndOptions, getIntentTemplate, getUserLanguage } = require("../sara/intentDetector");
+const { detectIntentAndOptions, pickIntentTemplate, getUserLanguage } = require("../sara/intentDetector");
 const { detectCoachIntent } = require("../sara/coachIntentDetector");
 const { getCoachingContext } = require("../sara/coachingContext");
 const { loadPhonoContext } = require("../sara/phonoLoader");
@@ -137,6 +137,7 @@ async function streamChatWithWorkspace(
   let intent, intentOptions = {}, intentPrefix = "";
   let coachContextBlock = "";
   let phonoContextBlock = "";
+  let forcedObjective = null;
   const userLang = getUserLanguage(user);
 
   if (isPhonoWorkspace) {
@@ -165,25 +166,28 @@ async function streamChatWithWorkspace(
     } else {
       ({ intent, options: intentOptions } = await detectIntentAndOptions(updatedMessage));
     }
-    intentPrefix = intent ? getIntentTemplate(intent, thread?.name, intentOptions, userLang) : "";
+    intentPrefix = intent ? pickIntentTemplate(workspace, intent, thread?.name, intentOptions, userLang) : "";
 
-    // Pour intent "exercice" + thread avec objectifs en DB : on injecte la liste
-    // exacte des objectifs en suffixe du prompt. Le LLM ajoute `objective: <titre>`
-    // dans son bloc. Le serveur résout via embedding cosine côté user_exercises.
-    if (intent === "exercice" && thread?.id) {
-      try {
-        const prisma = require("../prisma");
-        const objs = await prisma.thread_objectives.findMany({
-          where: { threadId: thread.id },
-          orderBy: { orderIndex: "asc" },
-          select: { title: true },
-        });
-        if (objs.length > 0) {
-          const list = objs.map((o, i) => `${i + 1}. ${o.title}`).join("\n");
-          const heading = userLang === "en" ? "## Available objectives for this thread" : "## Objectifs disponibles pour ce thread";
-          intentPrefix += `\n\n${heading}\n${list}\n`;
-        }
-      } catch (_) {}
+    // Intent "exercice" — deux cas pour rattacher l'exo à un thread_objective :
+    //   Cas 1 : l'IHM (clic ObjectiveProgress) a injecté `objectif : X` dans le
+    //           message → on extrait X et on l'impose au LLM. Annotation 1:1.
+    //   Cas 2 : message libre → le LLM annote `objective: <titre descriptif>` ;
+    //           le serveur résout par cosine (e5-large) à l'insertion de l'exo
+    //           via autoLinkExercise (cf. objectivesProgression.matchObjective).
+    // Dans les deux cas on n'injecte plus la liste complète des objectifs
+    // (gaspillage tokens, non scalable au-delà de ~10 objectifs).
+    if (intent === "exercice") {
+      const m = updatedMessage.match(/objecti(?:f|ve)\s*:\s*([^?\n]+)/i);
+      forcedObjective = m ? m[1].trim().replace(/[\.\s]+$/, "") : null;
+      if (forcedObjective) {
+        const heading = userLang === "en"
+          ? "## Imposed objective for this exercise"
+          : "## Objectif imposé pour cet exercice";
+        const instr = userLang === "en"
+          ? `The student requests an exercise targeted on this objective. Annotate the line \`objective: ${forcedObjective}\` (verbatim copy) right after \`competence:\` in your block.`
+          : `L'élève demande un exercice ciblé sur cet objectif. Annote la ligne \`objective: ${forcedObjective}\` (copie verbatim) juste après \`competence:\` dans ton bloc.`;
+        intentPrefix += `\n\n${heading}\n**${forcedObjective}**\n\n${instr}\n`;
+      }
     }
   }
 
@@ -493,15 +497,18 @@ async function streamChatWithWorkspace(
     });
   });
 
-  // Enrichir la requête RAG avec le nom du thread + mots-clés TF-IDF du sous-chapitre
+  // Enrichir la requête RAG avec le nom du thread + mots-clés TF-IDF du sous-chapitre.
+  // En cas 1 (objectif imposé), on préfixe l'objectif pour orienter le similarity
+  // search vers les passages liés à cette sous-compétence.
   const threadKeywords = require("../sara/thread_keywords.json");
   const baseRagInput = thread?.name
     ? `${thread.name} — ${updatedMessage}`
     : updatedMessage;
   const tk = thread?.slug ? threadKeywords[thread.slug] : null;
+  const objectivePrefix = forcedObjective ? `[objectif: ${forcedObjective}] ` : "";
   const ragInput = tk
-    ? `${baseRagInput} [contexte: ${tk.keywords}]`
-    : baseRagInput;
+    ? `${objectivePrefix}${baseRagInput} [contexte: ${tk.keywords}]`
+    : `${objectivePrefix}${baseRagInput}`;
 
   // Filtrer le RAG sur les documents du thread si possible
   const threadDocIds = await getThreadDocIdentifiers(workspace, thread);
@@ -615,15 +622,21 @@ async function streamChatWithWorkspace(
   const composedSystemPrompt = (() => {
     let prompt = baseSystemPrompt;
     if (isCoachWorkspace) prompt = `${prompt}\n\n${coachContextBlock}`;
-    else if (phonoContextBlock) prompt = `${prompt}\n\n${phonoContextBlock}`;
     if (scheduleContextBlock) prompt = `${prompt}\n\n${scheduleContextBlock}`;
     if (userActionContextBlock) prompt = `${prompt}\n\n${userActionContextBlock}`;
     return prompt;
   })();
+  // Le contexte phono (MD Mazade avec exos prêts) est placé EN SUFFIXE DU USER
+  // PROMPT — donc juste avant la génération du LLM. Recency bias : un bloc placé
+  // loin dans le system prompt se fait écraser par l'intentPrefix et le RAG. En
+  // queue de user prompt, les exos prêts à copier sont la dernière chose vue.
+  const composedUserPrompt = phonoContextBlock
+    ? `${updatedMessage}${intentPrefix}\n\n${phonoContextBlock}`
+    : `${updatedMessage}${intentPrefix}`;
   const messages = await LLMConnector.compressMessages(
     {
       systemPrompt: composedSystemPrompt,
-      userPrompt: updatedMessage + intentPrefix,
+      userPrompt: composedUserPrompt,
       contextTexts,
       chatHistory,
       attachments,

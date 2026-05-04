@@ -10,28 +10,9 @@ Les sons **[a]** et **[ɑ̃]** se distinguent par **nasalité (oral vs nasal)**.
 
 Tu vas travailler 5 objectifs : sentir la différence en bouche, l'entendre, la lire, l'écrire dans un mot, puis dans une phrase.
 
----
-
-## Objectif 1 — Articulation
-<!-- slug: a-an-articulation -->
-<!-- order: 1 -->
-
-### Cours
-
-Pour [a], la bouche est ouverte et l'air sort par la bouche seule. Pour [ɑ̃] (an), l'air sort aussi par le nez.
-
-**Astuce :** Pince ton nez : si tu ne peux plus prononcer, c'était nasal (an, en, am, em).
-
----
-
-## Objectif 2 — Discrimination auditive
+## Objectif 1 — Reconnaître le son entendu
 <!-- slug: a-an-discrimination -->
-<!-- order: 2 -->
-
-### Cours
-
-Tu vas écouter des mots et reconnaître si tu entends **[a]** ou **[ɑ̃]**.
-Pince ton nez : si tu ne peux plus prononcer, c'était nasal (an, en, am, em).
+<!-- order: 1 -->
 
 ### Exemples d'exercices
 
@@ -47,15 +28,9 @@ QCM || [tts:champ] Quel son entends-tu dans « champ » ? || [a] | V: [ɑ̃] || 
 
 ---
 
-## Objectif 3 — Lecture
+## Objectif 2 — Lecture
 <!-- slug: a-an-lecture -->
-<!-- order: 3 -->
-
-### Cours
-
-Quand tu lis :
-- **A, À** se lit [a].
-- **AN, EN, AM, EM** se lit [ɑ̃].
+<!-- order: 2 -->
 
 ### Exemples d'exercices
 
@@ -66,15 +41,9 @@ Association || {{chat::[a]}}{{ami::[a]}}{{papa::[a]}}{{enfant::[ɑ̃]}}{{manger:
 
 ---
 
-## Objectif 4 — Nomme les dessins et choisis le bon graphème
+## Objectif 3 — Nomme les dessins et choisis le bon graphème
 <!-- slug: a-an-production-mot -->
-<!-- order: 4 -->
-
-### Cours
-
-Pour chaque image, prononce le mot doucement, repère le son, puis tape la lettre (ou le groupe de lettres) qui manque.
-
-**Astuce :** Pince ton nez : si tu ne peux plus prononcer, c'était nasal (an, en, am, em).
+<!-- order: 3 -->
 
 ### Exemples d'exercices
 
@@ -92,16 +61,9 @@ Trous || {{t}}ante
 
 ---
 
-## Objectif 5 — Production en phrase / dictée
+## Objectif 4 — Production en phrase / dictée
 <!-- slug: a-an-production-phrase -->
-<!-- order: 5 -->
-
-### Cours
-
-Maintenant, complète des phrases entières et écris des verbes. Pour chaque mot où tu hésites :
-1. Prononce-le doucement.
-2. Pince ton nez : si tu ne peux plus prononcer, c'était nasal (an, en, am, em).
-3. Relis ta phrase à voix haute.
+<!-- order: 4 -->
 
 ### Phrases à compléter
 
