@@ -6,6 +6,7 @@ import {
   createContext,
   useContext,
   useCallback,
+  useMemo,
 } from "react";
 import renderMarkdown from "@/utils/chat/markdown";
 import { CaretDown } from "@phosphor-icons/react";
@@ -39,8 +40,13 @@ export function ThoughtExpansionProvider({ children }) {
     }));
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ getExpanded, setExpanded }),
+    [getExpanded, setExpanded]
+  );
+
   return (
-    <ThoughtExpansionContext.Provider value={{ getExpanded, setExpanded }}>
+    <ThoughtExpansionContext.Provider value={contextValue}>
       {children}
     </ThoughtExpansionContext.Provider>
   );

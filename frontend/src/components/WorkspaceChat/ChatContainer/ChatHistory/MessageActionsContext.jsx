@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 
 const EDIT_EVENT = "toggle-message-edit";
@@ -71,10 +72,13 @@ export function MessageActionsProvider({ children }) {
     setEditingMessage(null);
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ editingMessage, isEditing, isDeleted, clearEditing }),
+    [editingMessage, isEditing, isDeleted, clearEditing]
+  );
+
   return (
-    <MessageActionsContext.Provider
-      value={{ editingMessage, isEditing, isDeleted, clearEditing }}
-    >
+    <MessageActionsContext.Provider value={contextValue}>
       {children}
     </MessageActionsContext.Provider>
   );
