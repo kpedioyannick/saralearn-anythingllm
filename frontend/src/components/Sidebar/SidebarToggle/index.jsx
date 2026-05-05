@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SidebarSimple } from "@phosphor-icons/react";
+import { List, X } from "@phosphor-icons/react";
 import paths from "@/utils/paths";
 import { Tooltip } from "react-tooltip";
 const SIDEBAR_TOGGLE_STORAGE_KEY = "anythingllm_sidebar_toggle";
@@ -81,7 +81,7 @@ export function ToggleSidebarButton({ showSidebar, setShowSidebar }) {
     <>
       <button
         type="button"
-        className={`block border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-30 ${showSidebar ? "top-[18px] left-[248px]" : "top-[20px] left-[30px]"}`}
+        className={`flex items-center justify-center w-9 h-9 rounded-lg border border-zinc-700 light:border-slate-300 bg-zinc-800/40 light:bg-white hover:bg-zinc-700 light:hover:bg-slate-100 outline-none ring-0 absolute transition-all duration-500 z-30 ${showSidebar ? "top-[14px] left-[244px]" : "top-[14px] left-[16px]"}`}
         onClick={() => setShowSidebar((prev) => !prev)}
         data-tooltip-id="sidebar-toggle"
         data-tooltip-content={
@@ -95,10 +95,19 @@ export function ToggleSidebarButton({ showSidebar, setShowSidebar }) {
             : `Show Sidebar (${shortcut})`
         }
       >
-        <SidebarSimple
-          className="text-theme-text-secondary hover:text-theme-text-primary"
-          size={24}
-        />
+        {showSidebar ? (
+          <X
+            className="text-theme-text-secondary hover:text-theme-text-primary"
+            size={24}
+            weight="bold"
+          />
+        ) : (
+          <List
+            className="text-theme-text-secondary hover:text-theme-text-primary"
+            size={24}
+            weight="bold"
+          />
+        )}
       </button>
       <Tooltip
         id="sidebar-toggle"

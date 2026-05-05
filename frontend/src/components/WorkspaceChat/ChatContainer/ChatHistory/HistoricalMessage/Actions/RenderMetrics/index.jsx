@@ -45,15 +45,16 @@ function getAutoShowMetrics() {
 
 /**
  * Build the metrics string for a given metrics object
- * - Model name
  * - Duration and output TPS
  * - Timestamp
- * @param {metrics: {duration:number, outputTps: number, model?: string, timestamp?: number}} metrics
+ * Le nom du modèle (metrics.model, ex. "deepseek-chat") est volontairement
+ * exclu : info inutile pour l'élève et risquée à exposer (admin pourrait
+ * partager son écran ou faire un screenshot où le nom du LLM est visible).
+ * @param {metrics: {duration:number, outputTps: number, timestamp?: number}} metrics
  * @returns {string}
  */
 function buildMetricsString(metrics = {}) {
   return [
-    metrics?.model ? metrics.model : "",
     `${formatDuration(metrics.duration)} (${formatTps(metrics.outputTps)} tok/s)`,
     metrics?.timestamp
       ? formatDateTimeAsMoment(metrics.timestamp, "MMM D, h:mm A")
