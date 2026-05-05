@@ -1193,6 +1193,18 @@ does not extend the close button beyond the viewport. */
   animation: fadein 0.3s linear forwards;
 }
 
+/* Cellule de tableau Markdown qui ne contient qu'un emoji → agrandie.
+   Marqué côté markdown-it via le hook td_open (cf. utils/chat/markdown.js).
+   Cible les fiches dys-phono où la 1ère colonne est un pictogramme : sans cette
+   règle, l'emoji se rend à la font-size de la prose (~16 px) → illisible. */
+td.emoji-cell {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  text-align: center;
+  padding: 0.4rem 0.6rem;
+  vertical-align: middle;
+}
+
 /* Loader Sara — progression de la génération vidéo (intent video).
    3 bullets bouncing + texte. Pas de fond coloré, texte en noir
    (lisible en chat clair ; sur dark theme, override via .light:* ailleurs). */

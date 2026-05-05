@@ -109,32 +109,39 @@ function buildPromptBlock(parsed, message = "") {
   if (!parsed) return null;
   const { meta, sections } = parsed;
 
-  const focused = pickRelevantObjective(message);
+  // ─────────────────────────────────────────────────────────────────────────
+  // Architecture C (LLM enrichisseur) :
+  // Le canevas Mazade complet est dans `workspaces.settings.intentTemplates.exercice`.
+  // Ici on injecte UNIQUEMENT la fiche d'identité de la paire phonétique :
+  // - Titre de la paire (ex. "Confusion T / D")
+  // - Description courte (rappel de la sonorité / point d'articulation)
+  // - 1ère section "Description du thread" (articulation factuelle pour le LLM)
+  //
+  // On NE pousse PAS les blocs ```quiz prêts du MD : sinon le LLM les recopie
+  // au lieu de générer des variations (régression au bug B-ter inversé).
+  // ─────────────────────────────────────────────────────────────────────────
   const lines = [];
+  lines.push("# Fiche paire phonétique");
+  lines.push(`Paire travaillée : **${meta.title}**`);
+  if (meta.description) lines.push(`Sons à distinguer : ${meta.description}`);
 
-  lines.push("# Contexte pédagogique dys-phono");
-  lines.push(`Tu accompagnes un élève sur la confusion phonétique : **${meta.title}**.`);
-  if (meta.description) lines.push(meta.description);
-  lines.push("");
-
-  // On affiche TOUS les objectifs en full content. Volume raisonnable (~4
-  // sections × ~10 lignes), et plus le LLM voit d'exemples concrets, mieux
-  // il reproduit le pattern attendu (format text2quiz dans bloc ```quiz/```dictee).
-  // L'argument `message` / `focused` n'est plus utilisé pour compresser :
-  // tout est full, pour saturer le pattern.
-  for (const s of sections) {
-    if (!s.title) {
-      // Description brute (avant le 1er ##)
-      lines.push(s.content);
+  // 1ère section sans titre = description introductive du MD (avant tout `##`)
+  // Ou la 1ère section "Description du thread" si elle existe.
+  const intro = sections.find((s) =>
+    s.title && /description\s+du\s+thread/i.test(s.title)
+  );
+  if (intro?.content) {
+    // On garde la 1ère phrase non-vide (l'articulation factuelle)
+    const firstPara = intro.content.split(/\n\s*\n/).find((p) => p.trim()) || "";
+    if (firstPara.trim()) {
       lines.push("");
-      continue;
+      lines.push("Articulation : " + firstPara.trim().replace(/\s+/g, " "));
     }
-    lines.push(`## ${s.title}`);
-    if (s.content) {
-      lines.push(s.content);
-    }
-    lines.push("");
   }
+  lines.push("");
+  lines.push(
+    "Génère un exercice frais (mots/phrases différents à chaque appel), aligné sur le canevas Mazade décrit dans tes consignes système."
+  );
 
   return lines.join("\n");
 }

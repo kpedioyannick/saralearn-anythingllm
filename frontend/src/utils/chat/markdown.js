@@ -126,6 +126,34 @@ markdown.renderer.rules.fence = function (tokens, idx, options, env, self) {
 };
 // --- fin SaraLearn ---
 
+// --- SaraLearn : agrandir les cellules de tableau qui ne contiennent qu'un emoji
+// Utile pour les fiches dys-phono où la 1ère colonne est un pictogramme : sans
+// ce hook, les emojis se rendent à la taille de la prose (~16-18 px), illisibles
+// pour un élève. Heuristique : on regarde le token `inline` qui suit `td_open` ;
+// si son contenu trimmé ne contient QUE des emojis (et leurs modifiers), on
+// ajoute la classe `emoji-cell`. Les emojis ZWJ-séquences (drapeaux, familles)
+// passent grâce à `\p{Extended_Pictographic}`.
+const EMOJI_ONLY_RE =
+  /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|‍|️|⃣|\s)+$/u;
+
+const _defaultTdOpen =
+  markdown.renderer.rules.td_open ??
+  ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
+
+markdown.renderer.rules.td_open = function (tokens, idx, options, env, self) {
+  const next = tokens[idx + 1];
+  if (next && next.type === "inline") {
+    const content = (next.content || "").trim();
+    if (content && EMOJI_ONLY_RE.test(content)) {
+      const token = tokens[idx];
+      const existing = token.attrGet("class") || "";
+      token.attrSet("class", (existing ? existing + " " : "") + "emoji-cell");
+    }
+  }
+  return _defaultTdOpen(tokens, idx, options, env, self);
+};
+// --- fin SaraLearn emoji-cell ---
+
 markdown.use(markdownItKatexPlugin);
 
 // Détecte les messages de progression vidéo "⏳ Rendu vidéo en cours…"

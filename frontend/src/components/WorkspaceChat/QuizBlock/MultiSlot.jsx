@@ -34,7 +34,14 @@ function resolveVideoUrl(token) {
 
 function ImgSlot({ src }) {
   if (src && src.startsWith("emoji:")) {
-    return <span className="text-2xl">{src.slice("emoji:".length)}</span>;
+    // text-6xl = 60px. Pour un exo image→graphème (workspace dys-phono), l'image
+    // EST la consigne — doit être lisible d'un coup d'œil. leading-none évite
+    // d'introduire un line-height parasite qui décale les autres éléments inline.
+    return (
+      <span className="text-6xl leading-none align-middle inline-block">
+        {src.slice("emoji:".length)}
+      </span>
+    );
   }
   const url = resolveImage(src);
   if (!url) return null;
@@ -42,7 +49,7 @@ function ImgSlot({ src }) {
     <img
       src={url}
       alt=""
-      className="inline-block max-h-32 align-middle rounded"
+      className="inline-block max-h-48 align-middle rounded"
       onError={(e) => {
         e.currentTarget.style.display = "none";
       }}
