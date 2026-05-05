@@ -177,7 +177,7 @@ function bestScoreAgainst(msgVector, anchorVectors) {
 // Modifiers pilotés par vecteurs : on choisit le format dont le groupe
 // _video_format_* a la meilleure similarité (au-dessus du seuil), sinon portrait.
 // wordByWord = false uniquement si _video_no_karaoke dépasse le seuil.
-function pickVideoOptions(msgVector, anchors) {
+function pickVideoOptions(msgVector, anchors, message = "") {
   // Format : seuil absolu + marge sur le 2e. Quand les 3 scores sont serrés
   // (aucun signal explicite de format), aucun ne doit l'emporter → fallback portrait.
   const FORMAT_THRESHOLD = 0.75;
@@ -201,13 +201,40 @@ function pickVideoOptions(msgVector, anchors) {
   // et on désactive uniquement si "no_karaoke" l'emporte avec une marge claire
   // ET que sa proximité absolue est suffisamment forte (évite les false-positifs
   // quand le delta est ténu sur des contenus non reliés au karaoké).
-  const noKaraokeScore = bestScoreAgainst(msgVector, anchors._video_no_karaoke || []);
-  const karaokeScore = bestScoreAgainst(msgVector, anchors._video_karaoke || []);
-  const wordByWord = !(
-    noKaraokeScore - karaokeScore > 0.005 && noKaraokeScore > 0.88
+  // wordByWord — préempt littéral : si l'utilisateur dit explicitement "karaoké"
+  // ou "mot par mot", on FORCE wordByWord=true. Sans ça, "karaoké sans musique"
+  // est mal interprété (le no_karaoke gagne sur la sémantique de "sans …").
+  // Si pas de mot littéral, on tombe dans la comparaison embedding habituelle.
+  // \b ASCII ne match pas autour de "é" (caractère hors classe \w) → on utilise
+  // des lookarounds Unicode (?<![\p{L}]) / (?![\p{L}]) qui considèrent la lettre
+  // accentuée comme une lettre.
+  const literalKaraoke = /(?<![\p{L}])(karaok[eé]|mot[\s-]+(?:à|a|par)[\s-]+mot)(?![\p{L}])/iu.test(message || "");
+  const literalNoKaraoke = /(?<![\p{L}])(sans\s+karaok[eé]|sans\s+mot[\s-]+(?:à|a|par)[\s-]+mot)(?![\p{L}])/iu.test(message || "");
+  let wordByWord;
+  if (literalKaraoke && !literalNoKaraoke) {
+    wordByWord = true;
+  } else if (literalNoKaraoke) {
+    wordByWord = false;
+  } else {
+    const noKaraokeScore = bestScoreAgainst(msgVector, anchors._video_no_karaoke || []);
+    const karaokeScore = bestScoreAgainst(msgVector, anchors._video_karaoke || []);
+    wordByWord = !(noKaraokeScore - karaokeScore > 0.005 && noKaraokeScore > 0.88);
+  }
+
+  // backgroundMusic : par défaut ON (musique de fond pioché aléatoirement
+  // côté sara-video). On la désactive si le groupe "no_music" bat clairement
+  // "with_music" ET dépasse 0.87 en absolu. Seuil légèrement plus permissif que
+  // karaoke (0.88) parce que "vidéo voix seule" n'a pas de doublon littéral
+  // ("sans musique" est rarement ambigu, contrairement à "sans karaoké" qui
+  // peut accompagner "karaoké"). Cas typique : "vidéo voix seule", "garde juste
+  // la voix", "vidéo sans musique de fond".
+  const noMusicScore = bestScoreAgainst(msgVector, anchors._video_no_music || []);
+  const withMusicScore = bestScoreAgainst(msgVector, anchors._video_with_music || []);
+  const backgroundMusic = !(
+    noMusicScore - withMusicScore > 0.005 && noMusicScore > 0.87
   );
 
-  return { format: bestFormat, wordByWord };
+  return { format: bestFormat, wordByWord, backgroundMusic };
 }
 
 // pickWhenScope : choisit le scope temporel (today/tomorrow/week) pour les
@@ -257,6 +284,26 @@ function pickH5pFormat(msgVector, anchors, message = "") {
   return { format: "quiz" };
 }
 
+// Fast-path 'exercice' : un message qui contient le mot "exercice"/"exos"
+// littéralement EST presque toujours une demande d'exo. L'embedding peut
+// faire chuter le score quand le message a beaucoup de contexte autour
+// (ex. "Donne-moi un exercice sur l'objectif : Nomme les dessins"), au point
+// de tomber sous seuil/marge. Le fast-path court-circuite ce cas, sauf si
+// un mot-clé d'un AUTRE intent à vocation pédagogique différente est aussi
+// présent (dictée → préempte ; vidéo → préempte). Sans ce filtre on
+// risquerait de classer "exercice de dictée" en exercice plat.
+const EXERCICE_LITERAL_REGEX =
+  /\b(exercices?|exos?|entra[iî]ne(?:[\s-]+moi)?|interroge(?:[\s-]+moi)?|teste(?:[\s-]+moi)?)\b/i;
+const EXERCICE_PREEMPTED_BY = /\b(dict[eé]e|vid[eé]o|carte\s+mentale|fiche|cours|le[cç]on)\b/i;
+
+// Fast-path 'video' : symétrique du fast-path exercice. Le mot "vidéo" /
+// "video" / "clip" / "tiktok" / "reel" littéralement présent suffit pour
+// classifier video. Sans ça, des phrases comme "vidéo voix seule sur le
+// théorème de Pythagore" ou "vidéo sans musique de fond sur la conjugaison"
+// tombent sous le seuil/marge embedding (le contexte sujet dilue le signal).
+// On extrait toujours format/wordByWord/backgroundMusic via pickVideoOptions.
+const VIDEO_LITERAL_REGEX = /\b(vid[eé]os?|clips?|tiktok|reels?)\b/i;
+
 async function detectIntentAndOptions(message) {
   try {
     // Couche 1+2 : fast-path 'again'. Court-circuite l'embedding pour les
@@ -269,9 +316,25 @@ async function detectIntentAndOptions(message) {
       return { intent: "again", options: {} };
     }
 
+    // Fast-path 'exercice' : mot littéral présent ET pas de format "préempteur".
+    if (
+      typeof message === "string" &&
+      EXERCICE_LITERAL_REGEX.test(message) &&
+      !EXERCICE_PREEMPTED_BY.test(message)
+    ) {
+      return { intent: "exercice", options: {} };
+    }
+
     const anchors = await initAnchorVectors();
     const msgVector = await embedQuery(message);
     if (!msgVector) return { intent: null, options: {} };
+
+    // Fast-path 'video' : mot littéral présent → on passe directement à video
+    // et on extrait les modifiers (format/wordByWord/backgroundMusic) via embedding.
+    // Doit s'exécuter APRÈS l'embed du message car pickVideoOptions a besoin du msgVector.
+    if (typeof message === "string" && VIDEO_LITERAL_REGEX.test(message)) {
+      return { intent: "video", options: pickVideoOptions(msgVector, anchors, message) };
+    }
 
     // On calcule le meilleur score par intent (pas juste le best global)
     // pour pouvoir basculer vers le 2e meilleur si une garde filtre le gagnant.
@@ -312,7 +375,7 @@ async function detectIntentAndOptions(message) {
     const chosen = first[0];
 
     let options = {};
-    if (chosen === "video") options = pickVideoOptions(msgVector, anchors);
+    if (chosen === "video") options = pickVideoOptions(msgVector, anchors, message);
     else if (chosen === "generate_h5p") options = pickH5pFormat(msgVector, anchors, message);
     else if (chosen === "planning" || chosen === "quoi_faire")
       options = { scope: pickWhenScope(msgVector, anchors) };

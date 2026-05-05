@@ -463,5 +463,32 @@
     "video with karaoke",
     "word-by-word video",
     "tiktok karaoke style"
+  ],
+  "_video_no_music": [
+    "vidéo sans musique de fond",
+    "vidéo sans son de fond",
+    "vidéo sans musique",
+    "vidéo sans bande sonore",
+    "vidéo silencieuse en fond",
+    "vidéo avec uniquement la voix",
+    "vidéo voix seule",
+    "vidéo voix off seule",
+    "vidéo sans fond sonore",
+    "garde juste la voix",
+    "coupe la musique de la vidéo",
+    "désactive la musique de fond",
+    "video without background music",
+    "voice only video",
+    "no background music"
+  ],
+  "_video_with_music": [
+    "vidéo avec musique de fond",
+    "vidéo avec son de fond",
+    "vidéo avec une musique",
+    "vidéo avec ambiance musicale",
+    "vidéo avec bande sonore",
+    "ajoute de la musique de fond",
+    "video with background music",
+    "with music"
   ]
 }

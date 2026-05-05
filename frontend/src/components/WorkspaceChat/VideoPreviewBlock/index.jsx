@@ -69,11 +69,14 @@ export default function VideoPreviewBlock({ content }) {
           />
         )}
 
-        {/* Pied de page : message rassurant pour l'élève */}
-        <p className="mt-3 pt-2.5 border-t border-emerald-500/10 light:border-emerald-200 text-[11px] text-emerald-200/70 light:text-emerald-700/70">
-          Lis cette première slide pendant que les autres se construisent. La
-          vidéo complète arrive dans quelques secondes.
-        </p>
+        {/* Pied de page : message rassurant pour l'élève (spinner + texte plus grand) */}
+        <div className="mt-3 pt-2.5 border-t border-emerald-500/10 light:border-emerald-200 flex items-center gap-3">
+          <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full border-[2.5px] border-emerald-400 border-t-transparent animate-spin shrink-0" />
+          <p className="text-sm sm:text-base font-medium leading-snug text-emerald-200 light:text-emerald-700">
+            Lis cette première slide pendant que les autres se construisent. La
+            vidéo complète arrive dans quelques secondes.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -27,7 +27,11 @@ function parseDescriptions(raw) {
   return map;
 }
 
-function MarkmapBlock({ content }) {
+// React.memo sur (content) : empêche le remount/re-render quand un autre
+// message du même thread déclenche un cycle de render parent. Sans ça,
+// useEffect ré-exécutait Transformer().transform + Markmap.create →
+// containerRef.innerHTML="" → flicker visible du SVG pendant ~100ms.
+const MarkmapBlock = React.memo(function MarkmapBlock({ content }) {
   const containerRef = useRef(null);
   const svgRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
@@ -64,6 +68,15 @@ function MarkmapBlock({ content }) {
     if (!containerRef.current || !cleanContent) return;
     containerRef.current.innerHTML = "";
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // ⚠️ Markmap (d3) appelle getBBox / SVGLength.value sur le svg pour
+    // calculer le viewport. Si on laisse width/height en pourcentage, certains
+    // contextes (parent en `contain:paint`, ou première frame avant layout)
+    // déclenchent : "NotSupportedError: Could not resolve relative length".
+    // Fix : on lit la largeur effective du container et on pose des attributs
+    // SVG en pixels avant Markmap.create. Hauteur fixe à 300 (matches le div).
+    const containerWidth = containerRef.current.clientWidth || 800;
+    svg.setAttribute("width", String(containerWidth));
+    svg.setAttribute("height", "300");
     svg.style.width = "100%";
     svg.style.height = "100%";
     containerRef.current.appendChild(svg);
@@ -125,7 +138,7 @@ function MarkmapBlock({ content }) {
       )}
     </div>
   );
-}
+});
 
 // Détecte une vraie fiche de révision structurée (marqueurs emoji du template)
 function isFicheContent(html) {

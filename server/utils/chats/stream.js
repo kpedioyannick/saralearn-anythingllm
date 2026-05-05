@@ -318,6 +318,7 @@ async function streamChatWithWorkspace(
       // reflète la vraie demande user (vector-based).
       if (intentOptions?.format) payload.format = intentOptions.format;
       if (typeof intentOptions?.wordByWord === "boolean") payload.wordByWord = intentOptions.wordByWord;
+      if (typeof intentOptions?.backgroundMusic === "boolean") payload.backgroundMusic = intentOptions.backgroundMusic;
 
       const r = await fetch(`${VIDEO_API_URL}/api/videos`, {
         method: "POST", headers: { "Content-Type": "application/json" },
