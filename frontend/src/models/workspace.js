@@ -1,5 +1,5 @@
 import { API_BASE, fullApiUrl } from "@/utils/constants";
-import { baseHeaders, safeJsonParse } from "@/utils/request";
+import { baseHeaders, safeJsonParse, userFromStorage } from "@/utils/request";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import WorkspaceThread from "@/models/workspaceThread";
 import { v4 } from "uuid";
@@ -533,21 +533,47 @@ const Workspace = {
   },
 
   /**
-   * Orders workspaces based on the order preference stored in localstorage
+   * Orders workspaces based on the order preference stored in localstorage.
+   * À défaut de préférence user (drag-drop pas encore fait), on remonte le
+   * workspace de mathématiques de la classe de l'élève en première position
+   * (ex. user en 3eme → "3eme-mathematiques" en haut). Permet à l'élève de
+   * tomber direct sur sa matière principale sans avoir à scroller.
    * @param {Array} workspaces - array of workspace JSON objects
    * @returns {Array} - ordered workspaces
    */
   orderWorkspaces: function (workspaces = []) {
     const workspaceOrderPreference =
       safeJsonParse(localStorage.getItem(this.workspaceOrderStorageKey)) || [];
-    if (workspaceOrderPreference.length === 0) return workspaces;
-    const orderedWorkspaces = Array.from(workspaces);
-    orderedWorkspaces.sort(
-      (a, b) =>
-        workspaceOrderPreference.indexOf(a.id) -
-        workspaceOrderPreference.indexOf(b.id)
-    );
-    return orderedWorkspaces;
+
+    // Cas user : on respecte son drag-drop (priorité absolue).
+    if (workspaceOrderPreference.length > 0) {
+      const orderedWorkspaces = Array.from(workspaces);
+      orderedWorkspaces.sort(
+        (a, b) =>
+          workspaceOrderPreference.indexOf(a.id) -
+          workspaceOrderPreference.indexOf(b.id)
+      );
+      return orderedWorkspaces;
+    }
+
+    // Cas défaut : on pousse le workspace maths matchant la classe en DERNIÈRE
+    // position. Pourquoi en dernier ? `pages/Main/Home/index.jsx` sélectionne
+    // `workspaces[workspaces.length - 1]` comme workspace actif quand l'élève
+    // arrive sur la home → mettre maths à la fin = maths choisi par défaut.
+    // user.userSettings est un JSON sérialisé en DB, peut être absent.
+    const user = userFromStorage();
+    const settings = safeJsonParse(user?.userSettings, {}) || {};
+    const classe = (settings?.classe || "").toLowerCase();
+    if (!classe) return workspaces;
+
+    const pinnedSlug = `${classe}-mathematiques`;
+    const ordered = Array.from(workspaces);
+    ordered.sort((a, b) => {
+      if (a.slug === pinnedSlug) return 1;
+      if (b.slug === pinnedSlug) return -1;
+      return 0;
+    });
+    return ordered;
   },
 
   /**

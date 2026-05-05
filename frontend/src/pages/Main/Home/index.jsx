@@ -28,10 +28,12 @@ import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/Works
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 
 async function getTargetWorkspace() {
-  // On retourne TOUJOURS le DERNIER workspace de la liste (pas de cache
-  // localStorage). L'élève atterrit ainsi sur le contenu le plus récemment
-  // créé/mis à jour, pas sur l'historique.
-  const workspaces = await Workspace.all();
+  // On retourne le DERNIER workspace de la liste APRÈS application de
+  // orderWorkspaces. Cette dernière pousse le workspace mathématiques de la
+  // classe de l'élève en queue (cf. models/workspace.js:orderWorkspaces) →
+  // l'élève atterrit donc sur sa matière maths par défaut. Sans
+  // orderWorkspaces, le "dernier" était simplement le plus récemment créé.
+  const workspaces = Workspace.orderWorkspaces(await Workspace.all());
   return workspaces.length > 0 ? workspaces[workspaces.length - 1] : null;
 }
 

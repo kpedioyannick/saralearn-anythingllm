@@ -379,7 +379,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
       >
         {isMobile && <SidebarMobileHeader />}
         <TextSizeMenu />
-        <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+        <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
         <WorkspaceChatHeaderBar />
         <DnDFileUploaderWrapper>
           <div className="flex flex-col h-full w-full items-center justify-center">
@@ -433,7 +433,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         <TextSizeMenu />
         <div className="flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           {isMobile && <SidebarMobileHeader />}
-          <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+          <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
           <WorkspaceChatHeaderBar />
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full pb-20 md:pb-0">

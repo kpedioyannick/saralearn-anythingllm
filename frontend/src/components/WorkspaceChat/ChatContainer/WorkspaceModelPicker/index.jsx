@@ -13,23 +13,21 @@ import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import { SIDEBAR_TOGGLE_EVENT } from "@/components/Sidebar/SidebarToggle";
 
-function fetchModelName(slug, setModelName) {
+function fetchWorkspaceInfo(slug, setWorkspaceName) {
   if (!slug) return;
-  Promise.all([Workspace.bySlug(slug), System.keys()]).then(
-    ([workspace, systemSettings]) => {
-      const model = workspace.chatModel ?? systemSettings?.LLMModel ?? "";
-      setModelName(model);
-    }
-  );
+  Workspace.bySlug(slug).then((workspace) => {
+    setWorkspaceName(workspace?.name || "");
+  });
 }
 
-export default function WorkspaceModelPicker({ workspaceSlug = null }) {
+export default function WorkspaceModelPicker({ workspaceSlug = null, activeThread = null }) {
   const { t } = useTranslation();
   const { slug: urlSlug } = useParams();
   const slug = urlSlug ?? workspaceSlug;
   const { user } = useUser();
+  const isAdmin = !user || user.role === "admin";
   const [showSelector, setShowSelector] = useState(false);
-  const [modelName, setModelName] = useState("");
+  const [workspaceName, setWorkspaceName] = useState("");
   const {
     isOpen: isSetupProviderOpen,
     openModal: openSetupProviderModal,
@@ -47,14 +45,16 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
     return () => window.removeEventListener(SIDEBAR_TOGGLE_EVENT, handleToggle);
   }, []);
 
-  // Fetch current model name for display
-  useEffect(() => fetchModelName(slug, setModelName), [slug]);
+  // Fetch current workspace name for display (avant: nom du LLM type
+  // "deepseek-chat" → inutile et risqué côté élève. On garde le click pour
+  // ouvrir le LLM selector mais uniquement pour les admins).
+  useEffect(() => fetchWorkspaceInfo(slug, setWorkspaceName), [slug]);
 
-  // Close selector and refresh model name when model is saved
+  // Close selector and refresh workspace name when LLM is saved (admin path)
   useEffect(() => {
     function handleSave() {
       setShowSelector(false);
-      fetchModelName(slug, setModelName);
+      fetchWorkspaceInfo(slug, setWorkspaceName);
     }
     window.addEventListener(SAVE_LLM_SELECTOR_EVENT, handleSave);
     return () =>
@@ -73,13 +73,11 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
       window.removeEventListener(PROVIDER_SETUP_EVENT, handleProviderSetup);
   }, []);
 
-  // This feature is disabled for multi-user instances where the user is not an admin
-  if (!!user && user.role !== "admin") return null;
   if (!slug) return null;
 
   return (
     <>
-      {showSelector && (
+      {showSelector && isAdmin && (
         <div
           className="fixed inset-0 z-20"
           onClick={() => setShowSelector(false)}
@@ -92,25 +90,44 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
       >
         <button
           type="button"
-          onClick={() => setShowSelector(!showSelector)}
-          className={`group border-none cursor-pointer px-2.5 py-1 flex items-center rounded-full transition-all ${
-            showSelector
+          onClick={() => isAdmin && setShowSelector(!showSelector)}
+          // Élève (non-admin) → bouton non interactif (just info). Admin →
+          // toggle LLM selector. cursor-default empêche le hover-styling
+          // d'apparaître pour les élèves.
+          className={`group border-none px-2.5 py-1 flex flex-col items-start rounded-lg transition-all leading-tight ${
+            isAdmin ? "cursor-pointer" : "cursor-default"
+          } ${
+            showSelector && isAdmin
               ? "bg-zinc-700 light:bg-slate-200"
-              : "hover:bg-zinc-700 light:hover:bg-slate-200"
+              : isAdmin
+                ? "hover:bg-zinc-700 light:hover:bg-slate-200"
+                : ""
           }`}
         >
           <span
-            className={`text-xs ${
-              showSelector
+            className={`text-xs font-semibold ${
+              showSelector && isAdmin
                 ? "text-white light:text-slate-800"
-                : "text-zinc-500 light:text-slate-500 group-hover:text-white light:group-hover:text-slate-800"
+                : "text-zinc-200 light:text-slate-700 group-hover:text-white light:group-hover:text-slate-800"
             }`}
           >
-            {modelName || t("chat_window.select_model")}
+            {workspaceName || t("new-workspace.placeholder", "Workspace")}
           </span>
+          {activeThread?.name && (
+            <span
+              className={`text-[10px] font-normal mt-0.5 max-w-[260px] truncate ${
+                showSelector && isAdmin
+                  ? "text-zinc-300 light:text-slate-500"
+                  : "text-zinc-400 light:text-slate-500"
+              }`}
+              title={activeThread.name}
+            >
+              🧵 {activeThread.name}
+            </span>
+          )}
         </button>
 
-        {showSelector && (
+        {showSelector && isAdmin && (
           <div className="absolute left-0 top-full mt-1 bg-zinc-800 light:bg-white border border-zinc-700 light:border-slate-300 rounded-xl shadow-lg w-[620px] overflow-hidden">
             <LLMSelectorModal
               key={refreshKey}
