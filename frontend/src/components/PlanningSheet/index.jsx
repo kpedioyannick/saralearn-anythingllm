@@ -66,10 +66,10 @@ export default function PlanningSheet() {
         className={`absolute inset-0 bg-zinc-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
       />
       <div
-        className={`absolute right-0 top-0 z-10 flex h-full w-[96%] md:w-[90%] lg:w-[82%] xl:w-[74%] max-w-[1120px] flex-col overflow-hidden border-l border-theme-modal-border/80 bg-theme-bg-secondary shadow-2xl shadow-black/50 transform transition-transform duration-300 ease-out ${visible ? "translate-x-0" : "translate-x-full"}`}
+        className={`absolute right-0 top-0 z-10 flex h-full w-[98%] md:w-[92%] lg:w-[86%] xl:w-[78%] max-w-[1320px] flex-col overflow-hidden border-l border-theme-modal-border/80 bg-theme-bg-secondary shadow-2xl shadow-black/50 transform transition-transform duration-300 ease-out ${visible ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative shrink-0 px-6 py-4 border-b border-theme-modal-border/80 flex items-center gap-3 bg-gradient-to-r from-blue-500/10 via-transparent to-emerald-500/10">
+        <div className="relative shrink-0 px-6 py-4 border-b border-theme-modal-border/80 flex items-center gap-3 bg-gradient-to-r from-blue-500/15 via-transparent to-emerald-500/15">
           <div className="p-2 rounded-xl bg-blue-500/15 light:bg-blue-100 border border-blue-400/20 light:border-blue-300">
             <CalendarBlank
               size={20}
@@ -97,7 +97,7 @@ export default function PlanningSheet() {
             <X size={20} weight="bold" />
           </button>
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-5">
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-5 bg-gradient-to-b from-theme-bg-secondary to-theme-bg-primary/70">
           <ScheduleSection onNavigate={requestClose} hideTitle />
         </div>
       </div>

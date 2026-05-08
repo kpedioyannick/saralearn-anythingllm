@@ -61,18 +61,7 @@ export default function StudentSubjects() {
 
   return (
     <StudentLayout title="Choisis ta matière">
-      <div className="px-4 md:px-8 py-8 md:py-10 max-w-6xl mx-auto w-full">
-        <section className="mb-6 md:mb-8 rounded-3xl border border-white/70 bg-gradient-to-br from-indigo-100 via-sky-50 to-white shadow-sm px-5 md:px-7 py-5 md:py-7">
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-700/80 mb-1">
-            Espace eleve
-          </p>
-          <h2 className="text-xl md:text-3xl font-bold text-slate-800">
-            Bonjour 👋
-          </h2>
-          <p className="mt-2 text-sm md:text-base text-slate-600">
-            Choisis ta matiere pour continuer avec Sara.
-          </p>
-        </section>
+      <div className="px-4 md:px-[50px] py-6 w-full">
         {workspaces.length === 0 ? (
           <div className="rounded-3xl border border-slate-200 bg-white/80 shadow-sm text-center text-slate-500 py-16 px-6">
             <p className="text-3xl mb-3" aria-hidden>

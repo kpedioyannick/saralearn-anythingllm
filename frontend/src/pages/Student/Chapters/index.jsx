@@ -207,42 +207,9 @@ export default function StudentChapters() {
   }, [slug, navigate, user?.id]);
 
   if (workspace === null || threads === null) return <FullScreenLoader />;
-  const totalThreads = threads.length;
-  const progressValues = Object.values(progress || {});
-  const totalObjectives = progressValues.reduce(
-    (acc, item) => acc + (item?.total || 0),
-    0
-  );
-  const validatedObjectives = progressValues.reduce(
-    (acc, item) => acc + (item?.validated || 0),
-    0
-  );
-  const globalPct =
-    totalObjectives > 0
-      ? Math.round((validatedObjectives / totalObjectives) * 100)
-      : 0;
-
   return (
     <StudentLayout title={workspace.name} backTo={paths.student.home()}>
-      <div className="px-4 md:px-8 py-8 md:py-10 max-w-6xl mx-auto w-full">
-        <section className="mb-5 md:mb-7 rounded-3xl border border-white/70 bg-gradient-to-br from-indigo-100 via-sky-50 to-white shadow-sm px-5 md:px-7 py-5">
-          <div className="flex flex-wrap items-center gap-3 mb-3">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/85 border border-indigo-100 text-indigo-700 text-sm font-semibold">
-              📘 {workspace.name}
-            </span>
-            <span className="text-sm text-slate-600">
-              {totalThreads} chapitres
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold">
-              {validatedObjectives}/{totalObjectives} objectifs valides
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-semibold">
-              Progression {globalPct}%
-            </span>
-          </div>
-        </section>
+      <div className="px-4 md:px-[50px] py-6 w-full">
         <p className="text-slate-600 mb-4 text-sm md:text-base">
           Choisis un chapitre pour discuter avec Sara.
         </p>
