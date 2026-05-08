@@ -70,25 +70,30 @@ function ChapterCard({ thread, index, slug, summary, userId }) {
 
   return (
     <li>
-      <div className="flex flex-col rounded-2xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all overflow-hidden">
+      <div className="flex flex-col rounded-3xl bg-white/95 border border-slate-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
         <Link
           to={paths.student.chat(slug, thread.slug)}
-          className="p-4 flex flex-col gap-3 active:scale-[0.99] transition-transform"
+          className="p-4 flex flex-col gap-3 active:scale-[0.99] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
         >
           <div className="flex items-start gap-3">
-            <span className="flex items-center justify-center w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm shrink-0">
+            <span className="flex items-center justify-center w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm shrink-0 border border-indigo-200">
               {index + 1}
             </span>
             <span className="flex-1 min-w-0 font-semibold text-base text-slate-800 line-clamp-2">
               {thread.name}
             </span>
             {done && (
-              <CheckCircle
-                size={22}
-                weight="fill"
-                className="text-emerald-500 shrink-0"
-                aria-label="Chapitre complet"
-              />
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 border border-emerald-200 shrink-0">
+                <CheckCircle
+                  size={16}
+                  weight="fill"
+                  className="text-emerald-500 shrink-0"
+                  aria-label="Chapitre complet"
+                />
+                <span className="text-[11px] font-semibold text-emerald-700">
+                  Termine
+                </span>
+              </span>
             )}
           </div>
           {summary.total > 0 ? (
@@ -103,9 +108,11 @@ function ChapterCard({ thread, index, slug, summary, userId }) {
                     · {summary.inProgress} en cours
                   </span>
                 )}
-                <span className="ml-auto text-slate-500 tabular-nums">{pct}%</span>
+                <span className="ml-auto text-slate-600 tabular-nums px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">
+                  {pct}%
+                </span>
               </div>
-              <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden mb-2">
+              <div className="h-2 rounded-full bg-slate-200 overflow-hidden mb-2">
                 <div
                   className="h-full bg-emerald-500 transition-all"
                   style={{ width: `${pct}%` }}
@@ -116,7 +123,7 @@ function ChapterCard({ thread, index, slug, summary, userId }) {
                   type="button"
                   onClick={toggleObjectives}
                   aria-expanded={open}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
                 >
                   {open ? "Masquer les objectifs" : "Voir les objectifs"}
                   <CaretDown
@@ -134,7 +141,7 @@ function ChapterCard({ thread, index, slug, summary, userId }) {
           )}
         </Link>
         {open && (
-          <div className="px-4 pb-4 border-t border-slate-100 pt-3 bg-slate-50">
+          <div className="px-4 pb-4 border-t border-slate-100 pt-3 bg-slate-50/90">
             {objectives === null ? (
               <div className="text-xs text-slate-400 py-2">Chargement…</div>
             ) : objectives.length === 0 ? (
@@ -200,17 +207,54 @@ export default function StudentChapters() {
   }, [slug, navigate, user?.id]);
 
   if (workspace === null || threads === null) return <FullScreenLoader />;
+  const totalThreads = threads.length;
+  const progressValues = Object.values(progress || {});
+  const totalObjectives = progressValues.reduce(
+    (acc, item) => acc + (item?.total || 0),
+    0
+  );
+  const validatedObjectives = progressValues.reduce(
+    (acc, item) => acc + (item?.validated || 0),
+    0
+  );
+  const globalPct =
+    totalObjectives > 0
+      ? Math.round((validatedObjectives / totalObjectives) * 100)
+      : 0;
 
   return (
     <StudentLayout title={workspace.name} backTo={paths.student.home()}>
-      <div className="px-4 md:px-8 py-6 max-w-6xl mx-auto">
+      <div className="px-4 md:px-8 py-8 md:py-10 max-w-6xl mx-auto w-full">
+        <section className="mb-5 md:mb-7 rounded-3xl border border-white/70 bg-gradient-to-br from-indigo-100 via-sky-50 to-white shadow-sm px-5 md:px-7 py-5">
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/85 border border-indigo-100 text-indigo-700 text-sm font-semibold">
+              📘 {workspace.name}
+            </span>
+            <span className="text-sm text-slate-600">
+              {totalThreads} chapitres
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold">
+              {validatedObjectives}/{totalObjectives} objectifs valides
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-semibold">
+              Progression {globalPct}%
+            </span>
+          </div>
+        </section>
         <p className="text-slate-600 mb-4 text-sm md:text-base">
           Choisis un chapitre pour discuter avec Sara.
         </p>
         {threads.length === 0 ? (
-          <p className="text-center text-slate-500 py-16">
-            Aucun chapitre n'a encore été préparé pour cette matière.
-          </p>
+          <div className="rounded-3xl border border-slate-200 bg-white/80 shadow-sm text-center text-slate-500 py-16 px-6">
+            <p className="text-3xl mb-3" aria-hidden>
+              🗂️
+            </p>
+            <p className="font-medium">
+              Aucun chapitre n&apos;a encore ete prepare pour cette matiere.
+            </p>
+          </div>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 items-start">
             {threads.map((th, idx) => (
