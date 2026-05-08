@@ -80,6 +80,7 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
 
   return (
     <div className={hideTitle ? "" : "mt-2 pt-6 border-t border-theme-modal-border"}>
+      <div className="rounded-2xl border border-theme-modal-border/70 bg-theme-bg-primary/60 light:bg-white/80 p-3 md:p-4">
       <div className="flex items-center justify-between mb-3">
         {hideTitle ? (
           <span aria-hidden />
@@ -94,7 +95,7 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
         <button
           type="button"
           onClick={() => setEditing("new")}
-          className="flex items-center gap-x-1 bg-white text-black hover:opacity-60 light:bg-blue-600 light:text-white light:hover:bg-blue-700 light:hover:opacity-100 px-3 py-1.5 rounded-lg text-xs font-semibold"
+          className="flex items-center gap-x-1 bg-white text-black hover:opacity-70 light:bg-blue-600 light:text-white light:hover:bg-blue-700 light:hover:opacity-100 px-3 py-1.5 rounded-lg text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
         >
           <Plus size={14} weight="bold" /> Ajouter un créneau
         </button>
@@ -112,16 +113,16 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
         </div>
       )}
 
-      <div className="flex items-center gap-x-4 mb-3 text-xs text-white/70 light:text-slate-600">
-        <span className="flex items-center gap-x-1">
+      <div className="flex flex-wrap items-center gap-2.5 mb-3 text-xs text-white/80 light:text-slate-600">
+        <span className="flex items-center gap-x-1 px-2 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 light:bg-blue-50 light:border-blue-200">
           <span className="w-3 h-3 rounded bg-blue-500/40 border border-blue-400" />
           Cours
         </span>
-        <span className="flex items-center gap-x-1">
+        <span className="flex items-center gap-x-1 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 light:bg-emerald-50 light:border-emerald-200">
           <span className="w-3 h-3 rounded bg-emerald-500/40 border border-emerald-400" />
           Révision
         </span>
-        <span className="flex items-center gap-x-1 text-red-300 light:text-red-700">
+        <span className="flex items-center gap-x-1 px-2 py-1 rounded-full bg-red-500/10 border border-red-400/30 text-red-300 light:text-red-700 light:bg-red-50 light:border-red-200">
           <Warning size={14} /> Chevauchement
         </span>
       </div>
@@ -138,21 +139,21 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
             <button
               type="button"
               onClick={() => setWeekStart((d) => addWeeks(d, -1))}
-              className="p-1 rounded-md text-white/70 hover:bg-white/10 light:text-slate-600 light:hover:bg-slate-100"
+              className="p-1.5 rounded-md text-white/70 hover:bg-white/10 light:text-slate-600 light:hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
               aria-label="Semaine précédente"
               title="Semaine précédente"
             >
               <CaretLeft size={14} weight="bold" />
             </button>
             <div className="flex items-center gap-x-2 min-w-0">
-              <span className="text-xs font-medium text-white/90 light:text-slate-800 truncate">
+              <span className="text-xs font-semibold text-white/90 light:text-slate-800 truncate px-2.5 py-1 rounded-full bg-white/10 light:bg-slate-100 border border-white/10 light:border-slate-200">
                 {formatWeekRange(weekStart)}
               </span>
               {!isCurrentWeek && (
                 <button
                   type="button"
                   onClick={() => setWeekStart(todayMonday)}
-                  className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-100 hover:bg-emerald-500/30 light:bg-emerald-100 light:text-emerald-900 light:hover:bg-emerald-200"
+                  className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-100 hover:bg-emerald-500/30 light:bg-emerald-100 light:text-emerald-900 light:hover:bg-emerald-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                   title="Revenir à la semaine en cours"
                 >
                   Aujourd'hui
@@ -162,28 +163,28 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
             <button
               type="button"
               onClick={() => setWeekStart((d) => addWeeks(d, 1))}
-              className="p-1 rounded-md text-white/70 hover:bg-white/10 light:text-slate-600 light:hover:bg-slate-100"
+              className="p-1.5 rounded-md text-white/70 hover:bg-white/10 light:text-slate-600 light:hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
               aria-label="Semaine suivante"
               title="Semaine suivante"
             >
               <CaretRight size={14} weight="bold" />
             </button>
           </div>
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-1.5">
           {DAYS.map((d, i) => {
             const dayDate = addDays(weekStart, i);
             const isToday = isSameDay(dayDate, today);
             return (
             <div
               key={d.key}
-              className={`flex flex-col rounded-md p-1 min-h-[110px] ${
+              className={`flex flex-col rounded-xl p-1.5 min-h-[122px] ${
                 isToday
                   ? "bg-emerald-500/10 ring-1 ring-emerald-400/40 light:bg-emerald-50 light:ring-emerald-400"
-                  : "bg-theme-bg-primary"
+                  : "bg-theme-bg-primary/80 light:bg-slate-50/70"
               }`}
             >
               <div
-                className={`text-xs font-semibold text-center pb-1 border-b mb-1 ${
+                className={`text-xs md:text-sm font-semibold text-center pb-1 border-b mb-1 ${
                   isToday
                     ? "text-emerald-200 border-emerald-400/40 light:text-emerald-900 light:border-emerald-400"
                     : "text-white/80 border-white/10 light:text-slate-700 light:border-slate-300"
@@ -204,7 +205,7 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
                       key={s.id}
                       type="button"
                       onClick={() => setEditing(s)}
-                      className={`text-left text-[10px] leading-tight rounded border px-1.5 py-1 hover:opacity-80 ${
+                      className={`text-left text-xs md:text-[13px] leading-tight rounded-lg border px-1.5 py-1.5 hover:opacity-90 transition-all ${
                         TYPE_STYLES[s.type] || ""
                       } ${
                         inConflict ? "ring-2 ring-red-400 ring-offset-0" : ""
@@ -227,11 +228,13 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
                           {s.title || (s.type === "school" ? "Cours" : "Révision")}
                         </span>
                       </div>
-                      <div className="opacity-80">
+                      <div className="opacity-80 text-[11px] md:text-xs">
                         {s.start}–{s.end}
                       </div>
                       {s.subject && (
-                        <div className="opacity-70 truncate">{s.subject}</div>
+                        <div className="opacity-75 truncate text-[11px] md:text-xs">
+                          {s.subject}
+                        </div>
                       )}
                     </button>
                   );
@@ -243,6 +246,7 @@ export default function ScheduleSection({ onNavigate, hideTitle = false }) {
         </div>
         </>
       )}
+      </div>
 
     </div>
   );

@@ -146,18 +146,18 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
   };
 
   return (
-    <div className="mb-4 rounded-lg border-2 border-emerald-500/40 bg-theme-bg-primary overflow-hidden shadow-lg">
-      <div className="relative px-4 py-3 border-b border-theme-modal-border bg-emerald-600/10">
-        <h4 className="text-sm font-semibold text-white">
+    <div className="mb-4 rounded-2xl border border-emerald-400/40 light:border-emerald-300 bg-theme-bg-primary light:bg-white overflow-hidden shadow-lg">
+      <div className="relative px-4 py-3 border-b border-theme-modal-border bg-gradient-to-r from-emerald-500/10 via-transparent to-blue-500/10">
+        <h4 className="text-sm font-semibold text-white light:text-slate-800">
           {slot ? "Modifier le créneau" : "Nouveau créneau"}
         </h4>
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-2 right-2 bg-transparent rounded-lg p-1 hover:bg-theme-modal-border"
+          className="absolute top-2 right-2 bg-transparent rounded-lg p-1 hover:bg-theme-modal-border light:hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
           aria-label="Fermer"
         >
-          <X size={18} weight="bold" className="text-white" />
+          <X size={18} weight="bold" className="text-white light:text-slate-700" />
         </button>
       </div>
 
@@ -184,7 +184,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
         )}
 
         <div>
-          <label className="block text-xs font-medium text-white/80 mb-1">
+          <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
             Type
           </label>
           <div className="flex gap-x-2">
@@ -211,7 +211,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-white/80 mb-1">
+          <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
             Matière
           </label>
           <input
@@ -224,7 +224,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             }}
             maxLength={60}
             placeholder="Choisis dans la liste ou tape une matière…"
-            className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none focus:outline-primary-button"
+            className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200 focus:outline-primary-button"
           />
           <datalist id={matiereListId}>
             {workspaces.map((w) => (
@@ -232,18 +232,18 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             ))}
           </datalist>
           {resolvedWorkspace ? (
-            <p className="mt-1 text-[11px] text-emerald-300/80">
+            <p className="mt-1 text-[11px] text-emerald-300/80 light:text-emerald-700">
               Lié au workspace « {resolvedWorkspace.name} »
             </p>
           ) : matiereInput.trim() ? (
-            <p className="mt-1 text-[11px] text-white/40">
+            <p className="mt-1 text-[11px] text-white/40 light:text-slate-500">
               Libellé libre — non lié à un workspace
             </p>
           ) : null}
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-white/80 mb-1">
+          <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
             Thread (optionnel)
           </label>
           <input
@@ -258,7 +258,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
                 ? "Choisis d'abord une matière liée à un workspace"
                 : "Choisis un thread existant ou tape un libellé"
             }
-            className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none focus:outline-primary-button disabled:opacity-50"
+            className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200 focus:outline-primary-button disabled:opacity-50"
           />
           <datalist id={threadListId}>
             {threads.map((t) => (
@@ -266,7 +266,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             ))}
           </datalist>
           {!threadDisabled && threadInput.trim() && (
-            <p className="mt-1 text-[11px] text-white/40">
+            <p className="mt-1 text-[11px] text-white/40 light:text-slate-500">
               {threads.some(
                 (t) =>
                   (t?.name || "").toLowerCase() ===
@@ -280,13 +280,13 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
 
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <label className="block text-xs font-medium text-white/80 mb-1">
+            <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
               Jour
             </label>
             <select
               value={form.dayOfWeek}
               onChange={(e) => update("dayOfWeek", e.target.value)}
-              className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
+              className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200"
             >
               {DAYS.map((d) => (
                 <option key={d.key} value={d.key}>
@@ -296,7 +296,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/80 mb-1">
+            <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
               Début
             </label>
             <input
@@ -304,11 +304,11 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
               value={form.start}
               onChange={(e) => update("start", e.target.value)}
               required
-              className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
+              className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/80 mb-1">
+            <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
               Fin
             </label>
             <input
@@ -316,14 +316,14 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
               value={form.end}
               onChange={(e) => update("end", e.target.value)}
               required
-              className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
+              className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200"
             />
           </div>
         </div>
 
         <div className={form.recurrence === "once" ? "grid grid-cols-2 gap-2" : ""}>
           <div>
-            <label className="block text-xs font-medium text-white/80 mb-1">
+            <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
               Récurrence
             </label>
             <select
@@ -339,7 +339,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
                       : f.date,
                 }));
               }}
-              className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
+              className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200"
             >
               {RECURRENCES.map((r) => (
                 <option key={r.value} value={r.value}>
@@ -350,7 +350,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
           </div>
           {form.recurrence === "once" && (
             <div>
-              <label className="block text-xs font-medium text-white/80 mb-1">
+              <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
                 Date
               </label>
               <input
@@ -358,14 +358,14 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
                 value={form.date || ""}
                 onChange={(e) => update("date", e.target.value)}
                 required
-                className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none"
+                className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200"
               />
             </div>
           )}
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-white/80 mb-1">
+          <label className="block text-xs font-medium text-white/80 light:text-slate-600 mb-1">
             Note (optionnel)
           </label>
           <textarea
@@ -373,7 +373,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             onChange={(e) => update("note", e.target.value)}
             maxLength={500}
             rows={2}
-            className="bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2 border-none resize-y"
+            className="bg-theme-settings-input-bg light:bg-slate-100 text-white light:text-slate-800 text-sm rounded-lg block w-full p-2 border border-transparent light:border-slate-200 resize-y"
           />
         </div>
 
@@ -393,7 +393,7 @@ export default function SlotForm({ slot, onClose, onSave, onDelete, onNavigate }
             <button
               type="button"
               onClick={onClose}
-              className="text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+              className="text-white light:text-slate-700 hover:bg-zinc-700 light:hover:bg-slate-200 px-4 py-2 rounded-lg text-sm"
             >
               Annuler
             </button>
