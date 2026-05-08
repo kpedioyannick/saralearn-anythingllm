@@ -13,7 +13,7 @@ import {
 } from "../contexts/TTSProvider";
 import { PENDING_HOME_MESSAGE } from "@/utils/constants";
 
-export default function WorkspaceChat({ loading, workspace }) {
+export default function WorkspaceChat({ loading, workspace, studentMode = false }) {
   useWatchForAutoPlayAssistantTTSResponse();
   const navigate = useNavigate();
   const { threadSlug = null } = useParams();
@@ -65,7 +65,7 @@ export default function WorkspaceChat({ loading, workspace }) {
   return (
     <TTSProvider>
       <DnDFileUploaderProvider workspace={workspace} threadSlug={threadSlug}>
-        <ChatContainer workspace={workspace} knownHistory={history} activeThread={activeThread} />
+        <ChatContainer workspace={workspace} knownHistory={history} activeThread={activeThread} studentMode={studentMode} />
       </DnDFileUploaderProvider>
     </TTSProvider>
   );

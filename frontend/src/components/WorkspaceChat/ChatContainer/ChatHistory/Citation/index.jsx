@@ -15,6 +15,7 @@ import {
 import { toPercentString } from "@/utils/numbers";
 import { useTranslation } from "react-i18next";
 import { useSourcesSidebar } from "../../SourcesSidebar";
+import useUser from "@/hooks/useUser";
 
 const CIRCLE_ICONS = {
   file: FileText,
@@ -104,7 +105,12 @@ export default function Citations({ sources = [] }) {
     sources: currentSources,
   } = useSourcesSidebar();
   const { t } = useTranslation();
+  const { user } = useUser();
   if (sources.length === 0) return null;
+  // Sources visibles uniquement aux admin/manager — info sans valeur
+  // pédagogique pour l'élève et risquée à exposer (révèle les RAG docs).
+  const isAdmin = !user || user?.role === "admin" || user?.role === "manager";
+  if (!isAdmin) return null;
 
   const combined = combineLikeSources(sources);
   const visibleSources = combined.slice(0, 3);

@@ -799,9 +799,9 @@ const TRANSLATIONS = {
     more_actions: "Plus d'actions",
     followup_chips: {
       again: { label: "Encore", template: "Encore" },
-      fiche: { label: "En fiche", template: "Fais-moi une fiche de révision sur ce sujet" },
-      exercice: { label: "En exercices", template: "Donne-moi des exercices sur ce sujet" },
-      carte_mentale: { label: "Carte mentale", template: "Fais-moi une carte mentale sur ce sujet" },
+      fiche: { label: "Cours", template: "Fais-moi une fiche de révision sur ce sujet" },
+      exercice: { label: "Exercices", template: "Donne-moi des exercices sur ce sujet" },
+      carte_mentale: { label: "Carte Mentale", template: "Fais-moi une carte mentale sur ce sujet" },
       explication: { label: "Réexplique", template: "Reformule ton explication différemment" },
       coach_demain: { label: "Et demain ?", template: "Et qu'est-ce que je fais demain ?" },
       coach_detail: { label: "Détail", template: "Détaille par chapitre ou par matière" },

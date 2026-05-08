@@ -11,7 +11,9 @@ import {
   UserCircle,
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import AccountModal from "../AccountModal";
+import PlanningSheet, { PLANNING_SHEET_OPEN_EVENT } from "../../PlanningSheet";
 import {
   AUTH_TIMESTAMP,
   AUTH_TOKEN,
@@ -25,11 +27,17 @@ export default function UserButton() {
   const { t } = useTranslation();
   const mode = useLoginMode();
   const { user } = useUser();
+  const location = useLocation();
   const menuRef = useRef();
   const buttonRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
   const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [accountSection, setAccountSection] = useState(null);
+
+  // Sur /student/*, StudentLayout a un header h-16 (64px). On centre le
+  // bouton dedans plutôt que de le laisser flotter avec les offsets admin
+  // (md:top-9 = 36px) qui débordent sous le header.
+  const isStudentRoute = location.pathname.startsWith("/student");
 
   const handleClose = (event) => {
     if (
@@ -54,9 +62,28 @@ export default function UserButton() {
     return () => document.removeEventListener("mousedown", handleClose);
   }, [showMenu]);
 
+  // Permet aux autres parties de l'UI (ex. bouton "Mon planning" du chatinput)
+  // d'ouvrir AccountModal directement sur une section donnée.
+  useEffect(() => {
+    function onOpen(e) {
+      const section = e?.detail?.section || null;
+      setAccountSection(section);
+      setShowAccountSettings(true);
+      setShowMenu(false);
+    }
+    window.addEventListener("sara:openAccountSection", onOpen);
+    return () => window.removeEventListener("sara:openAccountSection", onOpen);
+  }, []);
+
   if (mode === null) return null;
   return (
-    <div className="absolute top-3 right-4 md:top-9 md:right-10 w-fit h-fit z-40">
+    <div
+      className={
+        isStudentRoute
+          ? "fixed top-[14px] right-4 md:right-8 w-fit h-fit z-[130]"
+          : "fixed top-3 right-4 md:absolute md:top-9 md:right-10 w-fit h-fit z-[130]"
+      }
+    >
       <button
         ref={buttonRef}
         onClick={() => setShowMenu(!showMenu)}
@@ -77,7 +104,12 @@ export default function UserButton() {
                 <MenuItem
                   icon={<CalendarBlank size={18} weight="duotone" />}
                   label="Mon planning"
-                  onClick={() => openSpace("schedule")}
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent(PLANNING_SHEET_OPEN_EVENT)
+                    );
+                    setShowMenu(false);
+                  }}
                 />
                 <MenuItem
                   icon={<Star size={18} weight="duotone" />}
@@ -117,6 +149,7 @@ export default function UserButton() {
           }}
         />
       )}
+      <PlanningSheet />
     </div>
   );
 }

@@ -202,7 +202,8 @@ export default function SaraLogin() {
         } catch {}
       }
       window.localStorage.setItem(AUTH_TOKEN, res.token);
-      window.location = paths.home();
+      const isAdmin = res.user?.role === "admin" || res.user?.role === "manager";
+      window.location = isAdmin ? paths.home() : paths.student.home();
     } else {
       setError(copy.invalidCredentials);
       setLoading(false);

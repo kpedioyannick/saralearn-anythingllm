@@ -10,7 +10,6 @@ import { Info, Plus, Star, Trash, X } from "@phosphor-icons/react";
 import ReactDOM from "react-dom";
 import { useTheme } from "@/hooks/useTheme";
 import useAssignedThreads from "@/hooks/useAssignedThreads";
-import ScheduleSection from "./ScheduleSection";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Tooltip } from "react-tooltip";
@@ -148,15 +147,8 @@ export default function AccountModal({ user, hideModal, initialSection = null })
         <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto">
           <form onSubmit={handleUpdate} className="flex flex-col">
             <section
-              id="space-section-schedule"
-              className="px-6 pt-6 scroll-mt-4"
-            >
-              <ScheduleSection onNavigate={requestClose} />
-            </section>
-
-            <section
               id="space-section-favorites"
-              className="px-6 scroll-mt-4"
+              className="px-6 pt-6 scroll-mt-4"
             >
               <AssignedThreadsSection />
             </section>

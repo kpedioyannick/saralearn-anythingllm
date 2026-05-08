@@ -1,4 +1,3 @@
-import { formatDateTimeAsMoment } from "@/utils/directories";
 import { numberWithCommas } from "@/utils/numbers";
 import React, { useEffect, useState, useContext } from "react";
 import { isMobile } from "react-device-detect";
@@ -53,12 +52,26 @@ function getAutoShowMetrics() {
  * @param {metrics: {duration:number, outputTps: number, timestamp?: number}} metrics
  * @returns {string}
  */
+// Format date courte FR via Intl, ex. "8 mai, 10:12" (24h, mois abrégé en
+// français). On évite moment+moment/locale/fr pour ne pas alourdir le bundle :
+// Intl.DateTimeFormat est natif et déjà localisé.
+function formatDateFr(timestamp) {
+  try {
+    return new Intl.DateTimeFormat("fr-FR", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(timestamp));
+  } catch {
+    return "";
+  }
+}
+
 function buildMetricsString(metrics = {}) {
   return [
     `${formatDuration(metrics.duration)} (${formatTps(metrics.outputTps)} tok/s)`,
-    metrics?.timestamp
-      ? formatDateTimeAsMoment(metrics.timestamp, "MMM D, h:mm A")
-      : "",
+    metrics?.timestamp ? formatDateFr(metrics.timestamp) : "",
   ]
     .filter(Boolean)
     .join(" · ");

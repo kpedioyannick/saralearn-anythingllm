@@ -22,6 +22,11 @@ export default {
     login: () => "/sara/login",
     register: () => "/sara/register",
   },
+  student: {
+    home: () => "/student",
+    subject: (slug) => `/student/${slug}`,
+    chat: (slug, threadSlug) => `/student/${slug}/t/${threadSlug}`,
+  },
   sso: {
     login: () => {
       return "/sso/simple";

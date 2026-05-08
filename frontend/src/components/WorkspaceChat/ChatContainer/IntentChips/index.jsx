@@ -286,68 +286,27 @@ export function FollowUpChips({ sendCommand, slug }) {
   const { t } = useTranslation();
   const chips = slug === COACH_SLUG ? COACH_FOLLOWUP_CHIPS : FOLLOWUP_CHIPS;
   return (
-    <div className="overflow-x-auto no-scrollbar">
-      <div className="inline-flex gap-1.5">
-        {chips.map((c) => {
-          const text = t(`chat_window.followup_chips.${c.id}.template`);
-          const label = t(`chat_window.followup_chips.${c.id}.label`);
-          return (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => sendCommand({ text, autoSubmit: true })}
-              title={label}
-              aria-label={label}
-              className={`${FOLLOWUP_CHIP_BASE} ${
-                INTENT_CHIP_BORDER[c.id] ?? CHIP_BTN_FALLBACK_BORDER
-              }`}
-            >
-              <span>{c.icon}</span>
-              <span className="hidden md:inline ml-1">{label}</span>
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex flex-wrap gap-1.5">
+      {chips.map((c) => {
+        const text = t(`chat_window.followup_chips.${c.id}.template`);
+        const label = t(`chat_window.followup_chips.${c.id}.label`);
+        return (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => sendCommand({ text, autoSubmit: true })}
+            title={label}
+            aria-label={label}
+            className={`${FOLLOWUP_CHIP_BASE} ${
+              INTENT_CHIP_BORDER[c.id] ?? CHIP_BTN_FALLBACK_BORDER
+            }`}
+          >
+            <span>{c.icon}</span>
+            <span className="ml-1">{label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
-// Desktop only : inline chip strip between textarea and toolbar.
-export function ActivitiesChipStrip({
-  workspace,
-  activeThread,
-  sendCommand,
-  textareaRef,
-}) {
-  const { t } = useTranslation();
-  const visible = getVisibleChips(workspace);
-  const threadTitle = activeThread?.name?.trim() || "";
-
-  if (!visible.length) return null;
-
-  return (
-    <div className="overflow-x-auto no-scrollbar pt-2 pb-1">
-      <div className="inline-flex gap-1.5 pr-2">
-        {visible.map((c) => {
-          const template = t(`sara.intent_chips.${c.id}.template`);
-          const text = buildText(template, threadTitle);
-          return (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => {
-                sendCommand({ text, autoSubmit: false });
-                textareaRef?.current?.focus();
-              }}
-              className={`text-[11px] md:text-xs px-2.5 py-1 rounded-full border bg-zinc-800/95 hover:bg-zinc-700 text-zinc-200 hover:text-white light:bg-white light:text-slate-700 light:hover:bg-slate-50 shadow-sm transition-colors whitespace-nowrap ${
-                INTENT_CHIP_BORDER[c.id] ?? CHIP_BTN_FALLBACK_BORDER
-              }`}
-            >
-              {c.icon} {t(`sara.intent_chips.${c.id}.label`)}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}

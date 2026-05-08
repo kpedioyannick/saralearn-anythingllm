@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import debounce from "lodash.debounce";
-import { ArrowUp, At } from "@phosphor-icons/react";
+import { ArrowUp, At, CalendarBlank, Target } from "@phosphor-icons/react";
 import StopGenerationButton from "./StopGenerationButton";
 import SpeechToText from "./SpeechToText";
 import { Tooltip } from "react-tooltip";
 import AttachmentManager from "./Attachments";
-import ObjectiveProgress from "./ObjectiveProgress";
+import ObjectiveProgress, { ObjectiveSheet, AutoStartObjective, OBJECTIVES_SHEET_OPEN_EVENT } from "./ObjectiveProgress";
+import { PLANNING_SHEET_OPEN_EVENT } from "@/components/PlanningSheet";
 import AttachItem from "./AttachItem";
 import {
   ATTACHMENTS_PROCESSED_EVENT,
@@ -18,7 +19,7 @@ import Appearance from "@/models/appearance";
 import usePromptInputStorage from "@/hooks/usePromptInputStorage";
 import useUser from "@/hooks/useUser";
 import ToolsMenu, { TOOLS_MENU_KEYBOARD_EVENT } from "./ToolsMenu";
-import { ActivitiesButton, ActivitiesChipStrip } from "../IntentChips";
+import { ActivitiesButton } from "../IntentChips";
 import { useSearchParams } from "react-router-dom";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
 
@@ -46,10 +47,11 @@ export default function PromptInput({
   centered = false,
   workspaceSlug = null,
   threadSlug = null,
+  studentMode = false,
 }) {
   const { t } = useTranslation();
   const { user } = useUser();
-  const isAdmin = !user || user?.role === "admin";
+  const isAdmin = !studentMode && (!user || user?.role === "admin");
   const { showAgentCommand = true } = workspace ?? {};
   const { isDisabled } = useIsDisabled();
   const agentSessionActive = useIsAgentSessionActive();
@@ -346,11 +348,27 @@ export default function PromptInput({
               centered={centered}
               highlightedIndexRef={toolsHighlightRef}
             />
-            <ObjectiveProgress
-              activeThread={activeThread}
-              sendCommand={sendCommand}
-            />
-            <div className="bg-zinc-800 light:bg-white light:border light:border-slate-300 rounded-[20px] pwa:rounded-3xl flex flex-col px-5 overflow-hidden">
+            {!studentMode && (
+              <ObjectiveProgress
+                activeThread={activeThread}
+                sendCommand={sendCommand}
+              />
+            )}
+            {studentMode && (
+              <>
+                <ObjectiveSheet
+                  activeThread={activeThread}
+                  sendCommand={sendCommand}
+                />
+                {centered && (
+                  <AutoStartObjective
+                    activeThread={activeThread}
+                    sendCommand={sendCommand}
+                  />
+                )}
+              </>
+            )}
+            <div className={`${studentMode ? "bg-white border border-slate-300" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} rounded-[20px] pwa:rounded-3xl flex flex-col px-5 overflow-hidden`}>
               <AttachmentManager attachments={attachments} />
               <div className="flex items-center">
                 <textarea
@@ -370,8 +388,8 @@ export default function PromptInput({
                   }}
                   value={promptInput}
                   spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 text-white light:text-slate-600 bg-transparent placeholder:text-white/60 light:placeholder:text-slate-400 resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
-                  placeholder={t("chat_window.send_message")}
+                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 ${studentMode ? "text-slate-700 placeholder:text-slate-400" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
+                  placeholder={studentMode ? "Pose ta question à Sara..." : t("chat_window.send_message")}
                 />
               </div>
               <div className="flex items-center pt-3.5 pb-3 gap-x-2">
@@ -401,26 +419,20 @@ export default function PromptInput({
                     />
                   )}
                   {!centered && (
-                    <div className="md:hidden">
-                      <ActivitiesButton
-                        workspace={workspace}
-                        activeThread={activeThread}
-                        sendCommand={sendCommand}
-                        textareaRef={textareaRef}
-                      />
-                    </div>
-                  )}
-                </div>
-                {!centered && (
-                  <div className="hidden md:block flex-1 min-w-0">
-                    <ActivitiesChipStrip
+                    <ActivitiesButton
                       workspace={workspace}
                       activeThread={activeThread}
                       sendCommand={sendCommand}
                       textareaRef={textareaRef}
                     />
-                  </div>
-                )}
+                  )}
+                  {studentMode && !centered && (
+                    <PlanningButton textareaRef={textareaRef} />
+                  )}
+                  {studentMode && !centered && activeThread?.id && (
+                    <ObjectivesButton textareaRef={textareaRef} />
+                  )}
+                </div>
                 <div className="flex gap-x-2 items-center shrink-0 ml-auto">
                   <SpeechToText sendCommand={sendCommand} />
                   {isStreaming ? (
@@ -439,6 +451,72 @@ export default function PromptInput({
         </div>
       </form>
     </div>
+  );
+}
+
+function PlanningButton({ textareaRef }) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          window.dispatchEvent(new CustomEvent(PLANNING_SHEET_OPEN_EVENT));
+          textareaRef?.current?.focus();
+        }}
+        data-tooltip-id="planning-btn"
+        data-tooltip-content="Mon planning"
+        aria-label="Mon planning"
+        className="group border-none cursor-pointer flex items-center justify-center h-6 px-2 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
+      >
+        <CalendarBlank
+          size={16}
+          weight="duotone"
+          className="text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-800 shrink-0"
+        />
+        <span className="ml-1 text-sm font-medium text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-800">
+          Planning
+        </span>
+      </button>
+      <Tooltip
+        id="planning-btn"
+        place="bottom"
+        delayShow={300}
+        className="tooltip !text-xs z-99"
+      />
+    </>
+  );
+}
+
+function ObjectivesButton({ textareaRef }) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          window.dispatchEvent(new CustomEvent(OBJECTIVES_SHEET_OPEN_EVENT));
+          textareaRef?.current?.focus();
+        }}
+        data-tooltip-id="objectives-btn"
+        data-tooltip-content="Mes objectifs"
+        aria-label="Mes objectifs"
+        className="group border-none cursor-pointer flex items-center justify-center h-6 px-2 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
+      >
+        <Target
+          size={16}
+          weight="fill"
+          className="text-emerald-400 light:text-emerald-600 shrink-0"
+        />
+        <span className="ml-1 text-sm font-medium text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-800">
+          Objectifs
+        </span>
+      </button>
+      <Tooltip
+        id="objectives-btn"
+        place="bottom"
+        delayShow={300}
+        className="tooltip !text-xs z-99"
+      />
+    </>
   );
 }
 

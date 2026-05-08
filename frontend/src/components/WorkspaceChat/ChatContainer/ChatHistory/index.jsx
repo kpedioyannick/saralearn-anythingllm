@@ -276,19 +276,33 @@ export default forwardRef(function (
           )}
         </div>
         {!isAtBottom && (
-          <div className="absolute bottom-40 right-10 z-50 cursor-pointer animate-pulse">
-            <div className="flex flex-col items-center">
-              <div
-                className="p-1 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 hover:text-white"
-                onClick={() => {
-                  scrollToBottom(isStreaming ? false : true);
-                  setIsUserScrolling(false);
-                }}
-              >
-                <ArrowDown weight="bold" className="text-white/60 w-5 h-5" />
-              </div>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              scrollToBottom(isStreaming ? false : true);
+              setIsUserScrolling(false);
+            }}
+            className={`absolute bottom-40 right-10 z-50 border-none cursor-pointer ${
+              isStreaming
+                ? "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 border border-emerald-400/40 light:shadow-emerald-200"
+                : "p-1 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 light:bg-slate-200 light:border-slate-300 light:hover:bg-slate-300 animate-pulse"
+            }`}
+            aria-label={isStreaming ? "Sara écrit, descendre" : "Descendre"}
+          >
+            {isStreaming ? (
+              <>
+                <span className="flex items-center gap-0.5" aria-hidden>
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/90 animate-pulse" style={{ animationDelay: "0ms" }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/90 animate-pulse" style={{ animationDelay: "150ms" }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/90 animate-pulse" style={{ animationDelay: "300ms" }} />
+                </span>
+                <span className="text-xs font-medium">Sara écrit</span>
+                <ArrowDown weight="bold" className="w-3.5 h-3.5" />
+              </>
+            ) : (
+              <ArrowDown weight="bold" className="text-white/60 light:text-slate-600 w-5 h-5" />
+            )}
+          </button>
         )}
       </ThoughtExpansionProvider>
     </MessageActionsProvider>

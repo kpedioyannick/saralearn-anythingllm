@@ -119,6 +119,33 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/student",
+        lazy: async () => {
+          const { default: StudentSubjects } = await import(
+            "@/pages/Student/Subjects"
+          );
+          return { element: <PrivateRoute Component={StudentSubjects} /> };
+        },
+      },
+      {
+        path: "/student/:slug",
+        lazy: async () => {
+          const { default: StudentChapters } = await import(
+            "@/pages/Student/Chapters"
+          );
+          return { element: <PrivateRoute Component={StudentChapters} /> };
+        },
+      },
+      {
+        path: "/student/:slug/t/:threadSlug",
+        lazy: async () => {
+          const { default: StudentChat } = await import(
+            "@/pages/Student/Chat"
+          );
+          return { element: <PrivateRoute Component={StudentChat} /> };
+        },
+      },
+      {
         path: "/workspace/:slug/t/:threadSlug",
         lazy: async () => {
           const { default: WorkspaceChat } = await import(

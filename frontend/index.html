@@ -6,6 +6,29 @@
     <link rel="icon" type="image/svg+xml" href="/sara-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Cache-bust : recharge auto si nouveau déploiement (compare version.txt vs localStorage). -->
+    <script>
+      (async function () {
+        try {
+          const r = await fetch("/version.txt?cb=" + Date.now(), { cache: "no-store" });
+          if (!r.ok) return;
+          const v = (await r.text()).trim();
+          if (!v) return;
+          const last = localStorage.getItem("saraVersion");
+          localStorage.setItem("saraVersion", v);
+          if (last && last !== v) {
+            if ("caches" in window) {
+              try {
+                const keys = await caches.keys();
+                await Promise.all(keys.map((k) => caches.delete(k)));
+              } catch (_) {}
+            }
+            location.reload();
+          }
+        } catch (_) {}
+      })();
+    </script>
+
     <title>Sara — Soutien scolaire IA · Programme français &amp; américain | AI tutor</title>
 
     <meta name="title" content="Sara — Soutien scolaire IA · Programme français & américain | AI tutor" />

@@ -17,10 +17,11 @@ import {
 } from "../ThoughtContainer";
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { chatQueryRefusalResponse } from "@/utils/chat";
 import HistoricalOutputs from "./HistoricalOutputs";
 import SaraLogo from "@/media/logo/sara-logo.svg";
+import { ActiveObjectiveLine } from "../../ActiveObjectiveContext";
 
 const HistoricalMessage = ({
   uuid = v4(),
@@ -42,6 +43,11 @@ const HistoricalMessage = ({
   sendCommand,
 }) => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  // En studentMode, le chat n'a plus de sidebar gauche → md:pl-0 (héritage
+  // admin) crée une asymétrie : 16px à droite, 0 à gauche. On force px-4
+  // symétrique sur /student/*.
+  const isStudentRoute = pathname.startsWith("/student");
   const { isEditing } = useEditMessage({ chatId, role });
   const { isDeleted, completeDelete, onEndAnimation } = useWatchDeleteMessage({
     chatId,
@@ -137,7 +143,7 @@ const HistoricalMessage = ({
       onAnimationEnd={onEndAnimation}
       className={`${isDeleted ? "animate-remove" : ""} flex justify-start w-full group`}
     >
-      <div className="py-4 px-4 md:pl-0 flex flex-col w-full">
+      <div className={`py-4 px-4 ${isStudentRoute ? "" : "md:pl-0"} flex flex-col w-full`}>
         {isEditing ? (
           <EditMessageForm
             role={role}
@@ -203,6 +209,7 @@ const HistoricalMessage = ({
                   sendCommand={sendCommand}
                 />
                 </div>
+                <ActiveObjectiveLine />
               </div>
               {role === "assistant" && (
                 <div className="mt-1">

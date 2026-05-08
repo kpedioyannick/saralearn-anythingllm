@@ -207,7 +207,10 @@ export default function MultiUserAuth() {
       } else {
         window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
         window.localStorage.setItem(AUTH_TOKEN, token);
-        window.location = paths.home();
+        window.location =
+          user?.role === "admin" || user?.role === "manager"
+            ? paths.home()
+            : paths.student.home();
       }
     } else {
       setError(message);

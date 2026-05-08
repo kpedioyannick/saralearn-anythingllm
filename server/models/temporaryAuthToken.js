@@ -7,7 +7,12 @@ const prisma = require("../utils/prisma");
  * to login as a user without the need of a username and password. These tokens are single-use and expire.
  */
 const TemporaryAuthToken = {
-  expiry: 1000 * 60 * 6, // 1 hour
+  // 120 jours (~4 mois). Pourquoi si long : le lien demo est utilise dans
+  // des campagnes mailing prospect — on veut qu'un lien envoye en mai marche
+  // encore en aout/septembre. Combine avec multi-use (delete supprime ci-dessous),
+  // une seule URL sert tous les prospects pendant 4 mois.
+  // Historique : 1000 * 60 * 6 (6 min, comment "1 hour" faux) → 24h → 120j.
+  expiry: 1000 * 60 * 60 * 24 * 120,
   tablename: "temporary_auth_tokens",
   writable: [],
 
@@ -93,11 +98,12 @@ const TemporaryAuthToken = {
     } catch (error) {
       console.error("FAILED TO VALIDATE TEMPORARY AUTH TOKEN.", error.message);
       return { sessionToken: null, token: null, error: error.message };
-    } finally {
-      // Delete the token after it has been used under all circumstances if it was retrieved
-      if (token)
-        await prisma.temporary_auth_tokens.delete({ where: { id: token.id } });
     }
+    // Anciennement : on supprimait le token après usage (single-use). Retiré
+    // pour le mode démo : la même URL sert plusieurs prospects (chacun obtient
+    // sa propre session JWT 30j à partir du même token). Le token expire
+    // toujours après 24h (cf. `expiry`) pour limiter la durée de vie d'un
+    // lien public partagé.
   },
 };
 

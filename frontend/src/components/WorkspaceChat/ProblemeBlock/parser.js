@@ -36,18 +36,25 @@ export function parseProbleme(raw) {
   const qrRaw = sepIdx >= 0 ? body.slice(sepIdx + 4).trim() : "";
 
   // Parser les paires Q: / R:
+  // `(?:^|\n)` consomme le `Q:` initial AUSSI bien que les suivants — sans
+  // ça, le 1er bloc gardait "Q: " en préfixe (les autres étaient propres
+  // car splittés sur `\nQ:`), produisant un affichage incohérent
+  // ("Q: 1. ..." pour la 1ère, "2. ..." pour les suivantes).
+  // On nettoie aussi les séparateurs `---` qui peuvent traîner en queue
+  // de chaque bloc (le LLM met souvent `---` entre paires Q/R).
+  const stripTrailingSep = (s) => s.replace(/\n?---\s*$/, "").trim();
   const questions = [];
-  const blocks = qrRaw.split(/\nQ:\s*/);
+  const blocks = qrRaw.split(/(?:^|\n)Q:\s*/);
   for (const block of blocks) {
     if (!block.trim()) continue;
     const rIdx = block.indexOf("\nR:");
     if (rIdx >= 0) {
       questions.push({
-        question: block.slice(0, rIdx).trim(),
-        corrige: block.slice(rIdx + 3).trim(),
+        question: stripTrailingSep(block.slice(0, rIdx)),
+        corrige: stripTrailingSep(block.slice(rIdx + 3)),
       });
     } else {
-      questions.push({ question: block.trim(), corrige: "" });
+      questions.push({ question: stripTrailingSep(block), corrige: "" });
     }
   }
 

@@ -35,6 +35,7 @@ import TextSizeMenu from "./TextSizeMenu";
 import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import IntentChips from "./IntentChips";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
+import { ActiveObjectiveProvider } from "./ActiveObjectiveContext";
 
 /** Bandeau haut : fond sous compte (UserMenu) et progression (ChatHistory). */
 function WorkspaceChatHeaderBar() {
@@ -46,7 +47,7 @@ function WorkspaceChatHeaderBar() {
   );
 }
 
-export default function ChatContainer({ workspace, knownHistory = [], activeThread = null }) {
+export default function ChatContainer({ workspace, knownHistory = [], activeThread = null, studentMode = false }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { threadSlug = null } = useParams();
@@ -377,14 +378,16 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
       >
-        {isMobile && <SidebarMobileHeader />}
-        <TextSizeMenu />
-        <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
-        <WorkspaceChatHeaderBar />
+        {isMobile && !studentMode && <SidebarMobileHeader />}
+        {!studentMode && <TextSizeMenu />}
+        {!studentMode && (
+          <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
+        )}
+        {!studentMode && <WorkspaceChatHeaderBar />}
         <DnDFileUploaderWrapper>
           <div className="flex flex-col h-full w-full items-center justify-center">
             <div className="flex flex-col items-center w-full">
-              <h1 className="text-white text-xl md:text-2xl mb-8 text-center">
+              <h1 className={`text-xl md:text-2xl mb-8 text-center ${studentMode ? "text-slate-800" : "text-white"}`}>
                 {activeThread ? activeThread.name : t("main-page.greeting")}
               </h1>
               <IntentChips
@@ -394,24 +397,28 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
               />
               <PromptInput
                 workspace={workspace}
+                activeThread={activeThread}
                 submit={handleSubmit}
                 isStreaming={loadingResponse}
                 sendCommand={sendCommand}
                 attachments={files}
                 centered={true}
+                studentMode={studentMode}
               />
-              <QuickActions
-                hasAvailableWorkspace={!!workspace}
-                onCreateAgent={() => navigate(paths.settings.agentSkills())}
-                onEditWorkspace={() =>
-                  navigate(
-                    paths.workspace.settings.generalAppearance(workspace.slug)
-                  )
-                }
-                onUploadDocument={() =>
-                  document.getElementById("dnd-chat-file-uploader")?.click()
-                }
-              />
+              {!studentMode && (
+                <QuickActions
+                  hasAvailableWorkspace={!!workspace}
+                  onCreateAgent={() => navigate(paths.settings.agentSkills())}
+                  onEditWorkspace={() =>
+                    navigate(
+                      paths.workspace.settings.generalAppearance(workspace.slug)
+                    )
+                  }
+                  onUploadDocument={() =>
+                    document.getElementById("dnd-chat-file-uploader")?.click()
+                  }
+                />
+              )}
             </div>
             <SuggestedMessages
               suggestedMessages={workspace?.suggestedMessages}
@@ -426,15 +433,28 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
 
   return (
     <SourcesSidebarProvider>
+     <ActiveObjectiveProvider activeThread={activeThread}>
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full"
+        className={
+          studentMode
+            ? "relative flex w-full h-full md:my-4 md:px-[50px]"
+            : "relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full"
+        }
       >
-        <TextSizeMenu />
-        <div className="flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          {isMobile && <SidebarMobileHeader />}
-          <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
-          <WorkspaceChatHeaderBar />
+        {!studentMode && <TextSizeMenu />}
+        <div
+          className={
+            studentMode
+              ? "flex-1 min-w-0 relative bg-white text-slate-900 h-full overflow-hidden md:rounded-2xl md:border md:border-slate-200 md:shadow-sm"
+              : "flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
+          }
+        >
+          {isMobile && !studentMode && <SidebarMobileHeader />}
+          {!studentMode && (
+            <WorkspaceModelPicker workspaceSlug={workspace.slug} activeThread={activeThread} />
+          )}
+          {!studentMode && <WorkspaceChatHeaderBar />}
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full pb-20 md:pb-0">
               <div className="contents">
@@ -458,6 +478,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
                   sendCommand={sendCommand}
                   attachments={files}
                   centered={false}
+                  studentMode={studentMode}
                 />
               </div>
             </div>
@@ -466,6 +487,7 @@ export default function ChatContainer({ workspace, knownHistory = [], activeThre
         </div>
         <SourcesSidebar />
       </div>
+     </ActiveObjectiveProvider>
     </SourcesSidebarProvider>
   );
 }

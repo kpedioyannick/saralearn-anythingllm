@@ -27,7 +27,7 @@ const TYPE_STYLES = {
     "bg-emerald-500/20 border-emerald-400 text-emerald-50 light:bg-emerald-100 light:border-emerald-500 light:text-emerald-900",
 };
 
-export default function ScheduleSection({ onNavigate }) {
+export default function ScheduleSection({ onNavigate, hideTitle = false }) {
   const { slots, loading, addSlot, updateSlot, removeSlot } = useUserSchedule();
   const [editing, setEditing] = useState(null); // null | "new" | slot object
   const [weekStart, setWeekStart] = useState(() => getMondayOf(new Date()));
@@ -79,18 +79,22 @@ export default function ScheduleSection({ onNavigate }) {
   };
 
   return (
-    <div className="mt-2 pt-6 border-t border-theme-modal-border">
+    <div className={hideTitle ? "" : "mt-2 pt-6 border-t border-theme-modal-border"}>
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-x-2">
-          <Calendar size={18} className="text-white" />
-          <h4 className="text-sm font-semibold text-white">
-            Mon planning (cours + révisions)
-          </h4>
-        </div>
+        {hideTitle ? (
+          <span aria-hidden />
+        ) : (
+          <div className="flex items-center gap-x-2">
+            <Calendar size={18} className="text-white light:text-slate-700" />
+            <h4 className="text-sm font-semibold text-white light:text-slate-800">
+              Mon planning (cours + révisions)
+            </h4>
+          </div>
+        )}
         <button
           type="button"
           onClick={() => setEditing("new")}
-          className="flex items-center gap-x-1 bg-white text-black hover:opacity-60 px-3 py-1.5 rounded-lg text-xs font-semibold"
+          className="flex items-center gap-x-1 bg-white text-black hover:opacity-60 light:bg-blue-600 light:text-white light:hover:bg-blue-700 light:hover:opacity-100 px-3 py-1.5 rounded-lg text-xs font-semibold"
         >
           <Plus size={14} weight="bold" /> Ajouter un créneau
         </button>
